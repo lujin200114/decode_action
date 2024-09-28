@@ -1,1310 +1,1317 @@
-//Sat Sep 28 2024 10:05:52 GMT+0000 (Coordinated Universal Time)
+//Sat Sep 28 2024 12:35:15 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
-const david_Mc = new david_Q0("喜马拉雅极速版"),
-  david_MI = "V1.0.0",
-  david_MT = "xmlyjsbapp";
-let david_Mq = david_Mc.getjson(david_MT, []);
-const david_Mn = david_Mc.isNode() ? require("fs") : "",
-  david_Mi = david_Mc.isNode() ? require("ws") : "",
-  david_MJ = "david_cookies.js";
-david_Mc.isNode() && !david_Mn.existsSync(david_MJ) && (david_Mc.log("🔔 外挂ck文件不存在，开始创建模版>>>"), david_Mn.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", e => {}));
-const david_Ml = david_Mc.isNode() ? require("http") : "",
-  david_MC = david_Mc.isNode() ? require("./sendNotify") : "",
-  david_Mb = david_Mc.isNode() ? require("./david_cookies") : "";
-let david_Mv = david_Mc.getdata("tguserid") || 1,
-  david_MH = david_Mc.getdata("xmlyjsbactivecode") || 0,
-  david_ME = david_Mc.getval("xmlyjsbuserck") || 1,
-  david_MS = david_Mc.getval("apiHost") || "http://106.15.104.124:8080";
-david_Mc.getval("apiHosts") && (david_MS = david_Mc.getval("apiHosts"));
-let david_Mw = david_Mc.getval("cleanCache") || false;
-const david_MO = 0;
-let david_MG = david_Mc.getval("tz") || "1",
-  david_ML = undefined,
-  david_Mk = undefined,
-  david_MK = false,
-  david_Mh = "xmlyjsb_cookies.json";
-var david_Ms = "",
-  david_Mu = "";
-let david_MW = "",
-  david_Mx = [];
-let david_Mt = [],
-  david_MB = [],
-  david_MF = [],
-  david_MD = [],
-  david_Ma = [],
-  david_MP = "",
-  david_Mo = "",
-  david_MY = "",
-  david_MV = "",
-  david_Mz = "",
-  david_MR = "",
-  david_Mj = "",
-  david_MU = "",
-  david_Mm = 1,
-  david_My = 1;
-let david_f0 = 1,
-  david_f1 = 1,
-  david_f2 = "",
-  david_f3 = "",
-  david_f4 = 3,
-  david_f5 = "";
-if (david_Mc.isNode()) {
-  process.env.XMLYJSBAPP ? david_Mq = JSON.parse(process.env.XMLYJSBAPP) : david_Mq = david_Mb.XMLYJSB;
-  david_Mv = process.env.TGUSERID;
-  david_MH = process.env.XMLYJSBACTIVECODE;
-  process.env.APIHOST && (david_MS = process.env.APIHOST);
-  process.env.APIHOSTS && (david_MS = process.env.APIHOSTS);
-  process.env.CLEANCACHE && (david_Mw = JSON.parse(process.env.CLEANCACHE));
-  david_Ms = new Date(new Date().getTime()).getHours();
-  david_Mu = new Date(new Date().getTime()).getMinutes();
-  david_Mc.log("🔔 当前环境: Node, 当前时间：" + david_Ms + "点");
+const david_ZR = new david_k0("喜马拉雅极速版"),
+  david_ZS = "V1.0.1",
+  david_ZM = "xmlyjsbapp";
+let david_ZX = david_ZR.getjson(david_ZM, []);
+const david_ZP = david_ZR.isNode() ? require("fs") : "",
+  david_Zp = david_ZR.isNode() ? require("ws") : "";
+const david_ZT = "david_cookies.js";
+david_ZR.isNode() && !david_ZP.existsSync(david_ZT) && (david_ZR.log("🔔 外挂ck文件不存在，开始创建模版>>>"), david_ZP.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", A => {}));
+const david_ZE = david_ZR.isNode() ? require("http") : "",
+  david_ZB = david_ZR.isNode() ? require("./sendNotify") : "",
+  david_Zz = david_ZR.isNode() ? require("./david_cookies") : "";
+let david_Zi = david_ZR.getdata("tguserid") || 1,
+  david_Zt = david_ZR.getdata("xmlyjsbactivecode") || 0,
+  david_Zo = david_ZR.getval("xmlyjsbuserck") || 1,
+  david_Zm = david_ZR.getval("apiHost") || "http://106.15.104.124:8080";
+david_ZR.getval("apiHosts") && (david_Zm = david_ZR.getval("apiHosts"));
+let david_Za = david_ZR.getval("cleanCache") || false;
+const david_ZQ = 0;
+let david_Zd = david_ZR.getval("tz") || "1",
+  david_Zs = undefined,
+  david_ZF = undefined,
+  david_Zc = false,
+  david_ZY = "xmlyjsb_cookies.json";
+var david_Zr = "",
+  david_Zf = "";
+let david_Zq = "",
+  david_ZN = [],
+  david_ZK = [],
+  david_ZL = [],
+  david_ZH = [],
+  david_Zy = [],
+  david_Zl = [],
+  david_ZG = "",
+  david_Zh = "",
+  david_ZV = "",
+  david_ZJ = "",
+  david_Zj = "",
+  david_ZD = "",
+  david_Zb = "",
+  david_ZU = "",
+  david_Ze = 1,
+  david_ZC = 1,
+  david_n0 = 1,
+  david_n1 = 1,
+  david_n2 = "",
+  david_n3 = "",
+  david_n4 = 3,
+  david_n5 = "";
+if (david_ZR.isNode()) {
+  process.env.XMLYJSBAPP ? david_ZX = JSON.parse(process.env.XMLYJSBAPP) : david_ZX = david_Zz.XMLYJSB;
+  david_Zi = process.env.TGUSERID;
+  david_Zt = process.env.XMLYJSBACTIVECODE;
+  process.env.APIHOST && (david_Zm = process.env.APIHOST);
+  process.env.APIHOSTS && (david_Zm = process.env.APIHOSTS);
+  process.env.CLEANCACHE && (david_Za = JSON.parse(process.env.CLEANCACHE));
+  david_Zr = new Date(new Date().getTime()).getHours();
+  david_Zf = new Date(new Date().getTime()).getMinutes();
+  david_ZR.log("🔔 当前环境: Node, 当前时间：" + david_Zr + "点");
 } else {
-  david_Ms = new Date().getHours();
-  david_Mu = new Date().getMinutes();
-  david_Mc.log("🔔 当前环境: 手机代理, 当前时间：" + david_Ms + "点");
+  david_Zr = new Date().getHours();
+  david_Zf = new Date().getMinutes();
+  david_ZR.log("🔔 当前环境: 手机代理, 当前时间：" + david_Zr + "点");
 }
 !(async () => {
   if (typeof $request !== "undefined") {
-    await david_fe();
+    await david_nA();
   } else {
-    if (!david_Mq) {
-      david_Mc.log("📢 很抱歉，😭 没有找到账号信息！你确定配置账号信息了吗？");
+    if (!david_ZX) {
+      david_ZR.log("📢 很抱歉，😭 没有找到账号信息！你确定配置账号信息了吗？");
       return;
     }
-    david_Mc.log("📢 开始检测服务器接口状态>>>");
-    let f = false;
-    const Q = david_MS.split("&"),
-      X = Q.length;
-    for (let n = 0; n < X; n++) {
-      if (david_Mc.isNode()) {
-        f = await david_fL("" + Q[n], 2500);
+    david_ZR.log("📢 开始检测服务器接口状态>>>");
+    let w = false;
+    const W = david_Zm.split("&"),
+      R = W.length;
+    for (let T = 0; T < R; T++) {
+      if (david_ZR.isNode()) {
+        w = await david_ns("" + W[T], 2500);
       } else {
-        if (david_Mc.isSurge() || david_Mc.isLoon()) {
-          f = await david_fK("" + Q[n], 2500);
+        if (david_ZR.isSurge() || david_ZR.isLoon()) {
+          w = await david_nc("" + W[T], 2500);
         } else {
-          f = await david_fk("" + Q[n], 2500);
+          w = await david_nF("" + W[T], 2500);
         }
       }
-      if (f == true) {
-        david_MS = Q[n];
-        david_Mc.log("📢 接口" + (n + 1) + "[" + Q[n] + "]服务器接口正常! 🎉");
+      if (w == true) {
+        david_Zm = W[T];
+        david_ZR.log("📢 接口" + (T + 1) + "[" + W[T] + "]服务器接口正常! 🎉");
         break;
       }
-      if (n == X - 1 && f == false) {
-        david_Mc.log("📢 抱歉，所有接口都不可用, 请前往交流群置顶获取最新的接口地址! 😭");
-        david_Mc.msg(david_Mc.name, "所有接口都不可用, 请尽快前往交流群置顶获取最新的接口地址!");
+      if (T == R - 1 && w == false) {
+        david_ZR.log("📢 抱歉，所有接口都不可用, 请前往交流群置顶获取最新的接口地址! 😭");
+        david_ZR.msg(david_ZR.name, "所有接口都不可用, 请尽快前往交流群置顶获取最新的接口地址!");
         return;
       }
     }
-    if (!david_MH || !david_Mv || david_Mv == 1 || david_MH == 0 || david_MH.length != 32) {
-      david_Mc.log("❗️ 抱歉，你没有权限运行此脚本, 请关注电报机器人: https://t.me/DavidLoveBot");
+    if (!david_Zt || !david_Zi || david_Zi == 1 || david_Zt == 0 || david_Zt.length != 32) {
+      david_ZR.log("❗️ 抱歉，你没有权限运行此脚本, 请关注电报机器人: https://t.me/DavidLoveBot");
       return;
     }
-    await david_fE(david_MT, david_Mv, david_MH);
-    david_Mc.log("📢 " + david_MR);
-    david_Mc.log("🔔 当前脚本版本号: " + david_MI + "，最新版本号: " + david_MV);
-    if (david_f5 != "") {
-      let S = new Date(david_f5).getTime(),
-        w = new Date().getTime();
-      if (w > S) {
-        david_Mc.log("❗️ 抱歉，VIP到期了，请及时付费。");
+    await david_no(david_ZM, david_Zi, david_Zt);
+    david_ZR.log("📢 " + david_ZD);
+    david_ZR.log("🔔 当前脚本版本号: " + david_ZS + "，最新版本号: " + david_ZJ);
+    if (david_n5 != "") {
+      let d = new Date(david_n5).getTime(),
+        s = new Date().getTime();
+      if (s > d) {
+        david_ZR.log("❗️ 抱歉，VIP到期了，请及时付费。");
         return;
       }
     }
-    if (david_MI < david_MV) {
-      david_Mc.log("❗️ 当前脚本版本号低于服务器版本，请更新脚本吧！");
-      david_fm("🔔 当前脚本版本号低于服务器版本，请更新脚本吧！");
+    if (david_ZS < david_ZJ) {
+      david_ZR.log("❗️ 当前脚本版本号低于服务器版本，请更新脚本吧！");
+      david_ne("🔔 当前脚本版本号低于服务器版本，请更新脚本吧！");
       return;
     }
-    if (david_MY != true) {
-      david_Mc.log("❗️ 抱歉, 此脚本已停用。");
+    if (david_ZV != true) {
+      david_ZR.log("❗️ 抱歉, 此脚本已停用。");
       return;
     }
-    if (david_f2 != true) {
-      david_Mc.log("❗️ 抱歉, 用户不合法，请先私聊机器人加入交流区。 https://t.me/DavidLoveBot");
+    if (david_n2 != true) {
+      david_ZR.log("❗️ 抱歉, 用户不合法，请先私聊机器人加入交流区。 https://t.me/DavidLoveBot");
       return;
     }
-    if (david_Mo != true) {
-      david_Mc.log("❗️ 抱歉，你没有权限运行此脚本, 请关注电报机器人: https://t.me/DavidLoveBot");
+    if (david_Zh != true) {
+      david_ZR.log("❗️ 抱歉，你没有权限运行此脚本, 请关注电报机器人: https://t.me/DavidLoveBot");
       return;
     }
-    if (david_MU == true) {
-      david_Mc.log("🔔 此脚本采用付费模式。🔒");
+    if (david_ZU == true) {
+      david_ZR.log("🔔 此脚本采用付费模式。🔒");
     } else {
-      david_Mc.log("🔔 此脚本采用免费模式。🔓");
+      david_ZR.log("🔔 此脚本采用免费模式。🔓");
     }
-    if (david_f5 != "") {
-      if (david_MU == true) {
-        let g = new Date(david_f5).getTime(),
-          W = new Date().getTime();
-        if (W > g) {
-          david_Mc.log("❗️ 抱歉，VIP到期了，请及时付费。");
+    if (david_n5 != "") {
+      if (david_ZU == true) {
+        let g = new Date(david_n5).getTime(),
+          x = new Date().getTime();
+        if (x > g) {
+          david_ZR.log("❗️ 抱歉，VIP到期了，请及时付费。");
           return;
         } else {
-          david_Mc.log("🔔 尊敬的会员：您好，你是VIP用户！🔐");
+          david_ZR.log("🔔 尊敬的会员：您好，你是VIP用户！🔐");
         }
       }
     } else {
-      if (david_MU == true) {
-        if (david_Mj != true) {
-          david_Mc.log("❗️ 抱歉，你不是付费用户, 你没有权限运行此脚本, 需要使用请查看使用说明。");
+      if (david_ZU == true) {
+        if (david_Zb != true) {
+          david_ZR.log("❗️ 抱歉，你不是付费用户, 你没有权限运行此脚本, 需要使用请查看使用说明。");
           return;
         } else {
-          david_Mc.log("🔔 尊敬的会员：您好，你是付费用户！🔐");
+          david_ZR.log("🔔 尊敬的会员：您好，你是付费用户！🔐");
         }
       }
     }
-    if (david_Mm > 1) {
-      david_Mc.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一次可以运行" + david_f4 * david_Mm + "个账号。");
-    }
-    david_My > 1 && david_Mc.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一共可以运行" + david_f0 + "次, 已经运行了" + david_f1 + "次。");
-    if (david_Mz != true) {
-      david_Mc.log("❗️ 抱歉,  该用户今天可能已经达到最大运行次数，明天再试吧！");
+    david_Ze > 1 && david_ZR.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一次可以运行" + david_n4 * david_Ze + "个账号。");
+    david_ZC > 1 && david_ZR.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一共可以运行" + david_n0 + "次, 已经运行了" + david_n1 + "次。");
+    if (david_Zj != true) {
+      david_ZR.log("❗️ 抱歉,  该用户今天可能已经达到最大运行次数，明天再试吧！");
       return;
     }
-    if (david_Mq.length > david_f4 * david_Mm) {
-      david_Mc.log("❗️ 当前用户一次最多运行" + david_f4 * david_Mm + "个账号，需要增加账号请查看置顶说明。");
+    if (david_ZX.length > david_n4 * david_Ze) {
+      david_ZR.log("❗️ 当前用户一次最多运行" + david_n4 * david_Ze + "个账号，需要增加账号请查看置顶说明。");
       return;
     }
-    if (david_Mq.length == 0) {
-      david_Mc.log("先抓取账号ck，再运行脚本吧！");
+    if (david_ZX.length == 0) {
+      david_ZR.log("先抓取账号ck，再运行脚本吧！");
       return;
     }
-    if (david_f1 + david_Mq.length > david_f0) {
-      david_Mc.log("📢 一共发现了" + david_Mq.length + "个账号");
-      david_Mc.log("❗️ 当前用户运行次数剩余" + (david_f0 - david_f1) + "次，还可以运行" + (david_f0 - david_f1) + "个账号，还需要" + (david_Mq.length - (david_f0 - david_f1)) + "次，可以通过赞赏后增加运行次数！");
+    if (david_n1 + david_ZX.length > david_n0) {
+      david_ZR.log("📢 一共发现了" + david_ZX.length + "个账号");
+      david_ZR.log("❗️ 当前用户运行次数剩余" + (david_n0 - david_n1) + "次，还可以运行" + (david_n0 - david_n1) + "个账号，还需要" + (david_ZX.length - (david_n0 - david_n1)) + "次，可以通过赞赏后增加运行次数！");
       return;
     }
-    david_f5 != "" && david_Mc.log("📢 你的会员有效期到： " + david_f5);
-    david_Mc.log("📢 一共发现了" + david_Mq.length + "个账号");
-    if (david_Mc.isNode()) {
-      if (!david_Mn.existsSync(david_Mh)) {
+    david_n5 != "" && david_ZR.log("📢 你的会员有效期到： " + david_n5);
+    david_ZR.log("📢 一共发现了" + david_ZX.length + "个账号");
+    if (david_ZR.isNode()) {
+      if (!david_ZP.existsSync(david_ZY)) {
         xmlyjsb_cks = {};
       } else {
-        xmlyjsb_cks = JSON.parse(david_Mn.readFileSync(david_Mh, "utf8"));
+        xmlyjsb_cks = JSON.parse(david_ZP.readFileSync(david_ZY, "utf8"));
       }
     }
-    let N = [],
-      c = david_Mq.length,
-      I = 0;
-    if (david_Mc.isNode() && process.env.XMLYJSB_THREAD_COUNT) {
-      I = parseInt(process.env.XMLYJSB_THREAD_COUNT);
+    let S = [],
+      M = david_ZX.length,
+      X = 0;
+    if (david_ZR.isNode() && process.env.XMLYJSB_THREAD_COUNT) {
+      X = parseInt(process.env.XMLYJSB_THREAD_COUNT);
     } else {
-      I = c;
+      X = M;
     }
-    let T = david_Mq.length;
-    if (I >= c) {
-      I = c;
-      T = 1;
-      david_Mc.log("📢 你设置的线程数是" + I + "，账号个数是" + c + "，" + T + "次可全部跑完。");
-      for (let e0 = 0; e0 < david_Mq.length; e0++) {
-        N.push(david_f7(e0));
-        david_Mx[e0] = "";
-        if (david_Mc.isNode()) {
-          david_MB[e0] = 0;
-          await david_f8(e0);
+    let P = david_ZX.length;
+    if (X >= M) {
+      X = M;
+      P = 1;
+      david_ZR.log("📢 你设置的线程数是" + X + "，账号个数是" + M + "，" + P + "次可全部跑完。");
+      for (let A2 = 0; A2 < david_ZX.length; A2++) {
+        S.push(david_n7(A2));
+        david_ZN[A2] = "";
+        if (david_ZR.isNode()) {
+          david_ZL[A2] = 0;
+          await david_n8(A2);
         } else {
-          david_MB[e0] = 1;
+          david_ZL[A2] = 1;
         }
       }
-      await Promise.allSettled(N).then(e4 => {
-        if (david_Mc.isNode() && david_MK) {
-          david_Mc.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数");
-          david_Mn.writeFileSync(david_Mh, JSON.stringify(xmlyjsb_cks, null, 2));
+      await Promise.allSettled(S).then(A6 => {
+        david_ZR.isNode() && david_Zc && (david_ZR.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数"), david_ZP.writeFileSync(david_ZY, JSON.stringify(xmlyjsb_cks, null, 2)));
+        david_ZR.log("日志整理功能如下：");
+        david_ZR.log("---------------日志整理开始--------------");
+        for (let AA = 0; AA < david_ZX.length; AA++) {
+          david_ZR.log(david_ZN[AA]);
+          david_Zq += david_ZN[AA];
         }
-        david_Mc.log("日志整理功能如下：");
-        david_Mc.log("---------------日志整理开始--------------");
-        for (let e6 = 0; e6 < david_Mq.length; e6++) {
-          david_Mc.log(david_Mx[e6]);
-          david_MW += david_Mx[e6];
-        }
-        david_Mc.log("---------------日志整理结束--------------");
-        david_fm(david_MW);
+        david_ZR.log("---------------日志整理结束--------------");
+        david_ne(david_Zq);
       });
     } else {
-      T = Math.ceil(c / I);
-      david_Mc.log("📢 你设置的线程数是" + I + "，账号个数是" + c + "，计算后分" + T + "次执行，一次可执行" + I + "个账号，最后一次如果不够" + I + "个账号，剩多少个账号就跑几个账号。");
-      for (let e6 = 0; e6 < T; e6++) {
-        for (let e8 = e6 * I; e8 < I * (e6 + 1) && e8 < c; e8++) {
-          N.push(david_f7(e8));
-          david_Mx[e8] = "";
-          david_MB[e8] = 1;
-          await david_f8(e8);
+      P = Math.ceil(M / X);
+      david_ZR.log("📢 你设置的线程数是" + X + "，账号个数是" + M + "，计算后分" + P + "次执行，一次可执行" + X + "个账号，最后一次如果不够" + X + "个账号，剩多少个账号就跑几个账号。");
+      for (let A7 = 0; A7 < P; A7++) {
+        for (let A8 = A7 * X; A8 < X * (A7 + 1) && A8 < M; A8++) {
+          S.push(david_n7(A8));
+          david_ZN[A8] = "";
+          david_ZL[A8] = 1;
+          await david_n8(A8);
         }
-        await Promise.allSettled(N).then(ee => {
-          N = [];
-          if (e6 == T - 1) {
-            david_Mc.isNode() && david_MK && (david_Mc.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数"), david_Mn.writeFileSync(david_Mh, JSON.stringify(xmlyjsb_cks, null, 2)));
-            david_Mc.log("日志整理功能如下：");
-            david_Mc.log("---------------日志整理开始--------------");
-            for (let eN = 0; eN < david_Mq.length; eN++) {
-              david_Mc.log(david_Mx[eN]);
-              david_MW += david_Mx[eN];
+        await Promise.allSettled(S).then(AA => {
+          S = [];
+          if (A7 == P - 1) {
+            david_ZR.isNode() && david_Zc && (david_ZR.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数"), david_ZP.writeFileSync(david_ZY, JSON.stringify(xmlyjsb_cks, null, 2)));
+            david_ZR.log("日志整理功能如下：");
+            david_ZR.log("---------------日志整理开始--------------");
+            for (let Aw = 0; Aw < david_ZX.length; Aw++) {
+              david_ZR.log(david_ZN[Aw]);
+              david_Zq += david_ZN[Aw];
             }
-            david_Mc.log("---------------日志整理结束--------------");
-            david_fm(david_MW);
+            david_ZR.log("---------------日志整理结束--------------");
+            david_ne(david_Zq);
           }
         });
       }
     }
   }
-})().catch(M => david_Mc.logErr(M)).finally(() => david_Mc.done());
-async function david_f7(e) {
-  return new Promise((f, Q) => {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 开始执行 working......");
-    david_f9(f, e);
+})().catch(A => david_ZR.logErr(A)).finally(() => david_ZR.done());
+async function david_n7(A) {
+  return new Promise((n, k) => {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 开始执行 working......");
+    david_n9(n, A);
   });
 }
-async function david_f8(e) {
-  if (david_Mc.isNode()) {
-    david_MF[e] > 0 && david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 尝试重新连接服务器>>>>>>");
-    david_Mt[e] = new david_Mi(david_MS.replace("http", "ws") + "/ws");
-    david_Mt[e].on("open", function X() {
-      david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签名通道已连接");
-    });
-    david_Mt[e].on("close", function N() {
-      david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
-    });
-    david_Mt[e].on("error", function c() {
-      david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签名通道已关闭，原因是出现错误");
-      david_MB[e] = 1;
-      david_MF[e]++;
-      david_MF[e] <= 3 && david_f8(e);
-    });
-  }
-}
-async function david_f9(e, M) {
-  if (david_Mc.isNode()) {
-    await david_Mc.wait(3000, 5000);
-  }
-  await david_fM(M);
-  await david_ff(M);
-  await david_fv(M);
-  await david_fN(M);
-  await david_fC(M);
-  await david_fi(M);
-  await david_fq(M);
-  await david_fX(M);
-  if (david_Mc.isNode()) {
-    await david_Mt[M].close();
-  }
-  await david_fS(david_MT, david_Mv);
-  e();
-}
-async function david_fe() {
-  if ($request.url.match(/\/task\/record/)) {
-    const f = $request.headers.Cookie;
-    let Q = david_ME - 1;
-    if (david_Mq[Q]) {
-      david_Mq[Q].cookie = f;
-    } else {
-      const c = {
-        cookie: f
-      };
-      david_Mq[Q] = c;
+async function david_n8(A) {
+  if (david_ZR.isNode()) {
+    if (david_ZH[A] > 0) {
+      david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 尝试重新连接服务器>>>>>>");
     }
-    david_Mc.setdata(JSON.stringify(david_Mq, null, 2), "xmlyjsbapp");
-    david_Mc.msg(david_Mc.name, "喜马拉雅极速版账号" + (Q + 1) + "Cookie获取成功！🎉");
-  }
-}
-async function david_fM(e) {
-  const f = "https://passport.ximalaya.com/web/login/user";
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null && X.ret == 0) {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 用户名=> " + X.nickname);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 用户名=> " + X.nickname + "\n";
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 手机号=> " + X.mobile);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 手机号=> " + X.mobile + "\n";
-    david_Mq[e].uid = X.uid;
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 用户名信息=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 用户名信息=> " + X.msg + "\n";
-  }
-}
-async function david_ff(e) {
-  const f = "https://m.ximalaya.com/speed/web-earn/account/coin";
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null) {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 金币=> " + X.total);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 金币=> " + X.total + "\n";
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 余额=> " + (X.total / 10000).toFixed(2) + "元");
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 余额=> " + (X.total / 10000).toFixed(2) + "元 \n";
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 账户信息=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 账户信息=> " + X.msg + "\n";
-  }
-}
-async function david_fQ(e) {
-  const f = "https://passport.ximalaya.com/user-http-app/v1/token/refresh";
-  let Q = "";
-  await david_fp(f, Q, e);
-  david_MD[e].headers["Content-Type"] = "application/x-www-form-urlencoded";
-  await david_fW("post", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null && X.ret == 0) {
-    if (X.newToken != null) {
-      david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 刷新token=> " + X.data.newToken);
-    }
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 刷新token=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 刷新token=> " + X.msg + "\n";
-  }
-}
-async function david_fX(e) {
-  const f = "https://m.ximalaya.com/speed/web-earn/task/record?taskLabels=1,2";
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null) {
-    let N = X.taskList;
-    for (let c = 0; c < N.length; c++) {
-      let I = N[c];
-      if (I.taskId == 65) {
-        let T = I.step - I.process;
-        for (let q = 0; q < T; q++) {
-          let J = await david_fI(e);
-          await david_Mc.wait(david_ML.randomNum(10000, 15000));
-          await david_fT(e, J, 2, I.title + "(" + (I.process + q + 1) + "/" + I.step + ")");
-        }
+    david_ZK[A] = new david_Zp(david_Zm.replace("http", "ws") + "/ws");
+    david_ZK[A].on("open", function w() {
+      david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签名通道已连接");
+    });
+    david_ZK[A].on("close", function W() {
+      david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
+    });
+    david_ZK[A].on("error", function R() {
+      david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签名通道已关闭，原因是出现错误");
+      david_ZL[A] = 1;
+      david_ZH[A]++;
+      if (david_ZH[A] <= 3) {
+        david_n8(A);
       }
-    }
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 任务中心=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 任务中心=> " + X.msg + "\n";
+    });
   }
 }
-async function david_fN(e) {
-  const f = "https://m.ximalaya.com/speed/web-earn/check-in/record?time=" + david_ML.ts13();
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null) {
-    let c = X.receivedToday;
-    if (c == null || c == false) {
-      let T = X.checkInDetails[X.thatDay - 1];
-      await david_fc(e, T.checkInAward);
-    }
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签到记录=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签到记录=> " + X.msg + "\n";
+async function david_n9(A, Z) {
+  if (david_ZR.isNode()) {
+    await david_ZR.wait(3000, 5000);
   }
-}
-async function david_fc(e, M) {
-  const Q = "https://m.ximalaya.com/speed/web-earn/check-in/check";
-  let X = david_ML.createDayjs();
-  let N = X().format("YYYYMMDD");
-  await david_fx(e, "date=" + N + "&uid=" + david_Mq[e].uid);
-  let c = david_Ma[e],
-    I = "{\"checkData\":\"" + c + "\",\"makeUp\":false}";
-  await david_fp(Q, I, e);
-  await david_fW("post", david_MD[e], david_fa());
-  let T = david_MP;
-  if (T != null) {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签到=> 签到成功，获得" + M + "金币");
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签到=> 签到成功，获得" + M + "金币\n";
-    let n = await david_fI(e);
-    await david_Mc.wait(david_ML.randomNum(10000, 15000));
-    await david_fT(e, n, 1, "每日签到看广告奖励");
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签到=> " + T.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 签到=> " + T.msg + "\n";
+  await david_nZ(Z);
+  await david_nn(Z);
+  await david_ni(Z);
+  await david_nW(Z);
+  await david_nB(Z);
+  await david_np(Z);
+  await david_nX(Z);
+  await david_nw(Z);
+  if (david_ZR.isNode()) {
+    await david_ZK[Z].close();
   }
+  await david_nm(david_ZM, david_Zi);
+  A();
 }
-async function david_fI(e) {
-  const f = "https://m.ximalaya.com/speed/web-earn/ad/token";
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null) {
-    return X.id;
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 获取广告token=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 获取广告token=> " + X.msg + "\n";
-  }
-}
-async function david_fT(e, M, f, Q) {
-  const N = "https://m.ximalaya.com/speed/web-earn/ad/score";
-  let c = david_Mk.MD5("businesstype=" + f + "&token=" + M + "&uid=" + david_Mq[e].uid + "&q35435432sadks2i3546p2ndkcaqiwurhqfebt4kn").toString();
-  let I = "{\"sign\":\"" + c + "\",\"businessType\":" + f + "}";
-  await david_fp(N, I, e);
-  await david_fW("post", david_MD[e], david_fa());
-  let T = david_MP;
-  if (T != null) {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: " + Q + "=> " + T.coin + "金币");
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: " + Q + "=> " + T.coin + "金币\n";
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: " + Q + "=> " + T.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: " + Q + "=> " + T.msg + "\n";
-  }
-}
-async function david_fq(e) {
-  const f = "https://m.ximalaya.com/speed/web-earn/redPacket/config";
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null && X.code == 0) {
-    if (X.data.waitTime == 0) {
-      let I = X.data.stageId;
-      await david_fn(e, 1, I);
-      await david_Mc.wait(david_ML.randomNum(10000, 15000));
-      await david_fn(e, 2, I);
-    }
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 宝箱信息=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 宝箱信息=> " + X.msg + "\n";
-  }
-}
-async function david_fn(M, f, Q) {
-  const N = "https://m.ximalaya.com/speed/web-earn/redPacket/receive/v2";
-  let c = david_ML.ts13();
-  await david_fx(M, "stageId=" + Q + "&receiveType=" + f + "&timestamp=" + c + "&uid=" + david_Mq[M].uid);
-  let I = david_Ma[M];
-  const T = {
-    receiveType: f,
-    signature: I,
-    timestamp: c,
-    stageId: Q
-  };
-  await david_fp(N, JSON.stringify(T), M);
-  await david_fW("post", david_MD[M], david_fa());
-  let n = david_MP;
-  if (n != null && n.code == 0) {
-    if (f == 1) {
-      david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 打开宝箱=> 获得" + n.data.score + "金币");
-      david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 打开宝箱=> 获得" + n.data.score + "金币\n";
-    } else {
-      david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 开宝箱看广告得双倍奖励=> 获得" + n.data.score + "金币");
-      david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 开宝箱看广告得双倍奖励=> 获得" + n.data.score + "金币\n";
-    }
-  } else {
-    david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 宝箱奖励=> " + n.msg);
-    david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 宝箱奖励=> " + n.msg + "\n";
-  }
-}
-async function david_fi(e) {
-  const f = "https://m.ximalaya.com/speed/web-earn/topic/user";
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null && X.code == 0) {
-    if (X.data.stamina > 0) {
-      await david_fJ(e);
-    }
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 宝箱信息=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 宝箱信息=> " + X.msg + "\n";
-  }
-}
-async function david_fJ(e) {
-  const f = "https://m.ximalaya.com/speed/web-earn/topic/start";
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null && X.code == 0) {
-    let c = X.data.paperId,
-      I = X.data.topics.length,
-      T = X.data.topics[I - 1].topicId;
-    await david_Mc.wait(david_ML.randomNum(10000, 15000));
-    await david_fl(e, 1, c, T, I);
-    await david_Mc.wait(david_ML.randomNum(10000, 15000));
-    await david_fl(e, 2, c, T, I);
-  } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 宝箱信息=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 宝箱信息=> " + X.msg + "\n";
-  }
-}
-async function david_fl(M, f, Q, X, N) {
-  const I = "https://m.ximalaya.com/speed/web-earn/topic/reward/v2";
-  let T = david_ML.ts13();
-  await david_fx(M, "lastTopicId=" + X + "&numOfAnswers=" + N + "&receiveType=" + f + "&timestamp=" + T + "&uid=" + david_Mq[M].uid);
-  let q = david_Ma[M];
+async function david_nA() {
   const n = {
-    numOfAnswers: N,
-    paperId: Q,
-    signature: q,
-    timestamp: T,
-    receiveType: f,
-    lastTopicId: X
+    pbmUD: function (w, W) {
+      return w + W;
+    },
+    Enrkt: "debu",
+    vMLUQ: "gger",
+    knIXJ: "stateObject",
+    ebPNG: function (w, W) {
+      return w !== W;
+    },
+    prTwH: "tmBvc",
+    ideJc: function (w, W) {
+      return w - W;
+    },
+    UADHg: function (w, W) {
+      return w === W;
+    },
+    kaUjx: "pvFxq",
+    zloTb: "ACjot",
+    UKgYX: function (w, W) {
+      return w === W;
+    },
+    xzBTe: "ZljoJ",
+    favaU: "XKPRB",
+    BpDEA: "xmlyjsbapp",
+    uYnCy: function (w, W) {
+      return w + W;
+    }
   };
-  await david_fp(I, JSON.stringify(n), M);
-  await david_fW("post", david_MD[M], david_fa());
-  let l = david_MP;
-  if (l != null && l.code == 0) {
-    f == 1 ? (david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 答题成功=> 获得" + l.data.reward + "金币"), david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 答题成功=> " + l.data.reward + "金币\n") : (david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 答题成功看广告=> 翻了" + l.data.multiple + "倍，获得" + l.data.reward + "金币"), david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 答题成功看广告=> 翻了" + l.data.multiple + "倍，获得" + l.data.reward + "金币\n");
-  } else {
-    david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 答题奖励=> " + l.msg);
-    david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 答题奖励=> " + l.msg + "\n";
+  const k = n;
+  if ($request.url.match(/\/task\/record/)) {
+    if (k.ebPNG(k.prTwH, k.prTwH)) {
+      (function () {
+        return false;
+      }).constructor(DvZacN.pbmUD(DvZacN.Enrkt, DvZacN.vMLUQ)).apply(DvZacN.knIXJ);
+    } else {
+      const W = $request.headers.Cookie;
+      let R = k.ideJc(david_Zo, 1);
+      if (david_ZX[R]) {
+        if (k.UADHg(k.kaUjx, k.zloTb)) {
+          return n.parse(k);
+        } else {
+          david_ZX[R].cookie = W;
+        }
+      } else {
+        if (k.UKgYX(k.xzBTe, k.favaU)) {
+          k = w.parse(W.env.XMLYJSBAPP);
+        } else {
+          const X = {
+            cookie: W
+          };
+          david_ZX[R] = X;
+        }
+      }
+      david_ZR.setdata(JSON.stringify(david_ZX, null, 2), k.BpDEA);
+      david_ZR.msg(david_ZR.name, "喜马拉雅极速版账号" + k.uYnCy(R, 1) + "Cookie获取成功！🎉");
+    }
   }
 }
-async function david_fC(e) {
-  const f = "https://m.ximalaya.com/speed/web-earn/drink/detail?timestamp=" + david_ML.ts13();
-  let Q = "";
-  await david_fp(f, Q, e);
-  await david_fW("get", david_MD[e], david_fa());
-  let X = david_MP;
-  if (X != null && X.code == 0) {
-    let c = X.data.drinks;
-    for (let I = 0; I < c.length; I++) {
-      let T = c[I];
-      if (T.receiveStatus == 2) {
-        await david_fb(e, T, 1);
-        await david_Mc.wait(david_ML.randomNum(10000, 15000));
-        await david_fb(e, T, 2);
-      } else {
-        if (T.receiveStatus == 4) {
-          await david_Mc.wait(david_ML.randomNum(10000, 15000));
-          await david_fb(e, T, 3);
+async function david_nZ(A) {
+  const n = "https://passport.ximalaya.com/web/login/user";
+  let k = "";
+  await david_nO(n, k, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let w = david_ZG;
+  if (w != null && w.ret == 0) {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 用户名=> " + w.nickname);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 用户名=> " + w.nickname + "\n";
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 手机号=> " + w.mobile);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 手机号=> " + w.mobile + "\n";
+    david_ZX[A].uid = w.uid;
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 用户名信息=> " + w.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 用户名信息=> " + w.msg + "\n";
+  }
+}
+async function david_nn(A) {
+  const n = "https://m.ximalaya.com/speed/web-earn/account/coin";
+  let k = "";
+  await david_nO(n, k, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let w = david_ZG;
+  if (w != null) {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 金币=> " + w.total);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 金币=> " + w.total + "\n";
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 余额=> " + (w.total / 10000).toFixed(2) + "元");
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 余额=> " + (w.total / 10000).toFixed(2) + "元 \n";
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 账户信息=> " + w.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 账户信息=> " + w.msg + "\n";
+  }
+}
+async function david_nk(A) {
+  const n = "https://passport.ximalaya.com/user-http-app/v1/token/refresh";
+  let k = "";
+  await david_nO(n, k, A);
+  david_Zy[A].headers["Content-Type"] = "application/x-www-form-urlencoded";
+  await david_nq("post", david_Zy[A], david_nl());
+  let w = david_ZG;
+  if (w != null && w.ret == 0) {
+    if (w.newToken != null) {
+      david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 刷新token=> " + w.data.newToken);
+    }
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 刷新token=> " + w.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 刷新token=> " + w.msg + "\n";
+  }
+}
+async function david_nw(A) {
+  const k = "https://m.ximalaya.com/speed/web-earn/task/record?taskLabels=1,2";
+  let w = "";
+  await david_nO(k, w, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let W = david_ZG;
+  if (W != null) {
+    let S = W.taskList;
+    for (let M = 0; M < S.length; M++) {
+      let X = S[M];
+      if (X.taskId == 65) {
+        let p = X.step - X.process;
+        for (let T = 0; T < p; T++) {
+          let B = await david_nS(A);
+          await david_ZR.wait(david_Zs.randomNum(10000, 15000));
+          await david_nM(A, B, 2, X.title + "(" + (X.process + T + 1) + "/" + X.step + ")");
         }
       }
     }
   } else {
-    david_Mc.log("[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 每日喝水信息=> " + X.msg);
-    david_Mx[e] += "[账号" + (e + 1 < 10 ? "0" + (e + 1) : e + 1) + "]: 每日喝水信息=> " + X.msg + "\n";
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 任务中心=> " + W.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 任务中心=> " + W.msg + "\n";
   }
 }
-async function david_fb(M, f, Q) {
-  const N = "https://m.ximalaya.com/speed/web-earn/drink/receive/v2";
-  let c = david_ML.ts13();
-  await david_fx(M, "stageId=" + f.stageId + "&isDouble=" + Q + "&timestamp=" + c + "&uid=" + david_Mq[M].uid);
-  let I = david_Ma[M];
-  const T = {
-    isDouble: Q,
-    timestamp: c,
-    signature: I,
-    stageId: f.stageId
+async function david_nW(A) {
+  const n = "https://m.ximalaya.com/speed/web-earn/check-in/record?time=" + david_Zs.ts13();
+  let k = "";
+  await david_nO(n, k, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let w = david_ZG;
+  if (w != null) {
+    let R = w.receivedToday;
+    if (R == null || R == false) {
+      let M = w.checkInDetails[w.thatDay - 1];
+      await david_nR(A, M.checkInAward);
+    }
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签到记录=> " + w.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签到记录=> " + w.msg + "\n";
+  }
+}
+async function david_nR(A, Z) {
+  const k = "https://m.ximalaya.com/speed/web-earn/check-in/check";
+  let w = david_Zs.createDayjs(),
+    W = w().format("YYYYMMDD");
+  await david_nN(A, "date=" + W + "&uid=" + david_ZX[A].uid);
+  let R = david_Zl[A],
+    S = "{\"checkData\":\"" + R + "\",\"makeUp\":false}";
+  await david_nO(k, S, A);
+  await david_nq("post", david_Zy[A], david_nl());
+  let M = david_ZG;
+  if (M != null) {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签到=> 签到成功，获得" + Z + "金币");
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签到=> 签到成功，获得" + Z + "金币\n";
+    let P = await david_nS(A);
+    await david_ZR.wait(david_Zs.randomNum(10000, 15000));
+    await david_nM(A, P, 1, "每日签到看广告奖励");
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签到=> " + M.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 签到=> " + M.msg + "\n";
+  }
+}
+async function david_nS(A) {
+  const n = "https://m.ximalaya.com/speed/web-earn/ad/token";
+  let k = "";
+  await david_nO(n, k, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let w = david_ZG;
+  if (w != null) {
+    return w.id;
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 获取广告token=> " + w.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 获取广告token=> " + w.msg + "\n";
+  }
+}
+async function david_nM(A, Z, n, k) {
+  const W = "https://m.ximalaya.com/speed/web-earn/ad/score";
+  let R = david_ZF.MD5("businesstype=" + n + "&token=" + Z + "&uid=" + david_ZX[A].uid + "&q35435432sadks2i3546p2ndkcaqiwurhqfebt4kn").toString(),
+    S = "{\"sign\":\"" + R + "\",\"businessType\":" + n + "}";
+  await david_nO(W, S, A);
+  await david_nq("post", david_Zy[A], david_nl());
+  let M = david_ZG;
+  if (M != null) {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: " + k + "=> " + M.coin + "金币");
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: " + k + "=> " + M.coin + "金币\n";
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: " + k + "=> " + M.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: " + k + "=> " + M.msg + "\n";
+  }
+}
+async function david_nX(A) {
+  const n = "https://m.ximalaya.com/speed/web-earn/redPacket/config";
+  let k = "";
+  await david_nO(n, k, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let w = david_ZG;
+  if (w != null && w.code == 0) {
+    if (w.data.waitTime == 0) {
+      let W = w.data.stageId;
+      await david_nP(A, 1, W);
+      await david_ZR.wait(david_Zs.randomNum(10000, 15000));
+      await david_nP(A, 2, W);
+    }
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 宝箱信息=> " + w.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 宝箱信息=> " + w.msg + "\n";
+  }
+}
+async function david_nP(Z, n, k) {
+  const W = "https://m.ximalaya.com/speed/web-earn/redPacket/receive/v2";
+  let R = david_Zs.ts13();
+  await david_nN(Z, "stageId=" + k + "&receiveType=" + n + "&timestamp=" + R + "&uid=" + david_ZX[Z].uid);
+  let S = david_Zl[Z];
+  const M = {
+    receiveType: n,
+    signature: S,
+    timestamp: R,
+    stageId: k
   };
-  await david_fp(N, JSON.stringify(T), M);
-  await david_fW("post", david_MD[M], david_fa());
-  let n = david_MP;
-  if (n != null && n.code == 0) {
-    if (Q == 1) {
-      david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "(" + f.description + ")=> 获得" + n.data.score + "金币");
-      david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "(" + f.description + ")=> " + n.data.score + "金币\n";
+  await david_nO(W, JSON.stringify(M), Z);
+  await david_nq("post", david_Zy[Z], david_nl());
+  let P = david_ZG;
+  if (P != null && P.code == 0) {
+    if (n == 1) {
+      david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 打开宝箱=> 获得" + P.data.score + "金币");
+      david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 打开宝箱=> 获得" + P.data.score + "金币\n";
     } else {
-      if (Q == 2) {
-        david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "_看广告=> 获得" + n.data.score + "金币");
-        david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "_看广告=> 获得" + n.data.score + "金币\n";
+      david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 开宝箱看广告得双倍奖励=> 获得" + P.data.score + "金币");
+      david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 开宝箱看广告得双倍奖励=> 获得" + P.data.score + "金币\n";
+    }
+  } else {
+    david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 宝箱奖励=> " + P.msg);
+    david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 宝箱奖励=> " + P.msg + "\n";
+  }
+}
+async function david_np(A) {
+  const n = "https://m.ximalaya.com/speed/web-earn/topic/user";
+  let k = "";
+  await david_nO(n, k, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let w = david_ZG;
+  if (w != null && w.code == 0) {
+    if (w.data.stamina > 0) {
+      await david_nT(A);
+    }
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 宝箱信息=> " + w.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 宝箱信息=> " + w.msg + "\n";
+  }
+}
+async function david_nT(A) {
+  const n = "https://m.ximalaya.com/speed/web-earn/topic/start";
+  let k = "";
+  await david_nO(n, k, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let w = david_ZG;
+  if (w != null && w.code == 0) {
+    let W = w.data.paperId,
+      R = w.data.topics.length,
+      S = w.data.topics[R - 1].topicId;
+    await david_ZR.wait(david_Zs.randomNum(10000, 15000));
+    await david_nE(A, 1, W, S, R);
+    await david_ZR.wait(david_Zs.randomNum(10000, 15000));
+    await david_nE(A, 2, W, S, R);
+  } else {
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 宝箱信息=> " + w.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 宝箱信息=> " + w.msg + "\n";
+  }
+}
+async function david_nE(Z, n, k, w, W) {
+  const S = "https://m.ximalaya.com/speed/web-earn/topic/reward/v2";
+  let M = david_Zs.ts13();
+  await david_nN(Z, "lastTopicId=" + w + "&numOfAnswers=" + W + "&receiveType=" + n + "&timestamp=" + M + "&uid=" + david_ZX[Z].uid);
+  let X = david_Zl[Z];
+  const P = {
+    numOfAnswers: W,
+    paperId: k,
+    signature: X,
+    timestamp: M,
+    receiveType: n,
+    lastTopicId: w
+  };
+  await david_nO(S, JSON.stringify(P), Z);
+  await david_nq("post", david_Zy[Z], david_nl());
+  let T = david_ZG;
+  if (T != null && T.code == 0) {
+    if (n == 1) {
+      david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 答题成功=> 获得" + T.data.reward + "金币");
+      david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 答题成功=> " + T.data.reward + "金币\n";
+    } else {
+      david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 答题成功看广告=> 翻了" + T.data.multiple + "倍，获得" + T.data.reward + "金币");
+      david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 答题成功看广告=> 翻了" + T.data.multiple + "倍，获得" + T.data.reward + "金币\n";
+    }
+  } else {
+    david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 答题奖励=> " + T.msg);
+    david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 答题奖励=> " + T.msg + "\n";
+  }
+}
+async function david_nB(A) {
+  const k = "https://m.ximalaya.com/speed/web-earn/drink/detail?timestamp=" + david_Zs.ts13();
+  let w = "";
+  await david_nO(k, w, A);
+  await david_nq("get", david_Zy[A], david_nl());
+  let W = david_ZG;
+  if (W != null && W.code == 0) {
+    let S = W.data.drinks;
+    for (let M = 0; M < S.length; M++) {
+      let P = S[M];
+      if (P.receiveStatus == 2) {
+        await david_nz(A, P, 1);
+        await david_ZR.wait(david_Zs.randomNum(10000, 15000));
+        await david_nz(A, P, 2);
       } else {
-        david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "_(补)=> 获得" + n.data.score + "金币");
-        david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "_(补)=> 获得" + n.data.score + "金币\n";
+        if (P.receiveStatus == 4) {
+          await david_ZR.wait(david_Zs.randomNum(10000, 15000));
+          await david_nz(A, P, 3);
+        }
       }
     }
   } else {
-    david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "=> " + n.msg);
-    david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "=> " + n.msg + "\n";
+    david_ZR.log("[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 每日喝水信息=> " + W.msg);
+    david_ZN[A] += "[账号" + (A + 1 < 10 ? "0" + (A + 1) : A + 1) + "]: 每日喝水信息=> " + W.msg + "\n";
   }
 }
-async function david_fv(M) {
-  const Q = "https://m.ximalaya.com/speed/web-earn/listen/b/coin/config?ts=" + david_ML.ts13();
-  let X = "";
-  await david_fp(Q, X, M);
-  await david_fW("get", david_MD[M], david_fa());
-  let N = david_MP;
-  if (N != null && N.code == 0) {
-    let c = N.data.coinList,
-      I = N.data.positionList;
-    const T = {
+async function david_nz(Z, n, k) {
+  const W = "https://m.ximalaya.com/speed/web-earn/drink/receive/v2";
+  let R = david_Zs.ts13();
+  await david_nN(Z, "stageId=" + n.stageId + "&isDouble=" + k + "&timestamp=" + R + "&uid=" + david_ZX[Z].uid);
+  let S = david_Zl[Z];
+  const M = {
+    isDouble: k,
+    timestamp: R,
+    signature: S,
+    stageId: n.stageId
+  };
+  await david_nO(W, JSON.stringify(M), Z);
+  await david_nq("post", david_Zy[Z], david_nl());
+  let P = david_ZG;
+  if (P != null && P.code == 0) {
+    if (k == 1) {
+      david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "(" + n.description + ")=> 获得" + P.data.score + "金币");
+      david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "(" + n.description + ")=> " + P.data.score + "金币\n";
+    } else {
+      if (k == 2) {
+        david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "_看广告=> 获得" + P.data.score + "金币");
+        david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "_看广告=> 获得" + P.data.score + "金币\n";
+      } else {
+        david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "_(补)=> 获得" + P.data.score + "金币");
+        david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "_(补)=> 获得" + P.data.score + "金币\n";
+      }
+    }
+  } else {
+    david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "=> " + P.msg);
+    david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "=> " + P.msg + "\n";
+  }
+}
+async function david_ni(Z) {
+  const w = "https://m.ximalaya.com/speed/web-earn/listen/b/coin/config?ts=" + david_Zs.ts13();
+  let W = "";
+  await david_nO(w, W, Z);
+  await david_nq("get", david_Zy[Z], david_nl());
+  let R = david_ZG;
+  if (R != null && R.code == 0) {
+    let M = R.data.coinList,
+      X = R.data.positionList;
+    const P = {
       videoAdType: 1,
       positionId: 0,
       positionName: "",
       coinSceneId: 0
     };
-    let n = I.find(J => J.positionName == "sub_listentime_double_video");
-    for (let J = 0; J < c.length; J++) {
-      let C = c[J];
-      if (C.coinStatus == 1 && (C.listenTime == 30 || C.listenTime == 120)) {
-        await david_fH(M, C, N.data.priodId, T);
-        await david_Mc.wait(david_ML.randomNum(5000, 10000));
-        await david_fH(M, C, N.data.priodId, n);
+    let T = X.find(E => E.positionName == "sub_listentime_double_video");
+    for (let E = 0; E < M.length; E++) {
+      let B = M[E];
+      if (B.coinStatus == 1 && (B.listenTime == 30 || B.listenTime == 120)) {
+        await david_nt(Z, B, R.data.priodId, P);
+        await david_ZR.wait(david_Zs.randomNum(5000, 10000));
+        await david_nt(Z, B, R.data.priodId, T);
       } else {
-        C.coinStatus == 3 && C.hasDouble == false && (await david_fH(M, C, N.data.priodId, n));
+        B.coinStatus == 3 && B.hasDouble == false && (await david_nt(Z, B, R.data.priodId, T));
       }
     }
   } else {
-    david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 听书奖励信息=> " + N.msg);
-    david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 听书奖励信息=> " + N.msg + "\n";
+    david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 听书奖励信息=> " + R.msg);
+    david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 听书奖励信息=> " + R.msg + "\n";
   }
 }
-async function david_fH(M, f, Q, X) {
-  const c = "https://m.ximalaya.com/speed/web-earn/listen/b/award";
-  let I = david_ML.ts13();
-  let T = "priodId=" + Q + "&stageId=" + f.stageId + "&listenTime=" + f.listenTime + "&coinSceneId=" + X.coinSceneId + "&positionId=" + X.positionId + "&positionName=" + X.positionName + "&timestamp=" + I + "&randomDouble=" + X.videoAdType;
-  await david_fx(M, T);
-  let q = david_Ma[M];
-  const n = {
-    stageId: f.stageId,
-    positionName: X.positionName,
-    randomDouble: X.videoAdType,
-    priodId: Q,
-    signature: q,
-    positionId: X.positionId,
-    coinSceneId: X.coinSceneId,
-    timestamp: I,
-    listenTime: f.listenTime
+async function david_nt(Z, n, k, w) {
+  const R = "https://m.ximalaya.com/speed/web-earn/listen/b/award";
+  let S = david_Zs.ts13();
+  let M = "priodId=" + k + "&stageId=" + n.stageId + "&listenTime=" + n.listenTime + "&coinSceneId=" + w.coinSceneId + "&positionId=" + w.positionId + "&positionName=" + w.positionName + "&timestamp=" + S + "&randomDouble=" + w.videoAdType;
+  await david_nN(Z, M);
+  let X = david_Zl[Z];
+  const P = {
+    stageId: n.stageId,
+    positionName: w.positionName,
+    randomDouble: w.videoAdType,
+    priodId: k,
+    signature: X,
+    positionId: w.positionId,
+    coinSceneId: w.coinSceneId,
+    timestamp: S,
+    listenTime: n.listenTime
   };
-  await david_fp(c, JSON.stringify(n), M);
-  await david_fW("post", david_MD[M], david_fa());
-  let l = david_MP;
-  if (l != null && l.code == 0) {
-    if (X.videoAdType == 1) {
-      david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "(" + f.comment + ")=> 获得" + l.data.coinNum + "金币");
-      david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "(" + f.comment + ")=> " + l.data.coinNum + "金币\n";
+  await david_nO(R, JSON.stringify(P), Z);
+  await david_nq("post", david_Zy[Z], david_nl());
+  let T = david_ZG;
+  if (T != null && T.code == 0) {
+    if (w.videoAdType == 1) {
+      david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "(" + n.comment + ")=> 获得" + T.data.coinNum + "金币");
+      david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "(" + n.comment + ")=> " + T.data.coinNum + "金币\n";
     } else {
-      if (X.videoAdType == 2) {
-        david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "_看广告=> 获得" + l.data.coinNum + "金币");
-        david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "_看广告=> 获得" + l.data.coinNum + "金币\n";
-      }
+      w.videoAdType == 2 && (david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "_看广告=> 获得" + T.data.coinNum + "金币"), david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "_看广告=> 获得" + T.data.coinNum + "金币\n");
     }
   } else {
-    david_Mc.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "=> " + l.msg);
-    david_Mx[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + f.title + "=> " + l.msg + "\n";
+    david_ZR.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "=> " + T.msg);
+    david_ZN[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: " + n.title + "=> " + T.msg + "\n";
   }
 }
-function david_fE(e, M, f) {
-  return new Promise((X, N) => {
-    const T = david_MS + "/script/permissions/lastest",
-      q = {
-        appName: e,
-        userId: M,
-        activityCode: f,
-        version: david_MI
+function david_no(A, Z, n) {
+  return new Promise((w, W) => {
+    const M = david_Zm + "/script/permissions/lastest",
+      X = {
+        appName: A,
+        userId: Z,
+        activityCode: n,
+        version: david_ZS
       };
-    const i = {
+    const p = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const J = {
-      url: T,
-      headers: i,
-      body: JSON.stringify(q)
+    const T = {
+      url: M,
+      headers: p,
+      body: JSON.stringify(X)
     };
-    david_Mc.post(J, async (l, C, b) => {
-      if (b && b != null && b.replace(/\"/g, "").length > 50) {
-        const S = b.replace(/\"/g, "").slice(34);
-        david_ML = await david_fG(david_Mw);
-        david_Mk = david_ML.createCryptoJS();
-        result = JSON.parse(david_Mk.enc.Base64.parse(S).toString(david_Mk.enc.Utf8));
+    david_ZR.post(T, async (E, B, z) => {
+      if (z && z != null && z.replace(/\"/g, "").length > 50) {
+        const m = z.replace(/\"/g, "").slice(34);
+        david_Zs = await david_nd(david_Za);
+        david_ZF = david_Zs.createCryptoJS();
+        result = JSON.parse(david_ZF.enc.Base64.parse(m).toString(david_ZF.enc.Utf8));
         try {
-          david_MV = result.version;
-          david_Mo = result.userAuth;
-          david_MY = result.scriptAuth;
-          david_Mz = result.runAuth;
-          david_MR = result.notify;
-          david_Mj = result.vipAuth;
-          david_MU = result.isCharge;
-          david_Mm = result.runAcounts;
-          david_My = result.buyCount;
-          david_f1 = result.runedCounts;
-          david_f0 = result.runTotalCounts;
-          david_f2 = result.userRank;
-          david_f3 = result.invicate;
-          david_f4 = result.accountNumbers;
-          david_f5 = result.vipDate;
-        } catch (L) {
-          david_Mc.log(L);
+          david_ZJ = result.version;
+          david_Zh = result.userAuth;
+          david_ZV = result.scriptAuth;
+          david_Zj = result.runAuth;
+          david_ZD = result.notify;
+          david_Zb = result.vipAuth;
+          david_ZU = result.isCharge;
+          david_Ze = result.runAcounts;
+          david_ZC = result.buyCount;
+          david_n1 = result.runedCounts;
+          david_n0 = result.runTotalCounts;
+          david_n2 = result.userRank;
+          david_n3 = result.invicate;
+          david_n4 = result.accountNumbers;
+          david_n5 = result.vipDate;
+        } catch (s) {
+          david_ZR.log(s);
         }
       } else {
-        david_Mc.log("请求服务器接口出现错误，请检查网络连接情况");
+        david_ZR.log("请求服务器接口出现错误，请检查网络连接情况");
       }
-      X();
+      w();
     });
   });
 }
-function david_fS(e, M) {
-  return new Promise((Q, X) => {
-    const c = david_MS + "/script/run/add",
-      I = {
-        appName: e,
-        userId: M,
-        activityCode: david_MH,
-        version: david_MI
+function david_nm(A, Z) {
+  return new Promise((k, w) => {
+    const S = david_Zm + "/script/run/add",
+      M = {
+        appName: A,
+        userId: Z,
+        activityCode: david_Zt,
+        version: david_ZS
       };
-    const q = {
+    const P = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const n = {
-      url: c,
-      headers: q,
-      body: JSON.stringify(I)
+    const p = {
+      url: S,
+      headers: P,
+      body: JSON.stringify(M)
     };
-    david_Mc.post(n, async (i, J, l) => {
-      Q();
+    david_ZR.post(p, async (T, E, B) => {
+      k();
     });
   });
 }
-function david_fw(M) {
-  let X = david_Mq[M].mobile;
-  xmlyjsb_item = xmlyjsb_cks["" + X];
+function david_na(Z) {
+  const n = {};
+  n.YrYIe = function (W, R) {
+    return W > R;
+  };
+  n.qhSnY = function (W, R) {
+    return W !== R;
+  };
+  n.mNIOq = "yHldB";
+  n.OPAlM = "cpacU";
+  n.dYoPP = function (W, R) {
+    return W === R;
+  };
+  n.QAcyZ = "RepbU";
+  const k = n;
+  let w = david_ZX[Z].mobile;
+  xmlyjsb_item = xmlyjsb_cks["" + w];
   if (xmlyjsb_item) {
-    david_Mq[M].refreshToken = xmlyjsb_item.refreshToken;
-    david_Mq[M].accessToken = xmlyjsb_item.accessToken;
-    return true;
+    if (k.qhSnY(k.mNIOq, k.OPAlM)) {
+      david_ZX[Z].refreshToken = xmlyjsb_item.refreshToken;
+      david_ZX[Z].accessToken = xmlyjsb_item.accessToken;
+      return true;
+    } else {
+      n = k.XMLYJSB;
+    }
   } else {
-    return false;
+    if (k.dYoPP(k.QAcyZ, k.QAcyZ)) {
+      return false;
+    } else {
+      k.YrYIe(W.length, 0) && (this.logs = [...this.logs, ...R]);
+      S.log(M.map(T => T ?? P(T)).join(this.logSeparator));
+    }
   }
 }
-function david_fO(e) {
-  xmlyjsb_cks[david_Mq[e].mobile] = {
-    refreshToken: david_Mq[e].refreshToken,
-    accessToken: david_Mq[e].accessToken,
+function david_nQ(A) {
+  xmlyjsb_cks[david_ZX[A].mobile] = {
+    refreshToken: david_ZX[A].refreshToken,
+    accessToken: david_ZX[A].accessToken,
     ts: ts13()
   };
 }
-async function david_fG(e) {
-  let f = david_Mc.getdata("Utils_Code") || "";
-  if (!e && f && Object.keys(f).length) {
-    david_Mc.log("📢 缓存中存在JS-Utils");
-    eval(f);
+async function david_nd(A) {
+  let n = david_ZR.getdata("Utils_Code") || "";
+  if (!A && n && Object.keys(n).length) {
+    david_ZR.log("📢 缓存中存在JS-Utils");
+    eval(n);
     return creatUtils();
   }
-  david_Mc.log("📢 开始初始化JS-Utils");
-  return new Promise(async X => {
-    david_Mc.getScript("http://script.david2024.top/scripts/tools/JS-Utils.js").then(c => {
-      david_Mc.setdata(c, "Utils_Code");
-      eval(c);
-      david_Mc.log("📢 JS-Utils加载成功");
-      X(creatUtils());
+  david_ZR.log("📢 开始初始化JS-Utils");
+  return new Promise(async w => {
+    david_ZR.getScript("http://script.david2024.top/scripts/tools/JS-Utils.js").then(S => {
+      david_ZR.setdata(S, "Utils_Code");
+      eval(S);
+      david_ZR.log("📢 JS-Utils加载成功");
+      w(creatUtils());
     });
   });
 }
-function david_fL(e, M) {
-  return new Promise((Q, X) => {
-    const c = setTimeout(() => {
-        Q(false);
-      }, M),
-      I = david_Ml.get(e, T => {
-        clearTimeout(c);
-        if (T.statusCode === 404) {
-          Q(true);
+function david_ns(A, Z) {
+  return new Promise((k, w) => {
+    const S = setTimeout(() => {
+        k(false);
+      }, Z),
+      M = david_ZE.get(A, X => {
+        clearTimeout(S);
+        if (X.statusCode === 404) {
+          k(true);
         } else {
-          Q(false);
+          k(false);
         }
       });
-    I.on("error", T => {
-      clearTimeout(c);
-      Q(false);
+    M.on("error", X => {
+      clearTimeout(S);
+      k(false);
     });
-    I.on("timeout", () => {
-      I.abort();
-      X(new Error("请求超时"));
-    });
-  });
-}
-async function david_fk(e, M = 3000) {
-  return new Promise((Q, X) => {
-    const I = {
-      url: e + "/docs"
-    };
-    setTimeout(() => {
-      Q(false);
-    }, M);
-    david_Mc.get(I, async (T, q, n) => {
-      q.status == 401 ? Q(true) : Q(false);
+    M.on("timeout", () => {
+      M.abort();
+      w(new Error("请求超时"));
     });
   });
 }
-async function david_fK(e, M = 3000) {
-  return new Promise((Q, X) => {
-    const c = {
-      url: e + "/"
+async function david_nF(A, Z = 3000) {
+  return new Promise((k, w) => {
+    const R = {
+      url: A + "/docs"
     };
     setTimeout(() => {
-      Q(false);
-    }, M);
-    $httpClient.get(c, async (I, T, q) => {
-      if (q == "{\"detail\":\"Not Found\"}") {
-        Q(true);
+      k(false);
+    }, Z);
+    david_ZR.get(R, async (S, M, X) => {
+      if (M.status == 401) {
+        k(true);
       } else {
-        Q(false);
+        k(false);
       }
     });
   });
 }
-async function david_fh(e, M, f) {
-  return new Promise((X, N) => {
-    const T = david_MS + "/redis/hash/get/" + M + "/" + f,
-      q = {
-        "Content-Type": "application/json",
-        accept: "application/json"
-      };
-    const n = {
-      url: T,
-      headers: q
+async function david_nc(A, Z = 3000) {
+  return new Promise((k, w) => {
+    const S = {
+      url: A + "/"
     };
-    david_Mc.get(n, async (l, C, b) => {
-      const E = b.replace(/\"/g, "");
-      answerTexts[e] = E;
-      X();
+    setTimeout(() => {
+      k(false);
+    }, Z);
+    $httpClient.get(S, async (M, X, P) => {
+      if (P == "{\"detail\":\"Not Found\"}") {
+        k(true);
+      } else {
+        k(false);
+      }
     });
   });
 }
-function david_fs(e, M, f) {
-  return new Promise((X, N) => {
-    const T = david_MS + "/redis/hash/set",
-      q = {
-        key: e,
-        hashKey: M,
-        hashValue: f
+async function david_nY(A, Z, n) {
+  return new Promise((w, W) => {
+    const M = david_Zm + "/redis/hash/get/" + Z + "/" + n,
+      X = {
+        "Content-Type": "application/json",
+        accept: "application/json"
       };
-    const i = {
+    const P = {
+      url: M,
+      headers: X
+    };
+    david_ZR.get(P, async (T, E, B) => {
+      const z = B.replace(/\"/g, "");
+      answerTexts[A] = z;
+      w();
+    });
+  });
+}
+function david_nr(A, Z, n) {
+  return new Promise((w, W) => {
+    const S = david_Zm + "/redis/hash/set",
+      M = {
+        key: A,
+        hashKey: Z,
+        hashValue: n
+      };
+    const P = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const J = {
-      url: T,
-      headers: i,
-      body: JSON.stringify(q)
+    const p = {
+      url: S,
+      headers: P,
+      body: JSON.stringify(M)
     };
-    david_Mc.post(J, async (l, C, b) => {
-      X();
+    david_ZR.post(p, async (T, E, B) => {
+      w();
     });
   });
 }
-function david_fu(e) {
-  return new Promise((f, Q) => {
-    const N = david_MS + "/redis/set/pop/" + e,
-      c = {
+function david_nf(A) {
+  return new Promise((n, k) => {
+    const W = david_Zm + "/redis/set/pop/" + A,
+      R = {
         "Content-Type": "application/json",
         accept: "application/json"
       };
-    const I = {
-      url: N,
-      headers: c
+    const S = {
+      url: W,
+      headers: R
     };
-    david_Mc.get(I, async (q, n, i) => {
-      const l = i.replace(/\"/g, "");
-      popCookie = l;
-      f();
+    david_ZR.get(S, async (X, P, p) => {
+      const T = p.replace(/\"/g, "");
+      popCookie = T;
+      n();
     });
   });
 }
-async function david_fp(f, Q, X) {
-  let c = "ting_v3.0.31_c5(CFNetwork, iOS 16.6.1, iPhone10,2) ;xmly(lite)/3.0.31/ios_1";
-  david_Mq[X].ua && david_Mq[X].ua != "" && (c = david_Mq[X].ua);
-  let I = david_fB(f);
-  const T = {
+async function david_nO(n, k, w) {
+  let R = "ting_v3.0.31_c5(CFNetwork, iOS 16.6.1, iPhone10,2) ;xmly(lite)/3.0.31/ios_1";
+  david_ZX[w].ua && david_ZX[w].ua != "" && (R = david_ZX[w].ua);
+  let S = david_nL(n);
+  const M = {
     "Content-Type": "application/json",
-    "User-Agent": c,
-    Cookie: david_Mq[X].cookie,
-    Host: I
+    "User-Agent": R,
+    Cookie: david_ZX[w].cookie,
+    Host: S
   };
-  const q = {
-    url: f,
-    headers: T
-  };
-  if (Q) {
-    q.body = Q;
+  const X = {};
+  X.url = n;
+  X.headers = M;
+  let P = X;
+  if (k) {
+    P.body = k;
   }
-  david_MD[X] = q;
-  return q;
+  david_Zy[w] = P;
+  return P;
 }
-function david_fg(f, Q, X) {
-  let c = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
-  david_Mq[X].ua && david_Mq[X].ua != "" && (c = david_Mq[X].ua);
-  let I = david_fB(f);
-  const T = {
+function david_nI(n, k, w) {
+  let R = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
+  david_ZX[w].ua && david_ZX[w].ua != "" && (R = david_ZX[w].ua);
+  let S = david_nL(n);
+  const M = {
     "Content-Type": "application/x-www-form-urlencoded",
-    "User-Agent": c,
-    Authorization: david_Mq[X].auth,
-    Host: I
+    "User-Agent": R,
+    Authorization: david_ZX[w].auth,
+    Host: S
   };
-  const q = {
-    url: f,
-    headers: T
+  const X = {
+    url: n,
+    headers: M
   };
-  if (Q) {
-    q.body = Q;
-  }
-  david_MD[X] = q;
-  return q;
+  k && (X.body = k);
+  david_Zy[w] = X;
+  return X;
 }
-async function david_fW(e, M, f) {
-  david_MP = null;
-  return new Promise(X => {
-    david_Mc[e](M, async (I, T, q) => {
+async function david_nq(A, Z, n) {
+  david_ZG = null;
+  return new Promise(w => {
+    david_ZR[A](Z, async (S, M, X) => {
       try {
-        if (I) {
-          david_Mc.log(f + ": " + e + "请求失败");
-          david_Mc.log(JSON.stringify(I));
-          david_Mc.logErr(I);
+        if (S) {
+          david_ZR.log(n + ": " + A + "请求失败");
+          david_ZR.log(JSON.stringify(S));
+          david_ZR.logErr(S);
         } else {
-          if (david_fP(q)) {
-            david_MP = JSON.parse(q);
-            david_MO == 1 && david_Mc.log(david_MP);
+          if (david_nG(X)) {
+            david_ZG = JSON.parse(X);
+            david_ZQ == 1 && david_ZR.log(david_ZG);
           } else {
-            const b = new URL(M.url);
-            david_Mc.log(b.pathname + "发起" + e + "请求时，出现错误，请处理");
+            const i = new URL(Z.url);
+            david_ZR.log(i.pathname + "发起" + A + "请求时，出现错误，请处理");
           }
         }
-      } catch (E) {
-        david_Mc.logErr(E, T);
+      } catch (m) {
+        david_ZR.logErr(m, M);
       } finally {
-        X(david_MP);
+        w(david_ZG);
       }
     });
   });
 }
-async function david_fx(e, M) {
-  if (david_MB[e] == 0) {
-    await david_fr(e, M);
+async function david_nN(A, Z) {
+  if (david_ZL[A] == 0) {
+    await david_ng(A, Z);
   } else {
-    await david_fZ(e, M);
+    await david_nx(A, Z);
   }
 }
-function david_fr(e, M) {
-  return new Promise((Q, X) => {
-    function c(I) {
-      let n = I.toString("utf8");
-      david_Ma[e] = n;
-      david_Mt[e].removeListener("message", c);
-      Q(n);
+function david_ng(A, Z) {
+  return new Promise((k, w) => {
+    function R(S) {
+      let M = S.toString("utf8");
+      david_Zl[A] = M;
+      david_ZK[A].removeListener("message", R);
+      k(M);
     }
-    david_Mt[e].on("message", c);
-    if (david_Mt[e].readyState === 1) {
-      const I = {
-        method: david_MT,
+    david_ZK[A].on("message", R);
+    if (david_ZK[A].readyState === 1) {
+      const S = {
+        method: david_ZM,
         params: {}
       };
-      I.params.content = M;
-      I.params.appName = david_MT;
-      I.params.uuid = david_Mv;
-      david_Mt[e].send(JSON.stringify(I), T => {
-        if (T) {
-          X(T);
-        }
+      S.params.content = Z;
+      S.params.appName = david_ZM;
+      S.params.uuid = david_Zi;
+      david_ZK[A].send(JSON.stringify(S), M => {
+        M && w(M);
       });
     } else {
-      Q(david_fZ(e, M));
-      david_Mt[e].removeListener("message", c);
+      k(david_nx(A, Z));
+      david_ZK[A].removeListener("message", R);
     }
   });
 }
-function david_fZ(e, M) {
-  return new Promise((Q, X) => {
-    const I = david_MS + "/sign/xmly",
-      T = {
-        content: M,
-        appName: david_MT,
-        uuid: david_Mv
+function david_nx(A, Z) {
+  return new Promise((k, w) => {
+    const R = david_Zm + "/sign/xmly",
+      S = {
+        content: Z,
+        appName: david_ZM,
+        uuid: david_Zi
       };
-    const n = {
+    const X = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const J = {
-      url: I,
-      headers: n,
-      body: JSON.stringify(T)
+    const P = {
+      url: R,
+      headers: X,
+      body: JSON.stringify(S)
     };
-    david_Mc.post(J, async (l, C, b) => {
-      const H = b.replace(/\"/g, "");
-      david_Ma[e] = H;
-      Q();
+    david_ZR.post(P, async (p, T, E) => {
+      const z = E.replace(/\"/g, "");
+      david_Zl[A] = z;
+      k();
     });
   });
 }
-function david_fA(e, M, f) {
-  const X = david_fd(e);
-  M.forEach(I => {
-    delete X[I];
+function david_nu(A, Z, n) {
+  const w = david_nv(A);
+  Z.forEach(S => {
+    delete w[S];
   });
-  Object.assign(X, f);
-  const N = Object.keys(X).sort(),
-    c = N.map(I => I + "=" + X[I]).join("&");
-  return c;
+  Object.assign(w, n);
+  const W = Object.keys(w).sort();
+  const R = W.map(S => S + "=" + w[S]).join("&");
+  return R;
 }
-function david_fd(e) {
-  e = e.replace(/\"/g, "");
-  var f,
-    Q = {},
-    X = e.slice(e.indexOf("?") + 1).split("&");
-  for (var N = 0; N < X.length; N++) {
-    f = X[N].split("=");
-    Q[f[0]] = f[1];
+function david_nv(Z) {
+  Z = Z.replace(/\"/g, "");
+  var w;
+  var W = {},
+    R = Z.slice(Z.indexOf("?") + 1).split("&");
+  for (var S = 0; S < R.length; S++) {
+    w = R[S].split("=");
+    W[w[0]] = w[1];
   }
-  return Q;
+  return W;
 }
-function david_ft(M) {
-  const X = M.replace(/[{} ]/g, ""),
-    N = X.split(","),
-    c = {};
-  N.forEach(I => {
-    const [q, n] = I.split("=");
-    c[q] = n;
+function david_nK(Z) {
+  const w = Z.replace(/[{} ]/g, ""),
+    W = w.split(","),
+    R = {};
+  W.forEach(S => {
+    const [P, p] = S.split("=");
+    R[P] = p;
   });
-  return c;
+  return R;
 }
-function david_fB(M) {
-  let X = M.substr(M.indexOf("//") + 2);
-  let N = X.substr(0, X.indexOf("/")),
-    c = "";
-  let I = N.indexOf(":");
-  if (I > 0) {
-    c = N.substr(0, I);
+function david_nL(A) {
+  let n = A.substr(A.indexOf("//") + 2);
+  let k = n.substr(0, n.indexOf("/")),
+    w = "",
+    W = k.indexOf(":");
+  if (W > 0) {
+    w = k.substr(0, W);
   } else {
-    c = N;
+    w = k;
   }
-  return c;
+  return w;
 }
-function david_fF(M, f) {
-  var q = new Date(M);
-  var I = new Date(f);
-  var T = I - q;
-  var n = Math.floor(T / 1000);
-  return n;
+function david_nH(Z, n) {
+  var M = new Date(Z);
+  var S = new Date(n);
+  var P = S - M;
+  var X = Math.floor(P / 1000);
+  return X;
 }
-function david_fD(M, f) {
-  if (M.length * 2 <= f) {
-    return M;
+function david_ny(A, Z) {
+  if (A.length * 2 <= Z) {
+    return A;
   }
-  var N = 0,
-    c = "";
-  for (var I = 0; I < M.length; I++) {
-    c = c + M.charAt(I);
-    if (M.charCodeAt(I) > 128) {
-      N = N + 2;
-      if (N >= f) {
-        return c.substring(0, c.length - 1) + "...";
+  var k = 0,
+    w = "";
+  for (var W = 0; W < A.length; W++) {
+    w = w + A.charAt(W);
+    if (A.charCodeAt(W) > 128) {
+      k = k + 2;
+      if (k >= Z) {
+        return w.substring(0, w.length - 1) + "...";
       }
     } else {
-      N = N + 1;
-      if (N >= f) {
-        return c.substring(0, c.length - 2) + "...";
+      k = k + 1;
+      if (k >= Z) {
+        return w.substring(0, w.length - 2) + "...";
       }
     }
   }
-  return c;
+  return w;
 }
-function david_fa() {
+function david_nl() {
   return new Error().stack.split("\n")[3].split("@")[0];
 }
-function david_fP(M) {
+function david_nG(A) {
   try {
-    if (typeof JSON.parse(M) == "object") {
+    if (typeof JSON.parse(A) == "object") {
       return true;
     }
-  } catch (N) {
-    console.log(N);
+  } catch (w) {
+    console.log(w);
     console.log("服务器访问数据为空，请检查自身设备网络情况");
     return false;
   }
 }
-function david_fo(e) {
-  var f = Object.keys(e).map(function (Q) {
-    return encodeURIComponent(Q) + "=" + encodeURIComponent(e[Q]);
+function david_nh(A) {
+  var n = Object.keys(A).map(function (k) {
+    return encodeURIComponent(k) + "=" + encodeURIComponent(A[k]);
   }).join("&");
-  return f;
+  return n;
 }
-function david_fY(e) {
-  var f = String.fromCharCode(e.charCodeAt(0) + e.length);
-  for (var Q = 1; Q < e.length; Q++) {
-    f += String.fromCharCode(e.charCodeAt(Q) + e.charCodeAt(Q - 1));
+function david_nV(A) {
+  var n = String.fromCharCode(A.charCodeAt(0) + A.length);
+  for (var k = 1; k < A.length; k++) {
+    n += String.fromCharCode(A.charCodeAt(k) + A.charCodeAt(k - 1));
   }
-  return escape(f);
+  return escape(n);
 }
-function david_fV(e) {
-  e = unescape(e);
-  var f = String.fromCharCode(e.charCodeAt(0) - e.length);
-  for (var Q = 1; Q < e.length; Q++) {
-    f += String.fromCharCode(e.charCodeAt(Q) - f.charCodeAt(Q - 1));
+function david_nJ(A) {
+  A = unescape(A);
+  var n = String.fromCharCode(A.charCodeAt(0) - A.length);
+  for (var k = 1; k < A.length; k++) {
+    n += String.fromCharCode(A.charCodeAt(k) - n.charCodeAt(k - 1));
   }
-  return f;
+  return n;
 }
-function david_fz() {
+function david_nj() {
   return "XX:XX:XX:XX:XX:XX".replace(/X/g, function () {
     return "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16));
   });
 }
-function david_fR(e) {
-  return new Promise((f, Q) => {
-    const N = "https://v1.hitokoto.cn/?c=e",
-      c = {
+function david_nD(A) {
+  return new Promise((n, k) => {
+    const W = "https://v1.hitokoto.cn/?c=e",
+      R = {
         accept: "application/json"
       };
-    const I = {
-      url: N,
-      headers: c
+    const S = {
+      url: W,
+      headers: R
     };
-    david_Mc.get(I, async (q, n, J) => {
-      let C = JSON.parse(J),
-        b = C.hitokoto;
-      contents[e] = b + " " + b;
-      f();
+    david_ZR.get(S, async (X, P, p) => {
+      let E = JSON.parse(p),
+        B = E.hitokoto;
+      contents[A] = B + " " + B;
+      n();
     });
   });
 }
-function david_fj() {
-  return new Promise((M, f) => {
-    const N = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
-      c = {
-        url: N
+function david_nb() {
+  return new Promise((Z, n) => {
+    const W = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
+      R = {
+        url: W
       };
-    david_Mc.get(c, async (T, q, n) => {
-      M(n);
+    david_ZR.get(R, async (M, X, P) => {
+      Z(P);
     });
   });
 }
-function david_fU() {
-  const M = {
-    INPHG: function (Q, X) {
-      return Q == X;
-    },
-    SODvM: function (Q, X) {
-      return Q === X;
-    },
-    qHaRx: "baIAN",
-    kPIiW: "JIsQN"
-  };
-  const f = M;
-  f.INPHG(david_MG, 1) && (f.SODvM(f.qHaRx, f.kPIiW) ? f = Q.XMLYJSB : david_Mc.msg(david_Mc.name, "", david_Mc.message));
+function david_nU() {
+  if (david_Zd == 1) {
+    david_ZR.msg(david_ZR.name, "", david_ZR.message);
+  }
 }
-async function david_fm(M) {
-  const f = {
-    uZNOy: function (X, N) {
-      return X * N;
-    },
-    ZJRuj: function (X, N) {
-      return X <= N;
-    },
-    qgvdb: function (X, N) {
-      return X > N;
-    },
-    FAvfB: function (X, N) {
-      return X == N;
-    },
-    PNbtn: function (X, N) {
-      return X == N;
-    },
-    llfPg: function (X, N) {
-      return X !== N;
-    },
-    JxFDI: "IZZnC",
-    RLqsN: function (X, N) {
-      return X == N;
-    },
-    XUVEe: "axvZy",
-    roGoq: function (X, N) {
-      return X === N;
-    },
-    FLiwY: "YaIgx",
-    arkAf: "usTfc",
-    HApaf: "GRXME",
-    VyCHK: "iuluk",
-    UkbfZ: function (X, N) {
-      return X === N;
-    },
-    WGfhB: "bjkes",
-    MdwqN: "EwYeA"
-  };
-  const Q = f;
-  if (Q.FAvfB(david_Ms, 9) || Q.FAvfB(david_Ms, 12) || Q.PNbtn(david_Ms, 18)) {
-    if (Q.llfPg(Q.JxFDI, Q.JxFDI)) {
-      Q = X[N].ua;
-    } else {
-      if (Q.RLqsN(david_MG, 1)) {
-        if (Q.llfPg(Q.XUVEe, Q.XUVEe)) {
-          return true;
-        } else {
-          if (david_Mc.isNode()) {
-            if (Q.roGoq(Q.FLiwY, Q.arkAf)) {
-              Q.log("❗️ 当前用户一次最多运行" + Q.uZNOy(X, N) + "个账号，需要增加账号请查看置顶说明。");
-              return;
-            } else {
-              await david_MC.sendNotify(david_Mc.name, M);
-            }
-          } else {
-            Q.roGoq(Q.HApaf, Q.VyCHK) ? Q.ZJRuj(this.logLevels[this.logLevel], this.logLevels.info) && (Q.qgvdb(N.length, 0) && (this.logs = [...this.logs, ...c]), I.log("" + this.logLevelPrefixs.info + T.map(J => J ?? n(J)).join(this.logSeparator))) : david_Mc.msg(david_Mc.name, "", M);
-          }
-        }
+async function david_ne(A) {
+  if (david_Zr == 9 || david_Zr == 12 || david_Zr == 18) {
+    if (david_Zd == 1) {
+      if (david_ZR.isNode()) {
+        await david_ZB.sendNotify(david_ZR.name, A);
       } else {
-        Q.UkbfZ(Q.WGfhB, Q.MdwqN) ? Q = X.parse(N.env.XMLYJSBAPP) : david_Mc.log(M);
+        david_ZR.msg(david_ZR.name, "", A);
       }
+    } else {
+      david_ZR.log(A);
     }
   }
 }
-async function david_fy(e, M, f) {
-  return new Promise((X, N) => {
-    const c = "https://wxpusher.zjiecode.com/api/send/message",
-      I = {
+async function david_nC(A, Z, n) {
+  return new Promise((w, W) => {
+    const S = "https://wxpusher.zjiecode.com/api/send/message",
+      M = {
         appToken: "AT_6BZsE2IyJuVLPp3mcOkKvpoF245GR9xn",
-        content: M,
+        content: Z,
         summary: "快手答题余额通知",
         contentType: 1,
-        uids: [f],
+        uids: [n],
         verifyPay: false
       };
-    const q = {
+    const P = {
       "Content-Type": "application/json"
     };
-    const n = {
-      url: c,
-      headers: q,
-      body: JSON.stringify(I)
+    const p = {
+      url: S,
+      headers: P,
+      body: JSON.stringify(M)
     };
-    david_Mc.post(n, async (J, l, C) => {
-      X();
+    david_ZR.post(p, async (T, E, B) => {
+      w();
     });
   });
 }
-function david_Q0(M, f) {
-  class X {
-    constructor(N) {
-      const c = {};
-      c.DLPjs = "data:";
-      this.env = N;
+function david_k0(A, Z) {
+  class k {
+    constructor(w) {
+      this.env = w;
     }
-    send(N, c = "GET") {
-      N = "string" == typeof N ? {
-        url: N
-      } : N;
-      let q = this.get;
-      "POST" === c && (q = this.post);
-      return new Promise((n, J) => {
-        q.call(this, N, (l, C, b) => {
-          l ? J(l) : n(C);
+    send(w, W = "GET") {
+      w = "string" == typeof w ? {
+        url: w
+      } : w;
+      let S = this.get;
+      "POST" === W && (S = this.post);
+      return new Promise((M, X) => {
+        S.call(this, w, (T, E, B) => {
+          T ? X(T) : M(E);
         });
       });
     }
-    get(N) {
-      return this.send.call(this.env, N);
+    get(w) {
+      return this.send.call(this.env, w);
     }
-    post(N) {
-      return this.send.call(this.env, N, "POST");
+    post(w) {
+      return this.send.call(this.env, w, "POST");
     }
   }
   return new class {
-    constructor(N, c) {
-      const q = {
+    constructor(w, W) {
+      const R = {
         debug: 0,
         info: 1,
         warn: 2,
         error: 3
       };
-      const n = {
+      const S = {
         debug: "[DEBUG] ",
         info: "[INFO] ",
         warn: "[WARN] ",
         error: "[ERROR] "
       };
-      this.logLevels = q;
-      this.logLevelPrefixs = n;
+      this.logLevels = R;
+      this.logLevelPrefixs = S;
       this.logLevel = "info";
-      this.name = N;
-      this.http = new X(this);
+      this.name = w;
+      this.http = new k(this);
       this.data = null;
       this.dataFile = "box.dat";
       this.logs = [];
@@ -1313,7 +1320,7 @@ function david_Q0(M, f) {
       this.logSeparator = "\n";
       this.encoding = "utf-8";
       this.startTime = new Date().getTime();
-      Object.assign(this, c);
+      Object.assign(this, W);
       this.log("", "🔔 " + this.name + ", 开始!");
     }
     getEnv() {
@@ -1337,68 +1344,68 @@ function david_Q0(M, f) {
     isStash() {
       return "Stash" === this.getEnv();
     }
-    toObj(N, c = null) {
+    toObj(w, W = null) {
       try {
-        return JSON.parse(N);
+        return JSON.parse(w);
       } catch {
-        return c;
+        return W;
       }
     }
-    toStr(N, c = null, ...I) {
+    toStr(w, W = null, ...R) {
       try {
-        return JSON.stringify(N, ...I);
+        return JSON.stringify(w, ...R);
       } catch {
-        return c;
+        return W;
       }
     }
-    getjson(N, c) {
-      let q = c;
-      if (this.getdata(N)) {
+    getjson(w, W) {
+      let M = W;
+      if (this.getdata(w)) {
         try {
-          q = JSON.parse(this.getdata(N));
+          M = JSON.parse(this.getdata(w));
         } catch {}
       }
-      return q;
+      return M;
     }
-    setjson(N, c) {
+    setjson(w, W) {
       try {
-        return this.setdata(JSON.stringify(N), c);
+        return this.setdata(JSON.stringify(w), W);
       } catch {
         return !1;
       }
     }
-    getScript(N) {
-      return new Promise(I => {
-        const q = {
-          url: N
+    getScript(w) {
+      return new Promise(S => {
+        const M = {
+          url: w
         };
-        this.get(q, (n, J, l) => I(l));
+        this.get(M, (X, P, p) => S(p));
       });
     }
-    runScript(N, c) {
-      return new Promise(T => {
-        let q = this.getdata("@chavy_boxjs_userCfgs.httpapi");
-        q = q ? q.replace(/\n/g, "").trim() : q;
-        let J = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
-        J = J ? 1 * J : 20;
-        J = c && c.timeout ? c.timeout : J;
-        const l = {
-          script_text: N,
+    runScript(w, W) {
+      return new Promise(S => {
+        let X = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+        X = X ? X.replace(/\n/g, "").trim() : X;
+        let P = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
+        P = P ? 1 * P : 20;
+        P = W && W.timeout ? W.timeout : P;
+        const p = {
+          script_text: w,
           mock_type: "cron",
-          timeout: J
+          timeout: P
         };
-        const [C, b] = q.split("@"),
-          v = {
-            url: "http://" + b + "/v1/scripting/evaluate",
-            body: l,
+        const [T, E] = X.split("@"),
+          B = {
+            url: "http://" + E + "/v1/scripting/evaluate",
+            body: p,
             headers: {
-              "X-Key": C,
+              "X-Key": T,
               Accept: "*/*"
             },
-            timeout: J
+            timeout: P
           };
-        this.post(v, (H, E, S) => T(S));
-      }).catch(T => this.logErr(T));
+        this.post(B, (z, m, Q) => S(Q));
+      }).catch(S => this.logErr(S));
     }
     loaddata() {
       if (!this.isNode()) {
@@ -1407,18 +1414,18 @@ function david_Q0(M, f) {
       {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const T = this.path.resolve(this.dataFile),
-          q = this.path.resolve(process.cwd(), this.dataFile),
-          n = this.fs.existsSync(T),
-          J = !n && this.fs.existsSync(q);
-        if (!n && !J) {
+        const S = this.path.resolve(this.dataFile),
+          M = this.path.resolve(process.cwd(), this.dataFile),
+          X = this.fs.existsSync(S),
+          P = !X && this.fs.existsSync(M);
+        if (!X && !P) {
           return {};
         }
         {
-          const C = n ? T : q;
+          const T = X ? S : M;
           try {
-            return JSON.parse(this.fs.readFileSync(C));
-          } catch (v) {
+            return JSON.parse(this.fs.readFileSync(T));
+          } catch (B) {
             return {};
           }
         }
@@ -1428,311 +1435,310 @@ function david_Q0(M, f) {
       if (this.isNode()) {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const I = this.path.resolve(this.dataFile),
-          T = this.path.resolve(process.cwd(), this.dataFile),
-          q = this.fs.existsSync(I),
-          n = !q && this.fs.existsSync(T),
-          J = JSON.stringify(this.data);
-        q ? this.fs.writeFileSync(I, J) : n ? this.fs.writeFileSync(T, J) : this.fs.writeFileSync(I, J);
+        const S = this.path.resolve(this.dataFile),
+          M = this.path.resolve(process.cwd(), this.dataFile),
+          X = this.fs.existsSync(S),
+          P = !X && this.fs.existsSync(M),
+          p = JSON.stringify(this.data);
+        X ? this.fs.writeFileSync(S, p) : P ? this.fs.writeFileSync(M, p) : this.fs.writeFileSync(S, p);
       }
     }
-    lodash_get(N, c, I) {
-      const T = c.replace(/\[(\d+)\]/g, ".$1").split(".");
-      let q = N;
-      for (const n of T) if (q = Object(q)[n], void 0 === q) {
-        return I;
+    lodash_get(w, W, R) {
+      const X = W.replace(/\[(\d+)\]/g, ".$1").split(".");
+      let P = w;
+      for (const p of X) if (P = Object(P)[p], void 0 === P) {
+        return R;
       }
-      return q;
+      return P;
     }
-    lodash_set(N, c, I) {
-      Object(N) !== N || (Array.isArray(c) || (c = c.toString().match(/[^.[\]]+/g) || []), c.slice(0, -1).reduce((T, q, n) => Object(T[q]) === T[q] ? T[q] : T[q] = Math.abs(c[n + 1]) >> 0 == +c[n + 1] ? [] : {}, N)[c[c.length - 1]] = I);
-      return N;
+    lodash_set(w, W, R) {
+      Object(w) !== w || (Array.isArray(W) || (W = W.toString().match(/[^.[\]]+/g) || []), W.slice(0, -1).reduce((M, X, P) => Object(M[X]) === M[X] ? M[X] : M[X] = Math.abs(W[P + 1]) >> 0 == +W[P + 1] ? [] : {}, w)[W[W.length - 1]] = R);
+      return w;
     }
-    getdata(N) {
-      let T = this.getval(N);
-      if (/^@/.test(N)) {
-        const [, q, n] = /^@(.*?)\.(.*?)$/.exec(N),
-          J = q ? this.getval(q) : "";
-        if (J) {
+    getdata(w) {
+      let S = this.getval(w);
+      if (/^@/.test(w)) {
+        const [, M, X] = /^@(.*?)\.(.*?)$/.exec(w),
+          P = M ? this.getval(M) : "";
+        if (P) {
           try {
-            const C = JSON.parse(J);
-            T = C ? this.lodash_get(C, n, "") : T;
-          } catch (b) {
-            T = "";
+            const T = JSON.parse(P);
+            S = T ? this.lodash_get(T, X, "") : S;
+          } catch (E) {
+            S = "";
           }
         }
       }
-      return T;
+      return S;
     }
-    setdata(N, c) {
-      let T = !1;
-      if (/^@/.test(c)) {
-        const [, q, n] = /^@(.*?)\.(.*?)$/.exec(c),
-          J = this.getval(q),
-          l = q ? "null" === J ? null : J || "{}" : "{}";
+    setdata(w, W) {
+      let M = !1;
+      if (/^@/.test(W)) {
+        const [, P, p] = /^@(.*?)\.(.*?)$/.exec(W),
+          T = this.getval(P),
+          E = P ? "null" === T ? null : T || "{}" : "{}";
         try {
-          const b = JSON.parse(l);
-          this.lodash_set(b, n, N);
-          T = this.setval(JSON.stringify(b), q);
-        } catch (v) {
-          const H = {};
-          this.lodash_set(H, n, N);
-          T = this.setval(JSON.stringify(H), q);
+          const z = JSON.parse(E);
+          this.lodash_set(z, p, w);
+          M = this.setval(JSON.stringify(z), P);
+        } catch (m) {
+          const Q = {};
+          this.lodash_set(Q, p, w);
+          M = this.setval(JSON.stringify(Q), P);
         }
       } else {
-        T = this.setval(N, c);
+        M = this.setval(w, W);
       }
-      return T;
+      return M;
     }
-    getval(N) {
+    getval(w) {
       switch (this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
-          return $persistentStore.read(N);
+          return $persistentStore.read(w);
         case "Quantumult X":
-          return $prefs.valueForKey(N);
+          return $prefs.valueForKey(w);
         case "Node.js":
           this.data = this.loaddata();
-          return this.data[N];
+          return this.data[w];
         default:
-          return this.data && this.data[N] || null;
+          return this.data && this.data[w] || null;
       }
     }
-    setval(N, c) {
+    setval(w, W) {
       switch (this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
-          return $persistentStore.write(N, c);
+          return $persistentStore.write(w, W);
         case "Quantumult X":
-          return $prefs.setValueForKey(N, c);
+          return $prefs.setValueForKey(w, W);
         case "Node.js":
           this.data = this.loaddata();
-          this.data[c] = N;
+          this.data[W] = w;
           this.writedata();
           return !0;
         default:
-          return this.data && this.data[c] || null;
+          return this.data && this.data[W] || null;
       }
     }
-    initGotEnv(N) {
+    initGotEnv(w) {
       this.got = this.got ? this.got : require("got");
       this.cktough = this.cktough ? this.cktough : require("tough-cookie");
       this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
-      N && (N.headers = N.headers ? N.headers : {}, N && (N.headers = N.headers ? N.headers : {}, void 0 === N.headers.cookie && void 0 === N.headers.Cookie && void 0 === N.cookieJar && (N.cookieJar = this.ckjar)));
+      w && (w.headers = w.headers ? w.headers : {}, w && (w.headers = w.headers ? w.headers : {}, void 0 === w.headers.cookie && void 0 === w.headers.Cookie && void 0 === w.cookieJar && (w.cookieJar = this.ckjar)));
     }
-    get(N, c = () => {}) {
-      const q = {
+    get(w, W = () => {}) {
+      const M = {
         redirection: !1
       };
-      switch (N.headers && (delete N.headers["Content-Type"], delete N.headers["Content-Length"], delete N.headers["content-type"], delete N.headers["content-length"]), N.params && (N.url += "?" + this.queryStr(N.params)), void 0 === N.followRedirect || N.followRedirect || ((this.isSurge() || this.isLoon()) && (N["auto-redirect"] = !1), this.isQuanX() && (N.opts ? N.opts.redirection = !1 : N.opts = q)), this.getEnv()) {
+      switch (w.headers && (delete w.headers["Content-Type"], delete w.headers["Content-Length"], delete w.headers["content-type"], delete w.headers["content-length"]), w.params && (w.url += "?" + this.queryStr(w.params)), void 0 === w.followRedirect || w.followRedirect || ((this.isSurge() || this.isLoon()) && (w["auto-redirect"] = !1), this.isQuanX() && (w.opts ? w.opts.redirection = !1 : w.opts = M)), this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
         default:
-          const n = {
+          const X = {
             "X-Surge-Skip-Scripting": !1
           };
-          this.isSurge() && this.isNeedRewrite && (N.headers = N.headers || {}, Object.assign(N.headers, n));
-          $httpClient.get(N, (l, C, b) => {
-            !l && C && (C.body = b, C.statusCode = C.status ? C.status : C.statusCode, C.status = C.statusCode);
-            c(l, C, b);
+          this.isSurge() && this.isNeedRewrite && (w.headers = w.headers || {}, Object.assign(w.headers, X));
+          $httpClient.get(w, (T, E, B) => {
+            !T && E && (E.body = B, E.statusCode = E.status ? E.status : E.statusCode, E.status = E.statusCode);
+            W(T, E, B);
           });
           break;
         case "Quantumult X":
-          const i = {
-            hints: !1
-          };
-          this.isNeedRewrite && (N.opts = N.opts || {}, Object.assign(N.opts, i));
-          $task.fetch(N).then(l => {
+          const P = {};
+          P.hints = !1;
+          this.isNeedRewrite && (w.opts = w.opts || {}, Object.assign(w.opts, P));
+          $task.fetch(w).then(T => {
             const {
-                statusCode: v,
-                statusCode: H,
-                headers: E,
-                body: S,
-                bodyBytes: w
-              } = l,
-              O = {
-                status: v,
-                statusCode: H,
-                headers: E,
-                body: S,
-                bodyBytes: w
+                statusCode: B,
+                statusCode: z,
+                headers: m,
+                body: Q,
+                bodyBytes: d
+              } = T,
+              F = {
+                status: B,
+                statusCode: z,
+                headers: m,
+                body: Q,
+                bodyBytes: d
               };
-            c(null, O, S, w);
-          }, l => c(l && l.error || "UndefinedError"));
+            W(null, F, Q, d);
+          }, T => W(T && T.error || "UndefinedError"));
           break;
         case "Node.js":
-          let J = require("iconv-lite");
-          this.initGotEnv(N);
-          this.got(N).on("redirect", (l, C) => {
+          let p = require("iconv-lite");
+          this.initGotEnv(w);
+          this.got(w).on("redirect", (T, E) => {
             try {
-              if (l.headers["set-cookie"]) {
-                const H = l.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
-                H && this.ckjar.setCookieSync(H, null);
-                C.cookieJar = this.ckjar;
+              if (T.headers["set-cookie"]) {
+                const o = T.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
+                o && this.ckjar.setCookieSync(o, null);
+                E.cookieJar = this.ckjar;
               }
-            } catch (S) {
-              this.logErr(S);
+            } catch (a) {
+              this.logErr(a);
             }
-          }).then(l => {
+          }).then(T => {
             const {
-                statusCode: b,
-                statusCode: v,
-                headers: H,
-                rawBody: E
-              } = l,
-              S = J.decode(E, this.encoding),
-              w = {
-                status: b,
-                statusCode: v,
-                headers: H,
-                rawBody: E,
-                body: S
+                statusCode: E,
+                statusCode: B,
+                headers: z,
+                rawBody: m
+              } = T,
+              Q = p.decode(m, this.encoding),
+              d = {
+                status: E,
+                statusCode: B,
+                headers: z,
+                rawBody: m,
+                body: Q
               };
-            c(null, w, S);
-          }, l => {
+            W(null, d, Q);
+          }, T => {
             const {
-              message: C,
-              response: b
-            } = l;
-            c(C, b, b && J.decode(b.rawBody, this.encoding));
+              message: E,
+              response: B
+            } = T;
+            W(E, B, B && p.decode(B.rawBody, this.encoding));
           });
           break;
       }
     }
-    post(N, c = () => {}) {
-      const q = N.method ? N.method.toLocaleLowerCase() : "post",
-        n = {
+    post(w, W = () => {}) {
+      const S = w.method ? w.method.toLocaleLowerCase() : "post",
+        M = {
           redirection: !1
         };
-      switch (N.body && N.headers && !N.headers["Content-Type"] && !N.headers["content-type"] && (N.headers["content-type"] = "application/x-www-form-urlencoded"), N.headers && (delete N.headers["Content-Length"], delete N.headers["content-length"]), void 0 === N.followRedirect || N.followRedirect || ((this.isSurge() || this.isLoon()) && (N["auto-redirect"] = !1), this.isQuanX() && (N.opts ? N.opts.redirection = !1 : N.opts = n)), this.getEnv()) {
+      switch (w.body && w.headers && !w.headers["Content-Type"] && !w.headers["content-type"] && (w.headers["content-type"] = "application/x-www-form-urlencoded"), w.headers && (delete w.headers["Content-Length"], delete w.headers["content-length"]), void 0 === w.followRedirect || w.followRedirect || ((this.isSurge() || this.isLoon()) && (w["auto-redirect"] = !1), this.isQuanX() && (w.opts ? w.opts.redirection = !1 : w.opts = M)), this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
         default:
-          const J = {
+          const X = {
             "X-Surge-Skip-Scripting": !1
           };
-          this.isSurge() && this.isNeedRewrite && (N.headers = N.headers || {}, Object.assign(N.headers, J));
-          $httpClient[q](N, (H, E, S) => {
-            !H && E && (E.body = S, E.statusCode = E.status ? E.status : E.statusCode, E.status = E.statusCode);
-            c(H, E, S);
+          this.isSurge() && this.isNeedRewrite && (w.headers = w.headers || {}, Object.assign(w.headers, X));
+          $httpClient[S](w, (B, z, m) => {
+            !B && z && (z.body = m, z.statusCode = z.status ? z.status : z.statusCode, z.status = z.statusCode);
+            W(B, z, m);
           });
           break;
         case "Quantumult X":
-          const l = {};
-          l.hints = !1;
-          N.method = q;
-          this.isNeedRewrite && (N.opts = N.opts || {}, Object.assign(N.opts, l));
-          $task.fetch(N).then(H => {
+          const P = {};
+          P.hints = !1;
+          w.method = S;
+          this.isNeedRewrite && (w.opts = w.opts || {}, Object.assign(w.opts, P));
+          $task.fetch(w).then(B => {
             const {
-                statusCode: w,
-                statusCode: O,
-                headers: G,
-                body: L,
-                bodyBytes: k
-              } = H,
-              K = {
-                status: w,
-                statusCode: O,
-                headers: G,
-                body: L,
-                bodyBytes: k
+                statusCode: d,
+                statusCode: F,
+                headers: c,
+                body: Y,
+                bodyBytes: f
+              } = B,
+              O = {
+                status: d,
+                statusCode: F,
+                headers: c,
+                body: Y,
+                bodyBytes: f
               };
-            c(null, K, L, k);
-          }, H => c(H && H.error || "UndefinedError"));
+            W(null, O, Y, f);
+          }, B => W(B && B.error || "UndefinedError"));
           break;
         case "Node.js":
-          let C = require("iconv-lite");
-          this.initGotEnv(N);
+          let p = require("iconv-lite");
+          this.initGotEnv(w);
           const {
-            url: b,
-            ...v
-          } = N;
-          this.got[q](b, v).then(H => {
+            url: T,
+            ...E
+          } = w;
+          this.got[S](T, E).then(B => {
             const {
-                statusCode: S,
-                statusCode: w,
-                headers: O,
-                rawBody: G
-              } = H,
-              L = C.decode(G, this.encoding),
-              k = {
-                status: S,
-                statusCode: w,
-                headers: O,
-                rawBody: G,
-                body: L
+                statusCode: m,
+                statusCode: Q,
+                headers: d,
+                rawBody: F
+              } = B,
+              c = p.decode(F, this.encoding),
+              Y = {
+                status: m,
+                statusCode: Q,
+                headers: d,
+                rawBody: F,
+                body: c
               };
-            c(null, k, L);
-          }, H => {
+            W(null, Y, c);
+          }, B => {
             const {
-              message: S,
-              response: w
-            } = H;
-            c(S, w, w && C.decode(w.rawBody, this.encoding));
+              message: m,
+              response: a
+            } = B;
+            W(m, a, a && p.decode(a.rawBody, this.encoding));
           });
           break;
       }
     }
-    time(N, c = null) {
-      const I = c ? new Date(c) : new Date();
-      let T = {
-        "M+": I.getMonth() + 1,
-        "d+": I.getDate(),
-        "H+": I.getHours(),
-        "m+": I.getMinutes(),
-        "s+": I.getSeconds(),
-        "q+": Math.floor((I.getMonth() + 3) / 3),
-        S: I.getMilliseconds()
+    time(w, W = null) {
+      const M = W ? new Date(W) : new Date();
+      let X = {
+        "M+": M.getMonth() + 1,
+        "d+": M.getDate(),
+        "H+": M.getHours(),
+        "m+": M.getMinutes(),
+        "s+": M.getSeconds(),
+        "q+": Math.floor((M.getMonth() + 3) / 3),
+        S: M.getMilliseconds()
       };
-      /(y+)/.test(N) && (N = N.replace(RegExp.$1, (I.getFullYear() + "").substr(4 - RegExp.$1.length)));
-      for (let q in T) new RegExp("(" + q + ")").test(N) && (N = N.replace(RegExp.$1, 1 == RegExp.$1.length ? T[q] : ("00" + T[q]).substr(("" + T[q]).length)));
-      return N;
+      /(y+)/.test(w) && (w = w.replace(RegExp.$1, (M.getFullYear() + "").substr(4 - RegExp.$1.length)));
+      for (let P in X) new RegExp("(" + P + ")").test(w) && (w = w.replace(RegExp.$1, 1 == RegExp.$1.length ? X[P] : ("00" + X[P]).substr(("" + X[P]).length)));
+      return w;
     }
-    queryStr(N) {
-      let T = "";
-      for (const q in N) {
-        let J = N[q];
-        null != J && "" !== J && ("object" == typeof J && (J = JSON.stringify(J)), T += q + "=" + J + "&");
+    queryStr(w) {
+      let R = "";
+      for (const S in w) {
+        let X = w[S];
+        null != X && "" !== X && ("object" == typeof X && (X = JSON.stringify(X)), R += S + "=" + X + "&");
       }
-      T = T.substring(0, T.length - 1);
-      return T;
+      R = R.substring(0, R.length - 1);
+      return R;
     }
-    msg(N = M, c = "", I = "", T = {}) {
-      const n = J => {
+    msg(w = A, W = "", R = "", S = {}) {
+      const X = P => {
         const {
-          $open: C,
-          $copy: b,
-          $media: v,
-          $mediaMime: H
-        } = J;
-        switch (typeof J) {
+          $open: T,
+          $copy: E,
+          $media: B,
+          $mediaMime: z
+        } = P;
+        switch (typeof P) {
           case void 0:
-            return J;
+            return P;
           case "string":
             switch (this.getEnv()) {
               case "Surge":
               case "Stash":
               default:
-                const E = {
-                  url: J
+                const m = {
+                  url: P
                 };
-                return E;
+                return m;
               case "Loon":
               case "Shadowrocket":
-                return J;
+                return P;
               case "Quantumult X":
-                const S = {
-                  "open-url": J
+                const Q = {
+                  "open-url": P
                 };
-                return S;
+                return Q;
               case "Node.js":
                 return;
             }
@@ -1743,88 +1749,88 @@ function david_Q0(M, f) {
               case "Shadowrocket":
               default:
                 {
-                  const w = {};
-                  let O = J.openUrl || J.url || J["open-url"] || C;
-                  O && Object.assign(w, {
+                  const d = {};
+                  let F = P.openUrl || P.url || P["open-url"] || T;
+                  F && Object.assign(d, {
                     action: "open-url",
-                    url: O
+                    url: F
                   });
-                  let G = J["update-pasteboard"] || J.updatePasteboard || b;
-                  if (G && Object.assign(w, {
+                  let c = P["update-pasteboard"] || P.updatePasteboard || E;
+                  if (c && Object.assign(d, {
                     action: "clipboard",
-                    text: G
-                  }), v) {
-                    let k, K, h;
-                    if (v.startsWith("http")) {
-                      k = v;
+                    text: c
+                  }), B) {
+                    let f, O, I;
+                    if (B.startsWith("http")) {
+                      f = B;
                     } else {
-                      if (v.startsWith("data:")) {
-                        const [p] = v.split(";"),
-                          [, g] = v.split(",");
-                        K = g;
-                        h = p.replace("data:", "");
+                      if (B.startsWith("data:")) {
+                        const [q] = B.split(";"),
+                          [, N] = B.split(",");
+                        O = N;
+                        I = q.replace("data:", "");
                       } else {
-                        K = v;
-                        h = (x => {
-                          const d = {
+                        O = B;
+                        I = (u => {
+                          const K = {
                             JVBERi0: "application/pdf",
                             R0lGODdh: "image/gif",
                             R0lGODlh: "image/gif",
                             iVBORw0KGgo: "image/png",
                             "/9j/": "image/jpg"
                           };
-                          for (var Z in d) if (0 === x.indexOf(Z)) {
-                            return d[Z];
+                          for (var v in K) if (0 === u.indexOf(v)) {
+                            return K[v];
                           }
                           return null;
-                        })(v);
+                        })(B);
                       }
                     }
-                    Object.assign(w, {
-                      "media-url": k,
-                      "media-base64": K,
-                      "media-base64-mime": H ?? h
+                    Object.assign(d, {
+                      "media-url": f,
+                      "media-base64": O,
+                      "media-base64-mime": z ?? I
                     });
                   }
-                  const L = {};
-                  L["auto-dismiss"] = J["auto-dismiss"];
-                  L.sound = J.sound;
-                  Object.assign(w, L);
-                  return w;
+                  const Y = {};
+                  Y["auto-dismiss"] = P["auto-dismiss"];
+                  Y.sound = P.sound;
+                  Object.assign(d, Y);
+                  return d;
                 }
               case "Loon":
                 {
-                  const x = {};
-                  let Z = J.openUrl || J.url || J["open-url"] || C;
-                  Z && Object.assign(x, {
-                    openUrl: Z
+                  const u = {};
+                  let v = P.openUrl || P.url || P["open-url"] || T;
+                  v && Object.assign(u, {
+                    openUrl: v
                   });
-                  let A = J.mediaUrl || J["media-url"];
-                  v?.["startsWith"]("http") && (A = v);
-                  A && Object.assign(x, {
-                    mediaUrl: A
+                  let K = P.mediaUrl || P["media-url"];
+                  B?.["startsWith"]("http") && (K = B);
+                  K && Object.assign(u, {
+                    mediaUrl: K
                   });
-                  console.log(JSON.stringify(x));
-                  return x;
+                  console.log(JSON.stringify(u));
+                  return u;
                 }
               case "Quantumult X":
                 {
-                  const d = {};
-                  let B = J["open-url"] || J.url || J.openUrl || C;
-                  B && Object.assign(d, {
-                    "open-url": B
+                  const L = {};
+                  let H = P["open-url"] || P.url || P.openUrl || T;
+                  H && Object.assign(L, {
+                    "open-url": H
                   });
-                  let F = J["media-url"] || J.mediaUrl;
-                  v?.["startsWith"]("http") && (F = v);
-                  F && Object.assign(d, {
-                    "media-url": F
+                  let y = P["media-url"] || P.mediaUrl;
+                  B?.["startsWith"]("http") && (y = B);
+                  y && Object.assign(L, {
+                    "media-url": y
                   });
-                  let D = J["update-pasteboard"] || J.updatePasteboard || b;
-                  D && Object.assign(d, {
-                    "update-pasteboard": D
+                  let l = P["update-pasteboard"] || P.updatePasteboard || E;
+                  l && Object.assign(L, {
+                    "update-pasteboard": l
                   });
-                  console.log(JSON.stringify(d));
-                  return d;
+                  console.log(JSON.stringify(L));
+                  return L;
                 }
               case "Node.js":
                 return;
@@ -1840,41 +1846,41 @@ function david_Q0(M, f) {
           case "Stash":
           case "Shadowrocket":
           default:
-            $notification.post(N, c, I, n(T));
+            $notification.post(w, W, R, X(S));
             break;
           case "Quantumult X":
-            $notify(N, c, I, n(T));
+            $notify(w, W, R, X(S));
             break;
           case "Node.js":
             break;
         }
       }
       if (!this.isMuteLog) {
-        let J = ["", "==============📣系统通知📣=============="];
-        J.push(N);
-        c && J.push(c);
-        I && J.push(I);
-        console.log(J.join("\n"));
-        this.logs = this.logs.concat(J);
+        let P = ["", "==============📣系统通知📣=============="];
+        P.push(w);
+        W && P.push(W);
+        R && P.push(R);
+        console.log(P.join("\n"));
+        this.logs = this.logs.concat(P);
       }
     }
-    debug(...N) {
-      this.logLevels[this.logLevel] <= this.logLevels.debug && (N.length > 0 && (this.logs = [...this.logs, ...N]), console.log("" + this.logLevelPrefixs.debug + N.map(c => c ?? String(c)).join(this.logSeparator)));
+    debug(...w) {
+      this.logLevels[this.logLevel] <= this.logLevels.debug && (w.length > 0 && (this.logs = [...this.logs, ...w]), console.log("" + this.logLevelPrefixs.debug + w.map(W => W ?? String(W)).join(this.logSeparator)));
     }
-    info(...N) {
-      this.logLevels[this.logLevel] <= this.logLevels.info && (N.length > 0 && (this.logs = [...this.logs, ...N]), console.log("" + this.logLevelPrefixs.info + N.map(c => c ?? String(c)).join(this.logSeparator)));
+    info(...w) {
+      this.logLevels[this.logLevel] <= this.logLevels.info && (w.length > 0 && (this.logs = [...this.logs, ...w]), console.log("" + this.logLevelPrefixs.info + w.map(W => W ?? String(W)).join(this.logSeparator)));
     }
-    warn(...N) {
-      this.logLevels[this.logLevel] <= this.logLevels.warn && (N.length > 0 && (this.logs = [...this.logs, ...N]), console.log("" + this.logLevelPrefixs.warn + N.map(c => c ?? String(c)).join(this.logSeparator)));
+    warn(...w) {
+      this.logLevels[this.logLevel] <= this.logLevels.warn && (w.length > 0 && (this.logs = [...this.logs, ...w]), console.log("" + this.logLevelPrefixs.warn + w.map(W => W ?? String(W)).join(this.logSeparator)));
     }
-    error(...N) {
-      this.logLevels[this.logLevel] <= this.logLevels.error && (N.length > 0 && (this.logs = [...this.logs, ...N]), console.log("" + this.logLevelPrefixs.error + N.map(c => c ?? String(c)).join(this.logSeparator)));
+    error(...w) {
+      this.logLevels[this.logLevel] <= this.logLevels.error && (w.length > 0 && (this.logs = [...this.logs, ...w]), console.log("" + this.logLevelPrefixs.error + w.map(W => W ?? String(W)).join(this.logSeparator)));
     }
-    log(...N) {
-      N.length > 0 && (this.logs = [...this.logs, ...N]);
-      console.log(N.map(c => c ?? String(c)).join(this.logSeparator));
+    log(...w) {
+      w.length > 0 && (this.logs = [...this.logs, ...w]);
+      console.log(w.map(W => W ?? String(W)).join(this.logSeparator));
     }
-    logErr(N, c) {
+    logErr(w, W) {
       switch (this.getEnv()) {
         case "Surge":
         case "Loon":
@@ -1882,30 +1888,30 @@ function david_Q0(M, f) {
         case "Shadowrocket":
         case "Quantumult X":
         default:
-          this.log("", "❗️" + this.name + ", 错误!", c, N);
+          this.log("", "❗️" + this.name + ", 错误!", W, w);
           break;
         case "Node.js":
-          this.log("", "❗️" + this.name + ", 错误!", c, void 0 !== N.message ? N.message : N, N.stack);
+          this.log("", "❗️" + this.name + ", 错误!", W, void 0 !== w.message ? w.message : w, w.stack);
           break;
       }
     }
-    wait(N) {
-      return new Promise(c => setTimeout(c, N));
+    wait(w) {
+      return new Promise(W => setTimeout(W, w));
     }
-    done(N = {}) {
-      const c = (new Date().getTime() - this.startTime) / 1000;
-      switch (this.log("", "🔔" + this.name + ", 结束! 🕛 " + c + " 秒"), this.log(), this.getEnv()) {
+    done(w = {}) {
+      const W = (new Date().getTime() - this.startTime) / 1000;
+      switch (this.log("", "🔔" + this.name + ", 结束! 🕛 " + W + " 秒"), this.log(), this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
         case "Quantumult X":
         default:
-          $done(N);
+          $done(w);
           break;
         case "Node.js":
           process.exit(1);
       }
     }
-  }(M, f);
+  }(A, Z);
 }
