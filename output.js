@@ -1,4 +1,4 @@
-//Sat Dec 28 2024 14:48:31 GMT+0000 (Coordinated Universal Time)
+//Sat Dec 28 2024 14:56:24 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
 const $ = new Env("趣动"),
