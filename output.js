@@ -1,43 +1,45 @@
-//Wed Jan 01 2025 09:35:16 GMT+0000 (Coordinated Universal Time)
+//Fri Jan 03 2025 11:48:09 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
-const $ = new Env("小福家"),
-  version = "V1.0.7",
-  appName = "xfjapp";
-let xfjapp = $.getjson(appName, []);
+const $ = new Env("趣动"),
+  version = "V1.0.3",
+  appName = "qdngapp";
+let qdngapp = $.getjson(appName, []);
 const fs = $.isNode() ? require("fs") : "",
   WebSocket = $.isNode() ? require("ws") : "",
   file = "david_cookies.js";
-$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", f => {}));
+$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", u => {}));
 const http = $.isNode() ? require("http") : "",
   notify = $.isNode() ? require("./sendNotify") : "",
   COOKIES = $.isNode() ? require("./david_cookies") : "";
 let userId = $.getdata("tguserid") || 1,
-  activeCode = $.getdata("xfjactivecode") || 0,
-  xfjuserck = $.getval("xfjuserck") || 1,
+  activeCode = $.getdata("qdngactivecode") || 0,
+  qdnguserck = $.getval("qdnguserck") || 1,
   apiHost = $.getval("apiHost") || "http://106.15.104.124:8080";
 $.getval("apiHosts") && (apiHost = $.getval("apiHosts"));
+let flushCash = $.getval("cleanCache") || false;
 const debug = 0;
-let tz = $.getval("tz") || "1";
+let tz = $.getval("tz") || "1",
+  helpUtils = undefined,
+  CryptoJS = undefined,
+  saveFile = false,
+  qdng_ck_file = "qdng_cookies.json";
 var hour = "",
   minute = "";
 let sendlogs = "",
-  xfjlogs = [],
+  qdnglogs = [],
+  isNeedAds = [],
   wss = [],
   channels_status = [],
   reconectCounts = [],
   requestObjects = [],
   requestSigns = [],
-  contents = [],
-  moments = [],
-  shareCodes = ["opa3a1735207541"],
-  assistCodes = ["opa951735207541"],
   httpResult = "",
   userAuth = "",
   scriptAuth = "",
   newest_version = "",
-  runAuth = "";
-let systemNotify = "",
+  runAuth = "",
+  systemNotify = "",
   vipAuth = "",
   isCharge = "",
   multiAccount = 1,
@@ -47,51 +49,32 @@ let systemNotify = "",
   userRank = "",
   invicode = "",
   numbers = 3,
-  vipDate = "",
-  APP_KEY = "c983571ad200485383245bb8be8419e5";
-let ACT_ID = "";
-if ($.isNode()) {
-  process.env.XFJAPP ? xfjapp = JSON.parse(process.env.XFJAPP) : xfjapp = COOKIES.XFJ;
-  userId = process.env.TGUSERID;
-  activeCode = process.env.XFJACTIVECODE;
-  process.env.APIHOST && (apiHost = process.env.APIHOST);
-  process.env.APIHOSTS && (apiHost = process.env.APIHOSTS);
-  hour = new Date(new Date().getTime()).getHours();
-  minute = new Date(new Date().getTime()).getMinutes();
-  $.log("🔔 当前环境: Node, 当前时间：" + hour + "点");
-} else {
-  hour = new Date().getHours();
-  minute = new Date().getMinutes();
-  $.log("🔔 当前环境: 手机代理, 当前时间：" + hour + "点");
-}
+  vipDate = "";
+$.isNode() ? (process.env.QDNGAPP ? qdngapp = JSON.parse(process.env.QDNGAPP) : qdngapp = COOKIES.QDNG, userId = process.env.TGUSERID, activeCode = process.env.QDNGACTIVECODE, process.env.APIHOST && (apiHost = process.env.APIHOST), process.env.APIHOSTS && (apiHost = process.env.APIHOSTS), process.env.CLEANCACHE && (flushCash = JSON.parse(process.env.CLEANCACHE)), hour = new Date(new Date().getTime()).getHours(), minute = new Date(new Date().getTime()).getMinutes(), $.log("🔔 当前环境: Node, 当前时间：" + hour + "点")) : (hour = new Date().getHours(), minute = new Date().getMinutes(), $.log("🔔 当前环境: 手机代理, 当前时间：" + hour + "点"));
 !(async () => {
   if (typeof $request !== "undefined") {
     await getCk();
   } else {
-    if (!xfjapp) {
+    if (!qdngapp) {
       $.log("📢 很抱歉，😭 没有找到账号信息！你确定配置账号信息了吗？");
       return;
     }
     $.log("📢 开始检测服务器接口状态>>>");
-    let N = false;
-    const C = apiHost.split("&"),
-      s = C.length;
-    for (let L = 0; L < s; L++) {
+    let u = false;
+    const m = apiHost.split("&"),
+      V = m.length;
+    for (let M = 0; M < V; M++) {
       if ($.isNode()) {
-        N = await checkAddress("" + C[L], 2500);
+        u = await checkAddress("" + m[M], 2500);
       } else {
-        if ($.isSurge() || $.isLoon()) {
-          N = await httpClientRequest("" + C[L], 2500);
-        } else {
-          N = await fetchRequest("" + C[L], 2500);
-        }
+        $.isSurge() || $.isLoon() ? u = await httpClientRequest("" + m[M], 2500) : u = await fetchRequest("" + m[M], 2500);
       }
-      if (N == true) {
-        apiHost = C[L];
-        $.log("📢 接口" + (L + 1) + "[" + C[L] + "]服务器接口正常! 🎉");
+      if (u == true) {
+        apiHost = m[M];
+        $.log("📢 接口" + (M + 1) + "[" + m[M] + "]服务器接口正常! 🎉");
         break;
       }
-      if (L == s - 1 && N == false) {
+      if (M == V - 1 && u == false) {
         $.log("📢 抱歉，所有接口都不可用, 请前往交流群置顶获取最新的接口地址! 😭");
         $.msg($.name, "所有接口都不可用, 请尽快前往交流群置顶获取最新的接口地址!");
         return;
@@ -105,9 +88,9 @@ if ($.isNode()) {
     $.log("📢 " + systemNotify);
     $.log("🔔 当前脚本版本号: " + version + "，最新版本号: " + newest_version);
     if (vipDate != "") {
-      let b = new Date(vipDate).getTime(),
-        z = new Date().getTime();
-      if (z > b) {
+      let x = new Date(vipDate).getTime(),
+        D = new Date().getTime();
+      if (D > x) {
         $.log("❗️ 抱歉，VIP到期了，请及时付费。");
         return;
       }
@@ -129,16 +112,12 @@ if ($.isNode()) {
       $.log("❗️ 抱歉，你没有权限运行此脚本, 请关注电报机器人: https://t.me/DavidLoveBot");
       return;
     }
-    if (isCharge == true) {
-      $.log("🔔 此脚本采用付费模式。🔒");
-    } else {
-      $.log("🔔 此脚本采用免费模式。🔓");
-    }
+    isCharge == true ? $.log("🔔 此脚本采用付费模式。🔒") : $.log("🔔 此脚本采用免费模式。🔓");
     if (vipDate != "") {
       if (isCharge == true) {
-        let a = new Date(vipDate).getTime(),
-          p = new Date().getTime();
-        if (p > a) {
+        let h = new Date(vipDate).getTime(),
+          I = new Date().getTime();
+        if (I > h) {
           $.log("❗️ 抱歉，VIP到期了，请及时付费。");
           return;
         } else {
@@ -155,82 +134,75 @@ if ($.isNode()) {
         }
       }
     }
-    if (multiAccount > 1) {
-      $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一次可以运行" + numbers * multiAccount + "个账号。");
-    }
+    multiAccount > 1 && $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一次可以运行" + numbers * multiAccount + "个账号。");
     buyCount > 1 && $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一共可以运行" + runTotalCounts + "次, 已经运行了" + runedCounts + "次。");
     if (runAuth != true) {
       $.log("❗️ 抱歉,  该用户今天可能已经达到最大运行次数，明天再试吧！");
       return;
     }
-    if (xfjapp.length > numbers * multiAccount) {
+    if (qdngapp.length > numbers * multiAccount) {
       $.log("❗️ 当前用户一次最多运行" + numbers * multiAccount + "个账号，需要增加账号请查看置顶说明。");
       return;
     }
-    if (xfjapp.length == 0) {
+    if (qdngapp.length == 0) {
       $.log("先抓取账号ck，再运行脚本吧！");
       return;
     }
-    if (runedCounts + xfjapp.length > runTotalCounts) {
-      $.log("📢 一共发现了" + xfjapp.length + "个账号");
-      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (xfjapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
+    if (runedCounts + qdngapp.length > runTotalCounts) {
+      $.log("📢 一共发现了" + qdngapp.length + "个账号");
+      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (qdngapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
       return;
     }
-    if (vipDate != "") {
-      $.log("📢 你的会员有效期到： " + vipDate);
-    }
-    $.log("📢 一共发现了" + xfjapp.length + "个账号");
-    let U = [],
-      c = xfjapp.length,
-      y = 0;
-    if ($.isNode() && process.env.XFJ_THREAD_COUNT) {
-      y = parseInt(process.env.XFJ_THREAD_COUNT);
-    } else {
-      y = c;
-    }
-    let r = xfjapp.length;
-    if (y >= c) {
-      y = c;
-      r = 1;
-      $.log("📢 你设置的线程数是" + y + "，账号个数是" + c + "，" + r + "次可全部跑完。");
-      for (let D = 0; D < xfjapp.length; D++) {
-        U.push(runMultiTasks(D));
-        xfjlogs[D] = "";
-        if ($.isNode()) {
-          channels_status[D] = 0;
-          await init_ws(D);
-        } else {
-          channels_status[D] = 1;
-        }
+    vipDate != "" && $.log("📢 你的会员有效期到： " + vipDate);
+    helpUtils = await loadUtils(flushCash);
+    CryptoJS = helpUtils.createCryptoJS();
+    $.log("📢 一共发现了" + qdngapp.length + "个账号");
+    $.isNode() && (!fs.existsSync(qdng_ck_file) ? qdng_cks = {} : qdng_cks = JSON.parse(fs.readFileSync(qdng_ck_file, "utf8")));
+    let g = [],
+      C = qdngapp.length,
+      W = 0;
+    $.isNode() && process.env.QDNG_THREAD_COUNT ? W = parseInt(process.env.QDNG_THREAD_COUNT) : W = C;
+    let Q = qdngapp.length;
+    if (W >= C) {
+      W = C;
+      Q = 1;
+      $.log("📢 你设置的线程数是" + W + "，账号个数是" + C + "，" + Q + "次可全部跑完。");
+      for (let H = 0; H < qdngapp.length; H++) {
+        g.push(runMultiTasks(H));
+        qdnglogs[H] = "";
+        isNeedAds[H] = true;
+        $.isNode() ? (channels_status[H] = 0, await init_ws(H)) : channels_status[H] = 1;
       }
-      await Promise.allSettled(U).then(f2 => {
+      await Promise.allSettled(g).then(e => {
+        $.isNode() && saveFile && ($.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数"), fs.writeFileSync(qdng_ck_file, JSON.stringify(qdng_cks, null, 2)));
         $.log("日志整理功能如下：");
         $.log("---------------日志整理开始--------------");
-        for (let f5 = 0; f5 < xfjapp.length; f5++) {
-          $.log(xfjlogs[f5]);
-          sendlogs += xfjlogs[f5];
+        for (let B = 0; B < qdngapp.length; B++) {
+          $.log(qdnglogs[B]);
+          sendlogs += qdnglogs[B];
         }
         $.log("---------------日志整理结束--------------");
         sendMsg(sendlogs);
       });
     } else {
-      r = Math.ceil(c / y);
-      $.log("📢 你设置的线程数是" + y + "，账号个数是" + c + "，计算后分" + r + "次执行，一次可执行" + y + "个账号，最后一次如果不够" + y + "个账号，剩多少个账号就跑几个账号。");
-      for (let f2 = 0; f2 < r; f2++) {
-        for (let f4 = f2 * y; f4 < y * (f2 + 1) && f4 < c; f4++) {
-          U.push(runMultiTasks(f4));
-          xfjlogs[f4] = "";
-          channels_status[f4] = 0;
-          await init_ws(f4);
+      Q = Math.ceil(C / W);
+      $.log("📢 你设置的线程数是" + W + "，账号个数是" + C + "，计算后分" + Q + "次执行，一次可执行" + W + "个账号，最后一次如果不够" + W + "个账号，剩多少个账号就跑几个账号。");
+      for (let e = 0; e < Q; e++) {
+        for (let B = e * W; B < W * (e + 1) && B < C; B++) {
+          g.push(runMultiTasks(B));
+          qdnglogs[B] = "";
+          channels_status[B] = 1;
+          await init_ws(B);
         }
-        await Promise.allSettled(U).then(f6 => {
-          U = [];
-          if (f2 == r - 1) {
+        await Promise.allSettled(g).then(F => {
+          g = [];
+          if (e == Q - 1) {
+            $.isNode() && saveFile && ($.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数"), fs.writeFileSync(qdng_ck_file, JSON.stringify(qdng_cks, null, 2)));
             $.log("日志整理功能如下：");
             $.log("---------------日志整理开始--------------");
-            for (let f9 = 0; f9 < xfjapp.length; f9++) {
-              $.log(xfjlogs[f9]);
-              sendlogs += xfjlogs[f9];
+            for (let s = 0; s < qdngapp.length; s++) {
+              $.log(qdnglogs[s]);
+              sendlogs += qdnglogs[s];
             }
             $.log("---------------日志整理结束--------------");
             sendMsg(sendlogs);
@@ -239,445 +211,353 @@ if ($.isNode()) {
       }
     }
   }
-})().catch(f => $.logErr(f)).finally(() => $.done());
-async function runMultiTasks(f) {
-  return new Promise((N, C) => {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 开始执行 working......");
-    runSubTask(N, f);
+})().catch(u => $.logErr(u)).finally(() => $.done());
+async function runMultiTasks(u) {
+  return new Promise((m, V) => {
+    $.log("[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: 开始执行 working......");
+    runSubTask(m, u);
   });
 }
-async function init_ws(f) {
-  $.isNode() && (reconectCounts[f] > 0 && $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 尝试重新连接服务器>>>>>>"), wss[f] = new WebSocket(apiHost.replace("http", "ws") + "/ws"), wss[f].on("open", function C() {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 签名通道已连接");
-  }), wss[f].on("close", function s() {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
-  }), wss[f].on("error", function U() {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 签名通道已关闭，原因是出现错误");
-    channels_status[f] = 1;
-    reconectCounts[f]++;
-    if (reconectCounts[f] <= 3) {
-      init_ws(f);
-    }
+async function init_ws(u) {
+  $.isNode() && (reconectCounts[u] > 0 && $.log("[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: 尝试重新连接服务器>>>>>>"), wss[u] = new WebSocket(apiHost.replace("http", "ws") + "/ws"), wss[u].on("open", function m() {
+    $.log("[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: 签名通道已连接");
+  }), wss[u].on("close", function V() {
+    $.log("[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
+  }), wss[u].on("error", function g() {
+    $.log("[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: 签名通道已关闭，原因是出现错误");
+    channels_status[u] = 1;
+    reconectCounts[u]++;
+    reconectCounts[u] <= 3 && init_ws(u);
   }));
 }
-async function runSubTask(f, w) {
-  await $.wait(3000, 5000);
-  await currentActivityInfo(w);
-  await userInfo(w);
-  await userCoin(w);
-  await cleanSelfMoment(w);
-  await redpacket(w);
-  await createAssist(w);
-  await createShare(w);
-  await familyInfo(w);
-  await taskList(w);
-  await $.wait(randomNum(10000, 15000));
-  await momentList(w);
-  for (let C = 0; C < shareCodes.length; C++) {
-    xfjapp[w].share_code != shareCodes[C] && (await shareInfo(w, shareCodes[C]), await $.wait(randomNum(3000, 5000)));
+async function runSubTask(u, V) {
+  $.isNode() && (await $.wait(3000, 5000));
+  let g = await commonRequest(V, "/login/loginAuto", "post", "自动登录", "refresh_key=" + qdngapp[V].token);
+  if (g) {
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 用户名=> " + g.data.username);
+    qdnglogs[V] += "[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 用户名=> " + g.data.username + "\n";
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 手机号=> " + helpUtils.phone_num(g.data.phone));
+    qdnglogs[V] += "[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 手机号=> " + helpUtils.phone_num(g.data.phone) + "\n";
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 金币=> " + g.data.gold_count);
+    qdnglogs[V] += "[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 金币=> " + g.data.gold_count + "\n";
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 现金余额=> " + g.data.gold_money + "元");
+    qdnglogs[V] += "[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 现金余额=> " + g.data.gold_money + "元\n";
+  } else {
+    u();
+    return;
   }
-  for (let c = 0; c < assistCodes.length; c++) {
-    if (xfjapp[w].assist_code != assistCodes[c]) {
-      await assistInfo(w, assistCodes[c]);
-      await $.wait(randomNum(3000, 5000));
+  g && g.data.gold_money >= 2 && hour == 8 && (await commonRequest(V, "/balance/goldWithdrawal", "post", "提现", "num=20000&pay_type=1"));
+  let C = helpUtils.createDayjs(),
+    W = C().format("YYYYMM"),
+    Q = await drawCommonRequest(V, "/user/get_sign_info?refresh_key=" + qdngapp[V].token + "&time=" + W + "&sign_type=2", "get", "每日睡觉信息", "");
+  if (Q && Q.data.days_my_is_sign == 2 && hour >= 21 && hour < 23) {
+    let s = await drawCommonRequest(V, "/user/user_sign?refresh_key=" + qdngapp[V].token + "&sign_type=2", "post", "早睡打卡", "");
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 早睡打卡任务=> 完成，获得" + s.data.integral + "积分");
+    await $.wait(helpUtils.randomNum(5000, 10000));
+    let L = await drawCommonRequest(V, "/user/userSignAdv", "post", "早睡打卡翻倍", "token=" + qdngapp[V].token + "&sign_type=2");
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 早睡打卡翻倍任务=> 完成，获得" + L.data.gold + "个金币");
+  }
+  let M = await drawCommonRequest(V, "/user/get_sign_info?refresh_key=" + qdngapp[V].token + "&time=" + W + "&sign_type=1", "get", "每日早起信息", "");
+  if (M && M.data.days_my_is_sign == 2 && hour >= 5 && hour <= 8) {
+    let l = await drawCommonRequest(V, "/user/user_sign?refresh_key=" + qdngapp[V].token + "&sign_type=1", "post", "早起打卡", "");
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 早起打卡任务=> 完成，获得" + l.data.integral + "积分");
+    await $.wait(helpUtils.randomNum(5000, 10000));
+    let K = await drawCommonRequest(V, "/user/userSignAdv", "post", "早起打卡翻倍", "token=" + qdngapp[V].token + "&sign_type=1");
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 早起打卡翻倍任务=> 完成，获得" + K.data.gold + "个金币");
+  }
+  let x = await drawCommonRequest(V, "/dayask/get_info", "post", "每日答题题目信息", "token=" + qdngapp[V].token);
+  while (x.data.power > 0) {
+    let Y = x.data.question_option,
+      w = Y.find(J => J.answer == 1);
+    if (w && x.data.power > 0) {
+      let J = await drawCommonRequest(V, "/dayask/user_ask", "post", "提交答案", "ask_id=" + w.ask_id + "&answer[0]=" + w.id + "&is_again=0&token=" + qdngapp[V].token);
+      if (J.data.is_true == 1) {
+        $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 回答问题=> ✅正确，获得" + J.data.add_integral + "个金币");
+        await $.wait(helpUtils.randomNum(5000, 10000));
+        let U = await drawCommonRequest(V, "/dayask/user_double", "post", "回答正确看广告得双倍奖励", "double=2&token=" + qdngapp[V].token + "&id=" + J.data.id);
+        $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 回答问题=> 看广告得双倍奖励，获得" + U.data.add_integral + "个金币");
+        await $.wait(helpUtils.randomNum(5000, 10000));
+        break;
+      }
     }
   }
-  if ($.isNode()) {
-    await wss[w].close();
+  let D = x.data.big_reward;
+  for (let t = 0; t < D.length; t++) {
+    let E = D[t];
+    if (E.can_receive == 1 && E.is_end == 0) {
+      let N = await drawCommonRequest(V, "/dayask/user_receive_big_reward", "post", "累计答题奖励", "id=" + E.id + "&token=" + qdngapp[V].token);
+      $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 累计答对" + E.num + "题=> 获得" + N.data.add_integral + "个金币");
+      await $.wait(helpUtils.randomNum(5000, 10000));
+    }
   }
+  let h = await drawCommonRequest(V, "/wheel/get_user_status?token=" + qdngapp[V].token, "get", "获取抽奖信息", "");
+  if (h && h.data.user_integral_remains > 0) {
+    if (h.data.user_daily_draw_remains > 0) {
+      for (let p = 0; p < h.data.user_daily_draw_remains; p++) {
+        await $.wait(helpUtils.randomNum(5000, 10000));
+        let R = await drawCommonRequest(V, "/wheel/make_draw", "post", "获取抽奖结果", "token=" + qdngapp[V].token);
+        $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 抽奖类型=> " + R.data.award_type);
+        R.data.award_type == "gold" && $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 抽奖=> 完成，获得" + R.data.award_amount + "个金币");
+        if (isNeedAds[V] && R.data.award_type != "integral") {
+          await $.wait(helpUtils.randomNum(10000, 15000));
+          let b = await drawCommonRequest(V, "/wheel/view_ad_complete", "post", "获取抽奖结果", "token=" + qdngapp[V].token + "&award_type=" + R.data.award_type + "&award_amount=" + R.data.award_amount + "&multi=" + R.data.award_multi_num);
+          b ? $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 抽奖看广告得金币=> 完成，获得" + b.data.num + "个金币") : isNeedAds[V] = false;
+          await $.wait(helpUtils.randomNum(5000, 10000));
+        }
+      }
+    }
+    if (h.data.user_daily_view_vad_remains > 0) {
+      for (let T = 0; T < h.data.user_daily_view_vad_remains; T++) {
+        await drawCommonRequest(V, "/wheel/view_ad_complete", "post", "获取抽奖信息", "token=" + qdngapp[V].token + "&award_type=draw&award_amount=3&multi=1");
+        await $.wait(helpUtils.randomNum(10000, 15000));
+      }
+    }
+    if (isNeedAds[V] && h.data.user_brs_adt_5_info == 0) {
+      let S = await drawCommonRequest(V, "/wheel/view_ad_complete", "post", "累计抽奖奖励", "token=" + qdngapp[V].token + "&award_type=gold&award_amount=0&multi=0&draw_times=5");
+      S ? ($.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 累计抽奖5次奖励=> 完成，获得" + S.data.num + "个金币"), await $.wait(helpUtils.randomNum(5000, 10000))) : isNeedAds[V] = false;
+    }
+    if (isNeedAds[V] && h.data.user_brs_adt_10_info == 0) {
+      let Z = await drawCommonRequest(V, "/wheel/view_ad_complete", "post", "累计抽奖奖励", "token=" + qdngapp[V].token + "&award_type=gold&award_amount=0&multi=0&draw_times=10");
+      Z ? ($.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 累计抽奖10次奖励=> 完成，获得" + Z.data.num + "个金币"), await $.wait(helpUtils.randomNum(5000, 10000))) : isNeedAds[V] = false;
+    }
+    if (isNeedAds[V] && h.data.user_brs_adt_20_info == 0) {
+      let d = await drawCommonRequest(V, "/wheel/view_ad_complete", "post", "累计抽奖奖励", "token=" + qdngapp[V].token + "&award_type=gold&award_amount=0&multi=0&draw_times=20");
+      d ? ($.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 累计抽奖20次奖励=> 完成，获得" + d.data.num + "个金币"), await $.wait(helpUtils.randomNum(5000, 10000))) : isNeedAds[V] = false;
+    }
+  }
+  let I = await commonRequest(V, "/qudongTask/getTimerBoxTask", "post", "定时宝箱信息", "");
+  if (I) {
+    let X = I.data.task_list[0];
+    if (X.count_down_seconds == 0) {
+      await $.wait(helpUtils.randomNum(10000, 15000));
+      let c = await commonRequest(V, "/qudongTask/pickTaskReward", "post", "开宝箱得金币", "data=&id=" + X.id + "&task_id=" + X.task_id);
+      $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + c.data.task_name + "=> 完成，获得" + c.data.gold + "个金币");
+      if (isNeedAds[V]) {
+        await $.wait(helpUtils.randomNum(10000, 15000));
+        let A = await commonRequest(V, "/qudongTask/viewAdComplete", "post", "开宝箱看广告得金币", "award_amount=" + c.data.gold + "&award_type=gold&multi=" + c.data.gold_multi + "&task_id=" + X.task_id);
+        A ? $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + c.data.task_name + "翻倍=> 完成，获得" + A.data.gold + "个金币") : isNeedAds[V] = false;
+      }
+    }
+  }
+  let H = await commonRequest(V, "/sport/addSportRecord", "post", "运动记录", "time_zone=" + encodeURIComponent("GMT+8") + "&sport_type=0&step_count=0&request_time=" + helpUtils.ts10());
+  if (H && H.data.step < 9999) {
+    $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 今天还没有上传运动信息，开始上传>>>");
+    await $.wait(helpUtils.randomNum(5000, 15000));
+    let r = helpUtils.randomNum(10000, 13000);
+    H = await commonRequest(V, "/sport/addSportRecord", "post", "运动步数上传", "time_zone=" + encodeURIComponent("GMT+8") + "&sport_type=0&step_count=" + r + "&request_time=" + helpUtils.ts10());
+    H && ($.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 每日运动上传=> 成功上传了" + H.data.step + "步 🎉"), qdnglogs[V] += "[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 每日运动上传=> 成功上传了" + H.data.step + "步 🎉 \n");
+  }
+  let e = await commonRequest(V, "/gold/get_gold_info", "get", "签到金币任务信息", "");
+  if (e && hour < 8) {
+    let f = e.data.sign_task_list;
+    for (let j in f) {
+      let O = f[j];
+      if (O.is_receive == 1 && O.special_status == 2) {
+        await $.wait(helpUtils.randomNum(15000, 20000));
+        let o = await commonRequest(V, "/gold/user_gold_sign", "post", "获取签到金", "id=" + O.id + "&is_adv=" + O.adv_b);
+        $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 签到第" + (parseInt(j) + 1) + "个任务=> 完成，获得" + o.data.num + "个金币");
+        O.is_special == 2 && (await $.wait(helpUtils.randomNum(15000, 20000)), o = await commonRequest(V, "/gold/user_gold_sign", "post", "获取签到金", "id=" + O.id + "&is_adv=1"), $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 签到第" + (parseInt(j) + 1) + "个翻倍任务=> 完成，获得" + o.data.num + "个金币"));
+      } else {
+        if (O.is_receive == 1 && O.special_status == 1) {
+          await $.wait(helpUtils.randomNum(15000, 20000));
+          let q = await commonRequest(V, "/gold/user_gold_sign", "post", "获取签到金", "id=" + O.id + "&is_adv=" + O.adv_b);
+          $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 签到第" + (parseInt(j) + 1) + "个大额金币任务=> 完成，获得" + q.data.num + "个金币");
+        }
+      }
+    }
+    let z = e.data.task_list;
+    if (z) {
+      for (let P = 0; P < z.length; P++) {
+        let y = z[P];
+        if (y.is_receive == 1) {
+          let G = await commonRequest(V, "/gold/task_receive", "post", "签到累计" + y.days + "天奖励", "days=" + y.days + "&is_adv=2&num=" + y.reward_num);
+          $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 连续签到" + y.days + "天任务=> 完成，获得" + G.data.num + "个金币");
+          await $.wait(helpUtils.randomNum(5000, 15000));
+          let v = await commonRequest(V, "/gold/task_receive", "post", "签到累计" + y.days + "天翻倍奖励", "days=" + y.days + "&is_adv=1&num=" + y.reward_num);
+          $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 连续签到" + y.days + "天翻倍任务=> 完成，获得" + v.data.num + "个金币");
+        }
+      }
+    }
+  }
+  let B = await commonRequest(V, "/qudongTask/getTodayTaskList", "post", "任务中心列表", ""),
+    F = await commonRequest(V, "/qudongTask/getTodaySignList", "post", "每日登录App任务信息", "");
+  if (F) {
+    let a = F.data.user_sign_list,
+      u0 = a.find(u1 => u1.words == "今天");
+    if (u0 && u0.pick_status == 0) {
+      let u1 = await commonRequest(V, "/qudongTask/pickTaskReward", "post", "每日登录App得金币", "data=&id=" + u0.id + "&task_id=" + u0.task_id);
+      await $.wait(helpUtils.randomNum(5000, 15000));
+      let u2 = await commonRequest(V, "/qudongTask/viewAdComplete", "post", "每日登录App看广告得双倍金币", "award_amount=" + u1.data.gold + "&award_type=gold&multi=" + u1.data.gold_multi + "&task_id=" + u0.task_id);
+      $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 每日登录App看广告得双倍金币任务=> 完成，获得" + u2.data.gold + "个金币");
+    }
+  }
+  if (B) {
+    let u3 = B.data.find(uu => uu.type == "video_bonus_tasks"),
+      u4 = u3.tasks;
+    for (let uu in u4) {
+      let um = u4[uu],
+        uV = um.task_list[0];
+      if (uV.pick_status == 0) {
+        await $.wait(helpUtils.randomNum(15000, 30000));
+        let ug = await commonRequest(V, "/qudongTask/pickTaskReward", "post", "看广告得金币", "data=&id=" + uV.id + "&task_id=" + uV.task_id);
+        $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uV.task_name + "(" + (parseInt(uu) + 1) + "/10)=> 完成，获得" + ug.data.gold + "个金币");
+      }
+      if (uV.multi_status == 0) {
+        await $.wait(helpUtils.randomNum(15000, 30000));
+        let uC = await commonRequest(V, "/qudongTask/viewAdComplete", "post", "再看一次广告翻倍得金币", "award_amount=" + uV.bonus + "&award_type=gold&multi=" + uV.multi + "&task_id=" + uV.task_id);
+        $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uV.task_name + "(" + (parseInt(uu) + 1) + "/10)_翻倍=> 完成，获得" + uC.data.gold + "个金币");
+      }
+    }
+    let u5 = B.data.find(uW => uW.type == "daily_tasks"),
+      u6 = u5.tasks.find(uW => uW.task_tag == "step"),
+      u7 = u6.task_list;
+    for (let uW in u7) {
+      let uQ = u7[uW];
+      if (uQ.pick_status == 0) {
+        await $.wait(helpUtils.randomNum(1000, 3000));
+        let uM = await commonRequest(V, "/qudongTask/pickTaskReward", "post", "完成特定步数得金币", "data=&id=" + uQ.id + "&task_id=" + uQ.task_id);
+        uM && $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uQ.task_name + "(" + (parseInt(uW) + 1) + "/10)=> 完成，获得" + uM.data.gold + "个金币");
+      }
+    }
+    let u8 = B.data.find(ux => ux.type == "habit_tasks");
+    if (u8) {
+      for (let uD = 0; uD < u8.tasks.length; uD++) {
+        let uh = u8.tasks[uD];
+        if (uh.task_tag != "drink_water") {
+          let uI = uh.task_list[0];
+          if (uI.finish_status == 1 && uI.pick_status == 0) {
+            let uH = await commonRequest(V, "/qudongTask/pickTaskReward", "post", uI.task_name, "data=&id=" + uI.id + "&task_id=" + uI.task_id);
+            $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uH.data.task_name + "=> 完成，获得" + uH.data.gold + "个金币");
+            if (isNeedAds[V]) {
+              await $.wait(helpUtils.randomNum(5000, 15000));
+              let ue = await commonRequest(V, "/qudongTask/viewAdComplete", "post", uI.task_name + "看广告得双倍金币", "award_amount=" + uH.data.gold + "&award_type=gold&multi=" + uH.data.gold_multi + "&task_id=" + uI.task_id);
+              ue ? $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uI.task_name + "看广告得双倍金币=> 完成，获得" + ue.data.gold + "个金币") : isNeedAds[V] = false;
+            }
+          }
+        }
+      }
+      let ux = u8.tasks.find(uB => uB.task_tag == "drink_water");
+      if (ux && hour > 12) {
+        let uB = await commonRequest(V, "/user/water_list", "get", "每日喝水信息", ""),
+          un = uB.data.list;
+        for (let uF = 0; uF < un.length; uF++) {
+          let us = un[uF];
+          us.is_receive == 2 && (await $.wait(helpUtils.randomNum(5000, 15000)), await commonRequest(V, "/user/receive_water", "post", "喝水", "id=" + us.key + "&receive_type=1"), $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 每日喝水(" + us.key + "/8)=> 完成，获得" + us.num + "个金币"));
+          us.is_adv == 2 && (await $.wait(helpUtils.randomNum(5000, 15000)), await commonRequest(V, "/user/receive_water", "post", "喝水翻倍", "id=" + us.key + "&receive_type=2"), $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: 每日喝水(" + us.key + "/8)看广告翻倍=> 完成，获得" + us.adv + "个金币"));
+        }
+      }
+    }
+    let u9 = B.data.find(uL => uL.type == "interactive_tasks");
+    if (u9) {
+      let uL = u9.tasks;
+      for (let ul = 0; ul < uL.length; ul++) {
+        let ui = uL[ul].task_list[0];
+        if (ui.task_tag == "invite_user") {
+          for (let uK = 0; uK < 5; uK++) {
+            await $.wait(helpUtils.randomNum(10000, 12000));
+            let uY = await commonRequest(V, "/qudongTask/pickTaskReward", "post", ui.task_name, "data=&id=" + ui.id + "&task_id=" + ui.task_id);
+            $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uY.data.task_name + "(" + (uK + 1) + "/5)=> 完成，获得" + uY.data.gold + "个金币");
+            await $.wait(helpUtils.randomNum(15000, 30000));
+            if (isNeedAds[V]) {
+              let uw = await commonRequest(V, "/qudongTask/viewAdComplete", "post", uY.data.task_name + "看广告得翻倍金币", "award_amount=" + uY.data.gold + "&award_type=gold&multi=" + uY.data.gold_multi + "&task_id=" + ui.task_id);
+              uw ? $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uY.data.task_name + "看广告(" + (uK + 1) + "/5)=> 完成，获得" + uw.data.gold + "个金币") : isNeedAds[V] = false;
+            }
+          }
+        }
+        if (ui.finish_status == 1 && ui.pick_status == 0) {
+          await $.wait(helpUtils.randomNum(10000, 12000));
+          let uJ = await commonRequest(V, "/qudongTask/pickTaskReward", "post", ui.task_name, "data=&id=" + ui.id + "&task_id=" + ui.task_id);
+          $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uJ.data.task_name + "=> 完成，获得" + uJ.data.gold + "个金币");
+          await $.wait(helpUtils.randomNum(15000, 30000));
+          if (isNeedAds[V]) {
+            let uU = await commonRequest(V, "/qudongTask/viewAdComplete", "post", uJ.data.task_name + "看广告得翻倍金币", "award_amount=" + uJ.data.gold + "&award_type=gold&multi=" + uJ.data.gold_multi + "&task_id=" + ui.task_id);
+            uU ? $.log("[账号" + (V + 1 < 10 ? "0" + (V + 1) : V + 1) + "]: " + uJ.data.task_name + "看广告=> 完成，获得" + uU.data.gold + "个金币") : isNeedAds[V] = false;
+          }
+        }
+        ui.task_tag == "view_miniclub_act" && ui.finish_status == 0 && (await drawCommonRequest(V, "/miniclub/activity_info", "post", "浏览同城活动", "token=" + qdngapp[V].token + "&activity_id=34090"), await $.wait(helpUtils.randomNum(3000, 5000)));
+        ui.task_tag == "view_miniclub" && ui.finish_status == 0 && (await commonRequest(V, "/miniclub/all_club_list", "post", "浏览同城俱乐部主页", "pages=1&type=1"), await $.wait(helpUtils.randomNum(3000, 5000)));
+        ui.task_tag == "browse_award" && ui.finish_status == 0 && (await drawCommonRequest(V, "/qudongTask/finishBrowseTask", "post", "逛街领奖励", "token=" + qdngapp[V].token + "&task_id=" + ui.task_id), await $.wait(helpUtils.randomNum(3000, 5000)));
+        if (ui.task_tag == "follow_miniclub" && ui.finish_status == 0) {
+          let ut = await commonRequest(V, "/miniclub/all_club_list", "post", "浏览同城俱乐部主页", "pages=1&type=1"),
+            uE = ut.data.list;
+          for (let uN in uE) {
+            let up = uE[uN];
+            if (up.is_join == 0) {
+              await commonRequest(V, "/miniclub/add_club", "post", "关注俱乐部", "club_id=" + up.id + "&status=1");
+              break;
+            }
+          }
+          await $.wait(helpUtils.randomNum(3000, 5000));
+        }
+      }
+    }
+  }
+  $.isNode() && (await wss[V].close());
   await runComplete(appName, userId);
-  f();
+  u();
 }
 async function getCk() {
-  if ($request.url.match(/\/op-activity\/current-activity/)) {
-    const U = $request.url,
-      c = U.split("access_token=")[1].split("&appkey")[0];
-    let y = xfjuserck - 1;
-    if (xfjapp[y]) {
-      xfjapp[y].token = c;
-    } else {
-      const l = {
-        token: c
-      };
-      xfjapp[y] = l;
-    }
-    $.setdata(JSON.stringify(xfjapp, null, 2), "xfjapp");
-    $.msg($.name, "小富家账号" + (y + 1) + "Token获取成功！🎉");
-  }
-}
-async function refreshToken(f) {
-  let N = ts10(),
-    C = "appkey" + APP_KEY + "refresh_token" + xfjapp[f].refresh_token + "time" + N + "5b1d5a0ee5484e40bb6f343f55576072",
-    s = MD5_Encrypt(C);
-  const U = "https://api.xiaofujia.com/familychat/user/refresh-token?refresh_token=" + xfjapp[f].refresh_token + "&time=" + N + "&appkey=" + APP_KEY + "&sign=" + s;
-  let c = "{}";
-  await getReqObject(U, c, f);
-  await httpRequest("post", requestObjects[f], printCaller());
-  let y = httpResult;
-  if (y != null && y.code == 0) {
-    xfjapp[f].token = y.data.access_token;
-  }
-}
-async function currentActivityInfo(f) {
-  let N = ts10();
-  let C = "access_token" + xfjapp[f].token + "appkey" + APP_KEY + "time" + N + "5b1d5a0ee5484e40bb6f343f55576072",
-    s = MD5_Encrypt(C);
-  const U = "https://api.xiaofujia.com/familychat/op-activity/current-activity?access_token=" + xfjapp[f].token + "&time=" + N + "&appkey=" + APP_KEY + "&sign=" + s;
-  let c = "";
-  await getReqObject(U, c, f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let y = httpResult;
-  if (y != null && y.code == 0) {
-    ACT_ID = y.data.activity_id;
-  }
-}
-async function userInfo(f) {
-  const N = await urlDeal(f, "https://api.xiaofujia.com/familychat/user/info");
-  await getReqObject(N, "", f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let C = httpResult;
-  if (C != null && C.code == 0) {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 用户名=> " + C.data.profile.nickname);
-    xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 用户名=> " + C.data.profile.nickname + "\n";
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 手机号=> " + C.data.profile.mobile);
-    xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 手机号=> " + C.data.profile.mobile + "\n";
-    xfjapp[f].uid = C.data.uid;
-    if (C.data.uid == "6bbbc924de14419aafb2f9b4efec6bc4") {
-      await getInvite(f);
-    }
-  } else {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 用户信息=> " + C.msg);
-    xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 用户信息=> " + C.msg + "\n";
-  }
-}
-async function userCoin(f) {
-  const N = await urlDeal(f, "https://api.xiaofujia.com/familychat/op-activity/user-coin?activity_id=" + ACT_ID);
-  await getReqObject(N, "", f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let C = httpResult;
-  if (C != null && C.code == 0) {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 福星=> " + C.data.remain_coins + "个");
-    xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 福星=> " + C.data.remain_coins + "个\n";
-    xfjapp[f].coins = C.data.remain_coins;
-  } else {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 账户信息=> " + C.msg);
-    xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 账户信息=> " + C.msg + "\n";
-  }
-}
-async function taskList(f) {
-  const N = await urlDeal(f, "https://api.xiaofujia.com/familychat/op-activity/task-list?activity_id=" + ACT_ID);
-  await getReqObject(N, "", f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let C = httpResult;
-  if (C != null && C.code == 0) {
-    let U = C.data;
-    for (let c = 0; c < U.length; c++) {
-      let r = U[c];
-      if (r.task_status == 0) {
-        if (r.task_name == "发动态") {
-          await createMoment(f);
-          await $.wait(randomNum(3000, 5000));
-        } else {
-          if (r.task_name == "App首次登录") {
-            await doTask(f, r.task_id, r.task_name);
-            await $.wait(randomNum(5000, 10000));
-          } else {
-            if (r.task_name == "每日打卡") {
-              await doTask(f, r.task_id, r.task_name);
-              await $.wait(randomNum(5000, 10000));
-            }
-          }
-        }
-      }
-      if (r.task_status == 1) {
-        if (r.task_name == "福星分享") {
-          for (let S = 0; S < shareCodes.length; S++) {
-            if (xfjapp[f].share_code != shareCodes[S]) {
-              await shareInfo(f);
-            }
-          }
-        } else {
-          if (r.task_name == "每日打卡") {
-            await doTask(f, r.task_id, r.task_name);
-            await $.wait(randomNum(5000, 10000));
-          }
-        }
-      }
-    }
-  } else {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 任务列表=> " + C.msg);
-    xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 任务列表=> " + C.msg + "\n";
-  }
-}
-async function doTask(f, w, N) {
-  const s = await urlDeal(f, "https://api.xiaofujia.com/familychat/op-activity/do-task?activity_id=" + ACT_ID);
-  let U = "{\"task_id\": \"" + w + "\"}";
-  await getReqObject(s, U, f);
-  await httpRequest("post", requestObjects[f], printCaller());
-  let c = httpResult;
-  c != null && c.code == 0 && ($.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 任务" + N + "=> " + c.msg), xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 任务" + N + "=> " + c.msg + "\n");
-}
-async function redpacket(f) {
-  const N = await urlDeal(f, "https://api.xiaofujia.com/familychat/op-activity/redenve-list?activity_id=" + ACT_ID);
-  await getReqObject(N, "", f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let C = httpResult;
-  if (C != null && C.code == 0) {
-    let U = C.data.find(r => r.amount == 1),
-      c = C.data.find(r => r.amount == 5),
-      y = C.data.find(r => r.amount == 10);
-    if (xfjapp[f].coins >= y.extra.exchange_coin_count && y.remain_count > 0 && y.redenve_status != 3) {
-      await excharge(f, y.redenve_id);
-    } else {
-      if (xfjapp[f].coins >= c.extra.exchange_coin_count && xfjapp[f].coins < 10000 && c.remain_count > 0 && c.redenve_status != 3) {
-        await excharge(f, c.redenve_id);
-      } else {
-        if (xfjapp[f].coins >= U.extra.exchange_coin_count && xfjapp[f].coins < 5000 && U.remain_count > 0 && U.redenve_status != 3) {
-          await excharge(f, U.redenve_id);
-        }
-      }
-    }
-  }
-}
-async function excharge(f, w) {
-  const C = await urlDeal(f, "https://api.xiaofujia.com/familychat/op-activity/redenve-receive?activity_id=" + ACT_ID);
-  let s = "{\"redenve_id\": \"" + w + "\"}";
-  await getReqObject(C, s, f);
-  await httpRequest("post", requestObjects[f], printCaller());
-  let U = httpResult;
-  U != null && U.code == 0 && U.data.status == 1 && ($.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 兑换" + U.data.redenve_amount + "元=> " + U.msg), xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 兑换" + U.data.redenve_amount + "元=> " + U.msg + "\n");
-}
-async function createShare(C) {
-  const U = await urlDeal(C, "https://api.xiaofujia.com/familychat/share/create?activity_id=" + ACT_ID);
-  const c = {
-    task_id: "a784b9a14b4845909eb126c7bb801341",
-    activity_id: ACT_ID,
-    scene_id: 4
-  };
-  const y = {
-    op_activity_data: c
-  };
-  let l = {
-    share_type: 11,
-    share_channel: 1,
-    data: y
-  };
-  await getReqObject(U, JSON.stringify(l), C);
-  await httpRequest("post", requestObjects[C], printCaller());
-  let L = httpResult;
-  if (L != null && L.code == 0) {
-    let d = L.data.url.split("=")[1];
-    xfjapp[C].share_code = d;
-  }
-}
-async function createAssist(C) {
-  const U = await urlDeal(C, "https://api.xiaofujia.com/familychat/share/create?activity_id=" + ACT_ID),
-    c = {
-      activity_id: ACT_ID,
-      task_id: "4f4b6dea1649453bb29f256dc9df1aae",
-      scene_id: 3
+  if ($request.url.match(/\/qudongTask\/getTodayTaskList/)) {
+    const u = $request.body,
+      m = u.split("app_imei=")[1].split("&app_type")[0],
+      V = u.split("token=")[1];
+    let g = qdnguserck - 1;
+    qdngapp[g] ? (qdngapp[g].deviceId = m, qdngapp[g].token = V) : qdngapp[g] = {
+      deviceId: m,
+      token: V
     };
-  const y = {
-    op_activity_data: c
-  };
-  let l = {
-    share_type: 11,
-    share_channel: 2,
-    data: y
-  };
-  await getReqObject(U, JSON.stringify(l), C);
-  await httpRequest("post", requestObjects[C], printCaller());
-  let L = httpResult;
-  if (L != null && L.code == 0) {
-    let X = L.data.url.split("=")[1];
-    xfjapp[C].assist_code = X;
+    $.setdata(JSON.stringify(qdngapp, null, 2), "qdngapp");
+    $.msg($.name, "趣动账号" + (g + 1) + "Token获取成功！🎉");
   }
 }
-async function shareInfo(f, w) {
-  const C = await urlDeal(f, "https://api.xiaofujia.com/familychat/share/info?activity_id=" + ACT_ID + "&code=" + w);
-  let s = "";
-  await getReqObject(C, s, f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let U = httpResult;
-  if (U != null && U.code == 0) {
-    if (U.data.task_info.has_assist == false) {
-      await takeAssist(f, U.data.task_info.task_id, U.data.task_info.uid);
-    }
+async function commonRequest(u, m, V, g, C) {
+  let W = "https://capi.wewillpro.com" + m,
+    Q = await encrypt(u, C);
+  V == "post" ? await getReqObject(W, Q, u) : (W = W + "?" + Q, await getReqObject(W, "", u));
+  await httpRequest(V, requestObjects[u], printCaller());
+  let M = httpResult;
+  if (M != null && M.code == 200) {
+    return M;
+  } else {
+    $.log("[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: " + g + "=> " + M.msg);
+    qdnglogs[u] += "[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: " + g + "=> " + M.msg + "\n";
   }
 }
-async function assistInfo(f, w) {
-  const C = await urlDeal(f, "https://api.xiaofujia.com/familychat/share/info?activity_id=" + ACT_ID + "&code=" + w);
-  await getReqObject(C, "", f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let s = httpResult;
-  if (s != null && s.code == 0) {
-    if (s.data.task_info.has_assist == false) {
-      await takeAssist(f, s.data.task_info.task_id, s.data.task_info.uid);
-    }
+async function drawCommonRequest(u, m, V, g, C) {
+  let W = "https://capi.wewillpro.com" + m;
+  await getReqObject(W, C, u);
+  await httpRequest(V, requestObjects[u], printCaller());
+  let Q = httpResult;
+  if (Q != null && Q.code == 200) {
+    return Q;
+  } else {
+    $.log("[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: " + g + "=> " + Q.msg);
+    qdnglogs[u] += "[账号" + (u + 1 < 10 ? "0" + (u + 1) : u + 1) + "]: " + g + "=> " + Q.msg + "\n";
   }
 }
-async function takeAssist(f, w, N) {
-  const s = await urlDeal(f, "https://api.xiaofujia.com/familychat/op-activity/task-assist?activity_id=" + ACT_ID);
-  let U = "{\"task_id\":\"" + w + "\",\"assisted_uid\":\"" + N + "\"}";
-  await getReqObject(s, U, f);
-  await httpRequest("post", requestObjects[f], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 0) {
-    $.log("[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 赠送福星任务=> " + c.msg);
-    xfjlogs[f] += "[账号" + (f + 1 < 10 ? "0" + (f + 1) : f + 1) + "]: 赠送福星任务=> " + c.msg + "=> " + c.msg + "\n";
-  }
-}
-async function createMoment(w) {
-  const C = await urlDeal(w, "https://api.xiaofujia.com/familychat/moment/create?version=1");
-  await txt_api(w);
-  const s = {
-    visible_family_ids: [],
-    visible_perm: 0
-  };
-  let U = {
-    status: 2,
-    perm_info: s,
-    publish_time: $.time("yyyy-MM-dd qq HH:mm:ss"),
-    text_content: contents[w]
-  };
-  await getReqObject(C, JSON.stringify(U), w);
-  await httpRequest("post", requestObjects[w], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 0) {
-    let r = c.data.moment_id;
-    $.log("[账号" + (w + 1 < 10 ? "0" + (w + 1) : w + 1) + "]: 发布动态(" + r + ")=> " + c.msg);
-    moments.push(r);
-    xfjapp[w].moment_id = r;
-  }
-}
-async function momentList(f) {
-  const N = await urlDeal(f, "https://api.xiaofujia.com/familychat/moment/list?version=1&page_index=0&page_size=50");
-  let C = "";
-  await getReqObject(N, C, f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let s = httpResult;
-  if (s != null && s.code == 0) {
-    let c = s.data;
-    for (let y = 0; y < c.length; y++) {
-      let r = c[y],
-        l = r.moment_id;
-      r.is_stared == 0 && (await setStar(f, l), await $.wait(randomNum(3000, 5000)));
-    }
-  }
-}
-async function cleanSelfMoment(f) {
-  const N = await urlDeal(f, "https://api.xiaofujia.com/familychat/moment/list?version=1&page_index=0&page_size=50");
-  let C = "";
-  await getReqObject(N, C, f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let s = httpResult;
-  if (s != null && s.code == 0) {
-    let c = s.data;
-    for (let y = 0; y < c.length; y++) {
-      let r = c[y],
-        l = r.moment_id;
-      if (r.creator.uid == xfjapp[f].uid) {
-        await delComent(f, l);
-        await $.wait(randomNum(3000, 5000));
-      }
-    }
-  }
-}
-async function setStar(w, N) {
-  const s = await urlDeal(w, "https://api.xiaofujia.com/familychat/moment/set-star?version=1");
-  let c = {
-    emoticon_name: "dianzan",
-    moment_id: N,
-    star: 1
-  };
-  await getReqObject(s, JSON.stringify(c), w);
-  await httpRequest("post", requestObjects[w], printCaller());
-  let y = httpResult;
-  if (y != null && y.code == 0) {
-    $.log("[账号" + (w + 1 < 10 ? "0" + (w + 1) : w + 1) + "]: 点赞动态(" + N + ")=> " + y.msg);
-  }
-}
-async function delComent(w, N) {
-  const s = await urlDeal(w, "https://api.xiaofujia.com/familychat/moment/del?version=1");
-  let c = {
-    moment_id: N
-  };
-  await getReqObject(s, JSON.stringify(c), w);
-  await httpRequest("post", requestObjects[w], printCaller());
-  let y = httpResult;
-  if (y != null && y.code == 0) {
-    $.log("[账号" + (w + 1 < 10 ? "0" + (w + 1) : w + 1) + "]: 删除动态(" + N + ")=> " + y.msg);
-  }
-}
-async function getInvite(f) {
-  const N = await urlDeal(f, "https://api.xiaofujia.com/familychat/family/invite-info?family_id=763cb4c5aca24ea1ba707c2654881300&version=1");
-  await getReqObject(N, "", f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let C = httpResult;
-  if (C != null && C.code == 0) {
-    let U = C.data.invite_code;
-    await redisSet("app_invicate_code", "xfjapp", U);
-  }
-}
-async function familyInfo(f) {
-  const N = await urlDeal(f, "https://api.xiaofujia.com/familychat/family/list?version=1");
-  await getReqObject(N, "", f);
-  await httpRequest("get", requestObjects[f], printCaller());
-  let C = httpResult;
-  if (C != null && C.code == 0) {
-    if (C.data.length == 0) {
-      await join(f);
-    }
-  }
-}
-async function join(w) {
-  const C = await urlDeal(w, "https://api.xiaofujia.com/familychat/family/join?version=1");
-  let U = {
-    join_type: 1,
-    invite_code: invicode
-  };
-  await getReqObject(C, JSON.stringify(U), w);
-  await httpRequest("post", requestObjects[w], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 0) {
-    $.log("[账号" + (w + 1 < 10 ? "0" + (w + 1) : w + 1) + "]: 加入圈子=> " + c.msg);
-  }
-}
-async function urlDeal(w, N) {
-  let s = ts10();
-  const U = {
-    time: "" + s,
-    appkey: "" + APP_KEY,
-    access_token: "" + xfjapp[w].token
-  };
-  let c = sortUrlParams(N, [], U);
-  await selectChannel(w, c);
-  return N + (N.indexOf("?") != -1 ? "&" : "?") + ("access_token=" + xfjapp[w].token + "&appkey=" + APP_KEY + "&sign=" + requestSigns[w] + "&time=" + s);
-}
-function getScriptAuth(f, w, N) {
-  return new Promise((s, U) => {
-    const y = apiHost + "/script/permissions/lastest",
-      r = {
-        appName: f,
-        userId: w,
-        activityCode: N,
+function getScriptAuth(u, m, V) {
+  return new Promise((g, C) => {
+    const W = apiHost + "/script/permissions/lastest",
+      Q = {
+        appName: u,
+        userId: m,
+        activityCode: V,
         version: version
+      },
+      M = {
+        url: W,
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        body: JSON.stringify(Q)
       };
-    const l = r,
-      L = {
-        "Content-Type": "application/json",
-        accept: "application/json"
-      };
-    const X = {
-      url: y,
-      headers: L,
-      body: JSON.stringify(l)
-    };
-    $.post(X, async (d, i, A) => {
-      if (A && A != null && A.replace(/\"/g, "").length > 50) {
-        const q = A.replace(/\"/g, "").slice(34),
-          t = new Base64();
-        result = JSON.parse(t.decode(q));
+    $.post(M, async (x, D, h) => {
+      if (h && h != null && h.replace(/\"/g, "").length > 50) {
+        const I = h.replace(/\"/g, "").slice(34);
+        helpUtils = await loadUtils(flushCash);
+        CryptoJS = helpUtils.createCryptoJS();
+        result = JSON.parse(CryptoJS.enc.Base64.parse(I).toString(CryptoJS.enc.Utf8));
         try {
           newest_version = result.version;
           userAuth = result.userAuth;
@@ -694,1657 +574,1091 @@ function getScriptAuth(f, w, N) {
           invicode = result.invicate;
           numbers = result.accountNumbers;
           vipDate = result.vipDate;
-        } catch (I) {
-          $.log(I);
+        } catch (H) {
+          $.log(H);
         }
       } else {
         $.log("请求服务器接口出现错误，请检查网络连接情况");
       }
-      s();
+      g();
     });
   });
 }
-function runComplete(f, w) {
-  return new Promise((C, s) => {
-    const y = apiHost + "/script/run/add";
-    const l = {
-        appName: f,
-        userId: w,
+function runComplete(u, m) {
+  return new Promise((V, g) => {
+    const C = apiHost + "/script/run/add",
+      W = {
+        appName: u,
+        userId: m,
         activityCode: activeCode,
         version: version
       },
-      L = {
-        "Content-Type": "application/json",
-        accept: "application/json"
+      Q = {
+        url: C,
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        body: JSON.stringify(W)
       };
-    const X = {
-      url: y,
-      headers: L,
-      body: JSON.stringify(l)
-    };
-    $.post(X, async (d, i, A) => {
-      C();
+    $.post(Q, async (M, x, D) => {
+      V();
     });
   });
 }
-function checkAddress(f, w) {
-  return new Promise((C, s) => {
-    const c = setTimeout(() => {
-        C(false);
-      }, w),
-      y = http.get(f, r => {
-        clearTimeout(c);
-        if (r.statusCode === 404) {
-          C(true);
-        } else {
-          C(false);
-        }
+function loadToken(u) {
+  let m = qdngapp[u].mobile;
+  qdng_item = qdng_cks["" + m];
+  return qdng_item ? (qdngapp[u].refreshToken = qdng_item.refreshToken, qdngapp[u].accessToken = qdng_item.accessToken, true) : false;
+}
+function saveToken(u) {
+  qdng_cks[qdngapp[u].mobile] = {
+    refreshToken: qdngapp[u].refreshToken,
+    accessToken: qdngapp[u].accessToken,
+    ts: ts13()
+  };
+}
+async function loadUtils(u) {
+  let m = $.getdata("Utils_Code") || "";
+  if (!u && m && Object.keys(m).length) {
+    $.log("📢 缓存中存在JS-Utils");
+    eval(m);
+    return creatUtils();
+  }
+  $.log("📢 开始初始化JS-Utils");
+  return new Promise(async V => {
+    $.getScript("http://script.david2024.top/scripts/tools/JS-Utils.js").then(g => {
+      $.setdata(g, "Utils_Code");
+      eval(g);
+      $.log("📢 JS-Utils加载成功");
+      V(creatUtils());
+    });
+  });
+}
+function checkAddress(u, m) {
+  return new Promise((V, g) => {
+    const C = setTimeout(() => {
+        V(false);
+      }, m),
+      W = http.get(u, Q => {
+        clearTimeout(C);
+        Q.statusCode === 404 ? V(true) : V(false);
       });
-    y.on("error", r => {
-      clearTimeout(c);
-      C(false);
+    W.on("error", Q => {
+      clearTimeout(C);
+      V(false);
     });
-    y.on("timeout", () => {
-      y.abort();
-      s(new Error("请求超时"));
+    W.on("timeout", () => {
+      W.abort();
+      g(new Error("请求超时"));
     });
   });
 }
-async function fetchRequest(f, w = 3000) {
-  return new Promise((C, s) => {
-    const y = {
-      url: f + "/docs"
+async function fetchRequest(u, m = 3000) {
+  return new Promise((V, g) => {
+    const C = {
+      url: u + "/docs"
     };
     setTimeout(() => {
-      C(false);
-    }, w);
-    $.get(y, async (r, l, L) => {
-      if (l.status == 401) {
-        C(true);
-      } else {
-        C(false);
-      }
+      V(false);
+    }, m);
+    $.get(C, async (W, Q, M) => {
+      Q.status == 401 ? V(true) : V(false);
     });
   });
 }
-async function httpClientRequest(f, w = 3000) {
-  return new Promise((C, s) => {
-    const c = {
-      url: f + "/"
+async function httpClientRequest(u, m = 3000) {
+  return new Promise((V, g) => {
+    const C = {
+      url: u + "/"
     };
     setTimeout(() => {
-      C(false);
-    }, w);
-    $httpClient.get(c, async (y, r, l) => {
-      if (l == "{\"detail\":\"Not Found\"}") {
-        C(true);
-      } else {
-        C(false);
-      }
+      V(false);
+    }, m);
+    $httpClient.get(C, async (W, Q, M) => {
+      M == "{\"detail\":\"Not Found\"}" ? V(true) : V(false);
     });
   });
 }
-async function redisGet(f, w, N) {
-  return new Promise((s, U) => {
-    const y = apiHost + "/redis/hash/get/" + w + "/" + N,
-      r = {
-        "Content-Type": "application/json",
-        accept: "application/json"
+async function redisGet(u, m, V) {
+  return new Promise((g, C) => {
+    const W = apiHost + "/redis/hash/get/" + m + "/" + V,
+      Q = {
+        url: W,
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        }
       };
-    const L = {
-      url: y,
-      headers: r
-    };
-    $.get(L, async (X, d, A) => {
-      const g = A.replace(/\"/g, "");
-      answerTexts[f] = g;
-      s();
+    $.get(Q, async (M, x, D) => {
+      const h = D.replace(/\"/g, "");
+      answerTexts[u] = h;
+      g();
     });
   });
 }
-function redisSet(f, w, N) {
-  return new Promise((s, U) => {
-    const r = apiHost + "/redis/hash/set";
-    const L = {
-        key: f,
-        hashKey: w,
-        hashValue: N
+function redisSet(u, m, V) {
+  return new Promise((g, C) => {
+    const W = apiHost + "/redis/hash/set",
+      Q = {
+        key: u,
+        hashKey: m,
+        hashValue: V
       },
-      X = {
-        "Content-Type": "application/json",
-        accept: "application/json"
+      M = {
+        url: W,
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        body: JSON.stringify(Q)
       };
-    const d = {
-      url: r,
-      headers: X,
-      body: JSON.stringify(L)
-    };
-    $.post(d, async (i, A, S) => {
-      s();
+    $.post(M, async (x, D, h) => {
+      g();
     });
   });
 }
-function redisPop(f) {
-  return new Promise((N, C) => {
-    const c = apiHost + "/redis/set/pop/" + f,
-      y = {
-        "Content-Type": "application/json",
-        accept: "application/json"
+function redisPop(u) {
+  return new Promise((m, V) => {
+    const g = apiHost + "/redis/set/pop/" + u,
+      C = {
+        url: g,
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        }
       };
-    const l = {
-      url: c,
-      headers: y
-    };
-    $.get(l, async (L, X, d) => {
-      const A = d.replace(/\"/g, "");
-      popCookie = A;
-      N();
+    $.get(C, async (W, Q, M) => {
+      const x = M.replace(/\"/g, "");
+      popCookie = x;
+      m();
     });
   });
 }
-async function getReqObject(N, C, s) {
-  let c = "Mozilla/5.0·(iPhone;·CPU·iPhone·OS·18_2·like·Mac·OS·X)·AppleWebKit/605.1.15·(KHTML,·like·Gecko)·Mobile/15E148·MicroMessenger/8.0.54(0x18003637)·NetType/WIFI·Language/zh_CN";
-  if (xfjapp[s].ua && xfjapp[s].ua != "") {
-    c = xfjapp[s].ua;
-  }
-  let y = getHostname(N);
-  const r = {
-    "Content-Type": "application/json;charset=UTF-8",
-    "User-Agent": c,
-    Host: y
-  };
-  let L = {
-    url: N,
-    headers: r
-  };
-  if (C) {
-    L.body = C;
-  }
-  requestObjects[s] = L;
-  return L;
+async function getReqObject(u, m, V) {
+  let g = "Will/3.7.3 (com.rdhy.will; build:104; iOS 16.6.1) Alamofire/5.8.0";
+  qdngapp[V].ua && qdngapp[V].ua != "" && (g = qdngapp[V].ua);
+  let C = getHostname(u),
+    W = {
+      url: u,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        "User-Agent": g,
+        brand: "Apple",
+        appVersion: "3.7.3",
+        deviceId: qdngapp[V].deviceId,
+        Host: C
+      },
+      body: m
+    };
+  m;
+  requestObjects[V] = W;
+  return W;
 }
-function getReqObject_(N, C, s) {
-  let c = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
-  xfjapp[s].ua && xfjapp[s].ua != "" && (c = xfjapp[s].ua);
-  let y = getHostname(N);
-  const r = {
-    "Content-Type": "application/x-www-form-urlencoded",
-    "User-Agent": c,
-    Authorization: xfjapp[s].auth,
-    Host: y
-  };
-  let L = {
-    url: N,
-    headers: r
-  };
-  if (C) {
-    L.body = C;
-  }
-  requestObjects[s] = L;
-  return L;
+function getReqObject_(u, m, V) {
+  let g = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
+  qdngapp[V].ua && qdngapp[V].ua != "" && (g = qdngapp[V].ua);
+  let C = getHostname(u),
+    W = {
+      url: u,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": g,
+        Authorization: qdngapp[V].auth,
+        Host: C
+      },
+      body: m
+    };
+  m;
+  requestObjects[V] = W;
+  return W;
 }
-async function httpRequest(f, w, N) {
+async function httpRequest(u, m, V) {
   httpResult = null;
-  return new Promise(s => {
-    $[f](w, async (y, r, l) => {
+  return new Promise(g => {
+    $[u](m, async (C, W, Q) => {
       try {
-        if (y) {
-          $.log(N + ": " + f + "请求失败");
-          $.log(JSON.stringify(y));
-          $.logErr(y);
+        if (C) {
+          $.log(V + ": " + u + "请求失败");
+          $.log(JSON.stringify(C));
+          $.logErr(C);
         } else {
-          if (safeGet(l)) {
-            httpResult = JSON.parse(l);
+          if (safeGet(Q)) {
+            httpResult = JSON.parse(Q);
             debug == 1 && $.log(httpResult);
           } else {
-            const t = new URL(w.url);
-            $.log(t.pathname + "发起" + f + "请求时，出现错误，请处理");
+            const M = new URL(m.url);
+            $.log(M.pathname + "发起" + u + "请求时，出现错误，请处理");
           }
         }
-      } catch (b) {
-        $.logErr(b, r);
+      } catch (x) {
+        $.logErr(x, W);
       } finally {
-        s(httpResult);
+        g(httpResult);
       }
     });
   });
 }
-async function selectChannel(f, w) {
-  if (channels_status[f] == 0) {
-    await getSign_(f, w);
-  } else {
-    await getSign(f, w);
-  }
+async function selectChannel(u, m) {
+  channels_status[u] == 0 ? await getSign_(u, m) : await getSign(u, m);
 }
-function getSign_(f, w) {
-  return new Promise((C, s) => {
-    function c(y) {
-      let L = y.toString("utf8");
-      requestSigns[f] = L;
-      wss[f].removeListener("message", c);
-      C(L);
+function getSign_(u, m) {
+  return new Promise((V, g) => {
+    function C(W) {
+      let Q = W.toString("utf8");
+      requestSigns[u] = Q;
+      wss[u].removeListener("message", C);
+      V(Q);
     }
-    wss[f].on("message", c);
-    if (wss[f].readyState === 1) {
-      const r = {
-        method: appName,
-        params: {}
-      };
-      r.params.content = w;
-      r.params.appName = appName;
-      r.params.uuid = userId;
-      wss[f].send(JSON.stringify(r), l => {
-        l && s(l);
-      });
-    } else {
-      C(getSign(f, w));
-      wss[f].removeListener("message", c);
-    }
+    wss[u].on("message", C);
+    wss[u].readyState === 1 ? wss[u].send(JSON.stringify({
+      method: appName,
+      params: {
+        content: m,
+        appName: appName,
+        uuid: userId
+      }
+    }), W => {
+      W && g(W);
+    }) : (V(getSign(u, m)), wss[u].removeListener("message", C));
   });
 }
-function getSign(f, w) {
-  return new Promise((C, s) => {
-    const c = apiHost + "/sign/xfj";
-    const r = {
-        content: w,
+function getSign(u, m) {
+  return new Promise((V, g) => {
+    const C = apiHost + "/sign/qdng",
+      W = {
+        content: m,
         appName: appName,
         uuid: userId
       },
-      l = {
-        "Content-Type": "application/json",
-        accept: "application/json"
+      Q = {
+        url: C,
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        body: JSON.stringify(W)
       };
-    const L = {
-      url: c,
-      headers: l,
-      body: JSON.stringify(r)
-    };
-    $.post(L, async (X, d, A) => {
-      const q = A.replace(/\"/g, "");
-      requestSigns[f] = q;
-      C();
+    $.post(Q, async (M, x, D) => {
+      const h = D.replace(/\"/g, "");
+      requestSigns[u] = h;
+      V();
     });
   });
 }
-function sortUrlParams(f, w, N) {
-  const s = url2obj(f);
-  w.forEach(y => {
-    delete s[y];
+function sortUrlParams(u, m, V) {
+  const g = url2obj(u);
+  m.forEach(Q => {
+    delete g[Q];
   });
-  Object.assign(s, N);
-  const U = Object.keys(s).sort(),
-    c = U.map(y => "" + y + s[y]).join("");
-  return c;
+  Object.assign(g, V);
+  const C = Object.keys(g).sort(),
+    W = C.map(Q => Q + "=" + g[Q]).join("&");
+  return W;
 }
-function url2obj(w) {
-  w = w.replace(/\"/g, "");
-  var s,
-    U = {};
-  if (w.indexOf("?") != -1) {
-    var c = w.slice(w.indexOf("?") + 1).split("&");
-    for (var y = 0; y < c.length; y++) {
-      s = c[y].split("=");
-      U[s[0]] = s[1];
-    }
+function url2obj(u) {
+  if (u == "") {
+    return {};
   }
-  return U;
+  u = u.replace(/\"/g, "");
+  var m,
+    V = {},
+    g = u.split("&");
+  for (var C = 0; C < g.length; C++) {
+    m = g[C].split("=");
+    V[m[0]] = m[1];
+  }
+  return V;
 }
-function convertStringToJson(w) {
-  const s = w.replace(/[{} ]/g, "");
-  const U = s.split(",");
-  const c = {};
-  U.forEach(y => {
-    const [l, L] = y.split("=");
-    c[l] = L;
+function convertStringToJson(u) {
+  const m = u.replace(/[{} ]/g, ""),
+    V = m.split(","),
+    g = {};
+  V.forEach(C => {
+    const [W, Q] = C.split("=");
+    g[W] = Q;
   });
-  return c;
+  return g;
 }
-function getHostname(f) {
-  let N = f.substr(f.indexOf("//") + 2),
-    C = N.substr(0, N.indexOf("/"));
-  let s = "",
-    U = C.indexOf(":");
-  if (U > 0) {
-    s = C.substr(0, U);
-  } else {
-    s = C;
+function getHostname(u) {
+  let m = u.substr(u.indexOf("//") + 2),
+    V = m.substr(0, m.indexOf("/")),
+    g = "",
+    C = V.indexOf(":");
+  C > 0 ? g = V.substr(0, C) : g = V;
+  return g;
+}
+function calculateTimeDifference(u, m) {
+  var V = new Date(u),
+    g = new Date(m),
+    C = g - V,
+    W = Math.floor(C / 1000);
+  return W;
+}
+function cutString(u, m) {
+  if (u.length * 2 <= m) {
+    return u;
   }
-  return s;
-}
-function calculateTimeDifference(w, N) {
-  var r = new Date(w);
-  var l = new Date(N);
-  var L = l - r;
-  var y = Math.floor(L / 1000);
-  return y;
-}
-function cutString(f, w) {
-  if (f.length * 2 <= w) {
-    return f;
-  }
-  var C = 0;
-  var U = "";
-  for (var c = 0; c < f.length; c++) {
-    U = U + f.charAt(c);
-    if (f.charCodeAt(c) > 128) {
-      C = C + 2;
-      if (C >= w) {
-        return U.substring(0, U.length - 1) + "...";
+  var V = 0,
+    g = "";
+  for (var C = 0; C < u.length; C++) {
+    g = g + u.charAt(C);
+    if (u.charCodeAt(C) > 128) {
+      V = V + 2;
+      if (V >= m) {
+        return g.substring(0, g.length - 1) + "...";
       }
     } else {
-      C = C + 1;
-      if (C >= w) {
-        return U.substring(0, U.length - 2) + "...";
+      V = V + 1;
+      if (V >= m) {
+        return g.substring(0, g.length - 2) + "...";
       }
     }
   }
-  return U;
+  return g;
 }
 function printCaller() {
   return new Error().stack.split("\n")[3].split("@")[0];
 }
-function safeGet(f) {
+function safeGet(u) {
   try {
-    if (typeof JSON.parse(f) == "object") {
+    if (typeof JSON.parse(u) == "object") {
       return true;
     }
-  } catch (s) {
-    console.log(s);
+  } catch (m) {
+    console.log(m);
     console.log("服务器访问数据为空，请检查自身设备网络情况");
     return false;
   }
 }
-function jsonToUrl(f) {
-  var N = Object.keys(f).map(function (C) {
-    return encodeURIComponent(C) + "=" + encodeURIComponent(f[C]);
+function jsonToUrl(u) {
+  var m = Object.keys(u).map(function (V) {
+    return encodeURIComponent(V) + "=" + encodeURIComponent(u[V]);
   }).join("&");
-  return N;
+  return m;
 }
-function compileStr(f) {
-  var N = String.fromCharCode(f.charCodeAt(0) + f.length);
-  for (var C = 1; C < f.length; C++) {
-    N += String.fromCharCode(f.charCodeAt(C) + f.charCodeAt(C - 1));
+function compileStr(u) {
+  var m = String.fromCharCode(u.charCodeAt(0) + u.length);
+  for (var V = 1; V < u.length; V++) {
+    m += String.fromCharCode(u.charCodeAt(V) + u.charCodeAt(V - 1));
   }
-  return escape(N);
+  return escape(m);
 }
-function uncompileStr(f) {
-  f = unescape(f);
-  var N = String.fromCharCode(f.charCodeAt(0) - f.length);
-  for (var C = 1; C < f.length; C++) {
-    N += String.fromCharCode(f.charCodeAt(C) - N.charCodeAt(C - 1));
+function uncompileStr(u) {
+  u = unescape(u);
+  var m = String.fromCharCode(u.charCodeAt(0) - u.length);
+  for (var V = 1; V < u.length; V++) {
+    m += String.fromCharCode(u.charCodeAt(V) - m.charCodeAt(V - 1));
   }
-  return N;
-}
-function randomNum(f, w) {
-  switch (arguments.length) {
-    case 1:
-      return parseInt(Math.random() * f + 1);
-      break;
-    case 2:
-      return parseInt(Math.random() * (w - f + 1) + f);
-      break;
-    default:
-      return 0;
-      break;
-  }
+  return m;
 }
 function randomMac() {
   return "XX:XX:XX:XX:XX:XX".replace(/X/g, function () {
     return "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16));
   });
 }
-function guid() {
-  function w() {
-    return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
-  }
-  return w() + w() + "-" + w() + "-" + w() + "-" + w() + "-" + w() + w() + w();
-}
-function phone_num(w) {
-  if (w.length == 11) {
-    let s = w.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-    return s;
-  } else {
-    return w;
-  }
-}
-function txt_api(f) {
-  return new Promise((N, C) => {
-    const c = "https://v1.hitokoto.cn/?c=e",
-      y = {
-        accept: "application/json"
+function txt_api(u) {
+  return new Promise((m, V) => {
+    const g = "https://v1.hitokoto.cn/?c=e",
+      C = {
+        url: g,
+        headers: {
+          accept: "application/json"
+        }
       };
-    const l = {
-      url: c,
-      headers: y
-    };
-    $.get(l, async (L, X, d) => {
-      if (d) {
-        let S = JSON.parse(d),
-          g = S.hitokoto;
-        contents[f] = g;
-      } else {
-        contents[f] = "又是开心快乐的一天！";
-      }
-      N();
+    $.get(C, async (W, Q, M) => {
+      let x = JSON.parse(M),
+        D = x.hitokoto;
+      contents[u] = D + " " + D;
+      m();
     });
   });
 }
 function getTime_8() {
-  return new Promise((w, N) => {
-    const s = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp";
-    const c = {
-      url: s
-    };
-    $.get(c, async (y, r, l) => {
-      w(l);
+  return new Promise((u, m) => {
+    const V = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
+      g = {
+        url: V
+      };
+    $.get(g, async (C, W, Q) => {
+      u(Q);
     });
   });
-}
-function ts13() {
-  return Math.round(new Date().getTime()).toString();
-}
-function ts10() {
-  return Math.round(new Date().getTime() / 1000).toString();
 }
 function message() {
   tz == 1 && $.msg($.name, "", $.message);
 }
-async function sendMsg(f) {
-  if (hour == 9 || hour == 12 || hour == 18) {
-    if (tz == 1) {
-      if ($.isNode()) {
-        await notify.sendNotify($.name, f);
-      } else {
-        $.msg($.name, "", f);
-      }
-    } else {
-      $.log(f);
-    }
-  }
+async function sendMsg(u) {
+  (hour == 9 || hour == 12 || hour == 18) && (tz == 1 ? $.isNode() ? await notify.sendNotify($.name, u) : $.msg($.name, "", u) : $.log(u));
 }
-async function wxPush(f, w, N) {
-  return new Promise((s, U) => {
-    const y = "https://wxpusher.zjiecode.com/api/send/message";
-    const l = {
+async function wxPush(u, m, V) {
+  return new Promise((g, C) => {
+    const W = "https://wxpusher.zjiecode.com/api/send/message",
+      Q = {
         appToken: "AT_6BZsE2IyJuVLPp3mcOkKvpoF245GR9xn",
-        content: w,
+        content: m,
         summary: "快手答题余额通知",
         contentType: 1,
-        uids: [N],
+        uids: [V],
         verifyPay: false
       },
-      L = {
-        "Content-Type": "application/json"
+      M = {
+        url: W,
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(Q)
       };
-    const X = {
-      url: y,
-      headers: L,
-      body: JSON.stringify(l)
-    };
-    $.post(X, async (d, A, S) => {
-      s();
+    $.post(M, async (x, D, h) => {
+      g();
     });
   });
 }
-function randomString(w, N) {
-  N = N || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let U = "";
-  for (let c = 0; c < w; c++) {
-    let y = Math.floor(Math.random() * N.length);
-    U += N.substring(y, y + 1);
-  }
-  return U;
+async function encrypt(u, m) {
+  let V = sortUrlParams(m, [], {
+      app_channel: "Apple_iPhone10,2_16.6.1",
+      app_imei: qdngapp[u].deviceId,
+      app_type: "2",
+      app_version: "3.7.3",
+      appoint_source: "1",
+      time_str: helpUtils.ts10(),
+      token: qdngapp[u].token
+    }),
+    g = url2obj(V);
+  await selectChannel(u, JSON.stringify(g));
+  g.sign = requestSigns[u];
+  let C = Object.keys(g).map(W => encodeURIComponent(W) + "=" + encodeURIComponent(g[W])).join("&");
+  return sortUrlParams(C, [], {});
 }
-function MD5_Encrypt(U) {
-  function S(fI, fj) {
-    return fI << fj | fI >>> 32 - fj;
-  }
-  function Q(fI, fj) {
-    var fQ, fJ, fE, fM, fR;
-    fE = 2147483648 & fI;
-    fM = 2147483648 & fj;
-    fQ = 1073741824 & fI;
-    fJ = 1073741824 & fj;
-    fR = (1073741823 & fI) + (1073741823 & fj);
-    return fQ & fJ ? 2147483648 ^ fR ^ fE ^ fM : fQ | fJ ? 1073741824 & fR ? 3221225472 ^ fR ^ fE ^ fM : 1073741824 ^ fR ^ fE ^ fM : fR ^ fE ^ fM;
-  }
-  function R(fI, fj, fQ) {
-    return fI & fj | ~fI & fQ;
-  }
-  function W(fI, fj, fQ) {
-    return fI & fQ | fj & ~fQ;
-  }
-  function T(fI, fj, fQ) {
-    return fI ^ fj ^ fQ;
-  }
-  function Z(fI, fj, fQ) {
-    return fj ^ (fI | ~fQ);
-  }
-  function P(fI, fj, fQ, fJ, fE, fM, fR) {
-    fI = Q(fI, Q(Q(R(fj, fQ, fJ), fE), fR));
-    return Q(S(fI, fM), fj);
-  }
-  function Y(fI, fj, fQ, fJ, fE, fM, fR) {
-    fI = Q(fI, Q(Q(W(fj, fQ, fJ), fE), fR));
-    return Q(S(fI, fM), fj);
-  }
-  function V(fI, fj, fQ, fJ, fE, fM, fR) {
-    fI = Q(fI, Q(Q(T(fj, fQ, fJ), fE), fR));
-    return Q(S(fI, fM), fj);
-  }
-  function f0(fI, fj, fQ, fJ, fE, fM, fR) {
-    fI = Q(fI, Q(Q(Z(fj, fQ, fJ), fE), fR));
-    return Q(S(fI, fM), fj);
-  }
-  function f1(fI) {
-    for (var fQ, fJ = fI.length, fE = fJ + 8, fM = (fE - fE % 64) / 64, fR = 16 * (fM + 1), fm = new Array(fR - 1), fa = 0, fp = 0; fJ > fp;) {
-      fQ = (fp - fp % 4) / 4;
-      fa = fp % 4 * 8;
-      fm[fQ] = fm[fQ] | fI.charCodeAt(fp) << fa;
-      fp++;
+function Env(u, m) {
+  class V {
+    constructor(g) {
+      this.env = g;
     }
-    fQ = (fp - fp % 4) / 4;
-    fa = fp % 4 * 8;
-    fm[fQ] = fm[fQ] | 128 << fa;
-    fm[fR - 2] = fJ << 3;
-    fm[fR - 1] = fJ >>> 29;
-    return fm;
-  }
-  function f2(fI) {
-    var fj,
-      fQ,
-      fJ = "",
-      fE = "";
-    for (fQ = 0; 3 >= fQ; fQ++) {
-      fj = fI >>> 8 * fQ & 255;
-      fE = "0" + fj.toString(16);
-      fJ += fE.substr(fE.length - 2, 2);
-    }
-    return fJ;
-  }
-  function f3(fI) {
-    fI = fI.replace(/\r\n/g, "\n");
-    for (var fj = "", fQ = 0; fQ < fI.length; fQ++) {
-      var fJ = fI.charCodeAt(fQ);
-      128 > fJ ? fj += String.fromCharCode(fJ) : fJ > 127 && 2048 > fJ ? (fj += String.fromCharCode(fJ >> 6 | 192), fj += String.fromCharCode(63 & fJ | 128)) : (fj += String.fromCharCode(fJ >> 12 | 224), fj += String.fromCharCode(fJ >> 6 & 63 | 128), fj += String.fromCharCode(63 & fJ | 128));
-    }
-    return fj;
-  }
-  var f4,
-    f5,
-    f6,
-    f7,
-    f8,
-    f9,
-    ff,
-    fw,
-    fN,
-    fC = [],
-    fU = 7,
-    fc = 12,
-    fy = 17,
-    fr = 22,
-    fl = 5,
-    fL = 9,
-    fX = 14,
-    fd = 20,
-    fi = 4,
-    fA = 11,
-    fS = 16,
-    fg = 23,
-    fq = 6,
-    ft = 10,
-    fb = 15,
-    fz = 21;
-  for (U = f3(U), fC = f1(U), f9 = 1732584193, ff = 4023233417, fw = 2562383102, fN = 271733878, f4 = 0; f4 < fC.length; f4 += 16) {
-    f5 = f9;
-    f6 = ff;
-    f7 = fw;
-    f8 = fN;
-    f9 = P(f9, ff, fw, fN, fC[f4 + 0], fU, 3614090360);
-    fN = P(fN, f9, ff, fw, fC[f4 + 1], fc, 3905402710);
-    fw = P(fw, fN, f9, ff, fC[f4 + 2], fy, 606105819);
-    ff = P(ff, fw, fN, f9, fC[f4 + 3], fr, 3250441966);
-    f9 = P(f9, ff, fw, fN, fC[f4 + 4], fU, 4118548399);
-    fN = P(fN, f9, ff, fw, fC[f4 + 5], fc, 1200080426);
-    fw = P(fw, fN, f9, ff, fC[f4 + 6], fy, 2821735955);
-    ff = P(ff, fw, fN, f9, fC[f4 + 7], fr, 4249261313);
-    f9 = P(f9, ff, fw, fN, fC[f4 + 8], fU, 1770035416);
-    fN = P(fN, f9, ff, fw, fC[f4 + 9], fc, 2336552879);
-    fw = P(fw, fN, f9, ff, fC[f4 + 10], fy, 4294925233);
-    ff = P(ff, fw, fN, f9, fC[f4 + 11], fr, 2304563134);
-    f9 = P(f9, ff, fw, fN, fC[f4 + 12], fU, 1804603682);
-    fN = P(fN, f9, ff, fw, fC[f4 + 13], fc, 4254626195);
-    fw = P(fw, fN, f9, ff, fC[f4 + 14], fy, 2792965006);
-    ff = P(ff, fw, fN, f9, fC[f4 + 15], fr, 1236535329);
-    f9 = Y(f9, ff, fw, fN, fC[f4 + 1], fl, 4129170786);
-    fN = Y(fN, f9, ff, fw, fC[f4 + 6], fL, 3225465664);
-    fw = Y(fw, fN, f9, ff, fC[f4 + 11], fX, 643717713);
-    ff = Y(ff, fw, fN, f9, fC[f4 + 0], fd, 3921069994);
-    f9 = Y(f9, ff, fw, fN, fC[f4 + 5], fl, 3593408605);
-    fN = Y(fN, f9, ff, fw, fC[f4 + 10], fL, 38016083);
-    fw = Y(fw, fN, f9, ff, fC[f4 + 15], fX, 3634488961);
-    ff = Y(ff, fw, fN, f9, fC[f4 + 4], fd, 3889429448);
-    f9 = Y(f9, ff, fw, fN, fC[f4 + 9], fl, 568446438);
-    fN = Y(fN, f9, ff, fw, fC[f4 + 14], fL, 3275163606);
-    fw = Y(fw, fN, f9, ff, fC[f4 + 3], fX, 4107603335);
-    ff = Y(ff, fw, fN, f9, fC[f4 + 8], fd, 1163531501);
-    f9 = Y(f9, ff, fw, fN, fC[f4 + 13], fl, 2850285829);
-    fN = Y(fN, f9, ff, fw, fC[f4 + 2], fL, 4243563512);
-    fw = Y(fw, fN, f9, ff, fC[f4 + 7], fX, 1735328473);
-    ff = Y(ff, fw, fN, f9, fC[f4 + 12], fd, 2368359562);
-    f9 = V(f9, ff, fw, fN, fC[f4 + 5], fi, 4294588738);
-    fN = V(fN, f9, ff, fw, fC[f4 + 8], fA, 2272392833);
-    fw = V(fw, fN, f9, ff, fC[f4 + 11], fS, 1839030562);
-    ff = V(ff, fw, fN, f9, fC[f4 + 14], fg, 4259657740);
-    f9 = V(f9, ff, fw, fN, fC[f4 + 1], fi, 2763975236);
-    fN = V(fN, f9, ff, fw, fC[f4 + 4], fA, 1272893353);
-    fw = V(fw, fN, f9, ff, fC[f4 + 7], fS, 4139469664);
-    ff = V(ff, fw, fN, f9, fC[f4 + 10], fg, 3200236656);
-    f9 = V(f9, ff, fw, fN, fC[f4 + 13], fi, 681279174);
-    fN = V(fN, f9, ff, fw, fC[f4 + 0], fA, 3936430074);
-    fw = V(fw, fN, f9, ff, fC[f4 + 3], fS, 3572445317);
-    ff = V(ff, fw, fN, f9, fC[f4 + 6], fg, 76029189);
-    f9 = V(f9, ff, fw, fN, fC[f4 + 9], fi, 3654602809);
-    fN = V(fN, f9, ff, fw, fC[f4 + 12], fA, 3873151461);
-    fw = V(fw, fN, f9, ff, fC[f4 + 15], fS, 530742520);
-    ff = V(ff, fw, fN, f9, fC[f4 + 2], fg, 3299628645);
-    f9 = f0(f9, ff, fw, fN, fC[f4 + 0], fq, 4096336452);
-    fN = f0(fN, f9, ff, fw, fC[f4 + 7], ft, 1126891415);
-    fw = f0(fw, fN, f9, ff, fC[f4 + 14], fb, 2878612391);
-    ff = f0(ff, fw, fN, f9, fC[f4 + 5], fz, 4237533241);
-    f9 = f0(f9, ff, fw, fN, fC[f4 + 12], fq, 1700485571);
-    fN = f0(fN, f9, ff, fw, fC[f4 + 3], ft, 2399980690);
-    fw = f0(fw, fN, f9, ff, fC[f4 + 10], fb, 4293915773);
-    ff = f0(ff, fw, fN, f9, fC[f4 + 1], fz, 2240044497);
-    f9 = f0(f9, ff, fw, fN, fC[f4 + 8], fq, 1873313359);
-    fN = f0(fN, f9, ff, fw, fC[f4 + 15], ft, 4264355552);
-    fw = f0(fw, fN, f9, ff, fC[f4 + 6], fb, 2734768916);
-    ff = f0(ff, fw, fN, f9, fC[f4 + 13], fz, 1309151649);
-    f9 = f0(f9, ff, fw, fN, fC[f4 + 4], fq, 4149444226);
-    fN = f0(fN, f9, ff, fw, fC[f4 + 11], ft, 3174756917);
-    fw = f0(fw, fN, f9, ff, fC[f4 + 2], fb, 718787259);
-    ff = f0(ff, fw, fN, f9, fC[f4 + 9], fz, 3951481745);
-    f9 = Q(f9, f5);
-    ff = Q(ff, f6);
-    fw = Q(fw, f7);
-    fN = Q(fN, f8);
-  }
-  var fv = f2(f9) + f2(ff) + f2(fw) + f2(fN);
-  return fv.toLowerCase();
-}
-function SHA256(f) {
-  var N = 8;
-  var C = 0;
-  function U(b, z) {
-    var I = (b & 65535) + (z & 65535),
-      j = (b >> 16) + (z >> 16) + (I >> 16);
-    return j << 16 | I & 65535;
-  }
-  function c(b, z) {
-    return b >>> z | b << 32 - z;
-  }
-  function y(b, z) {
-    return b >>> z;
-  }
-  function r(b, v, I) {
-    return b & v ^ ~b & I;
-  }
-  function l(b, v, I) {
-    return b & v ^ b & I ^ v & I;
-  }
-  function L(b) {
-    return c(b, 2) ^ c(b, 13) ^ c(b, 22);
-  }
-  function X(b) {
-    return c(b, 6) ^ c(b, 11) ^ c(b, 25);
-  }
-  function d(b) {
-    return c(b, 7) ^ c(b, 18) ^ y(b, 3);
-  }
-  function i(b) {
-    return c(b, 17) ^ c(b, 19) ^ y(b, 10);
-  }
-  function A(z, v) {
-    var Q = new Array(1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298),
-      J = new Array(1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225),
-      E = new Array(64),
-      M,
-      p,
-      o,
-      F,
-      H,
-      B,
-      O,
-      G,
-      T,
-      Z,
-      P,
-      x;
-    z[v >> 5] |= 128 << 24 - v % 32;
-    z[(v + 64 >> 9 << 4) + 15] = v;
-    for (var T = 0; T < z.length; T += 16) {
-      M = J[0];
-      p = J[1];
-      o = J[2];
-      F = J[3];
-      H = J[4];
-      B = J[5];
-      O = J[6];
-      G = J[7];
-      for (var Z = 0; Z < 64; Z++) {
-        if (Z < 16) {
-          E[Z] = z[Z + T];
-        } else {
-          E[Z] = U(U(U(i(E[Z - 2]), E[Z - 7]), d(E[Z - 15])), E[Z - 16]);
-        }
-        P = U(U(U(U(G, X(H)), r(H, B, O)), Q[Z]), E[Z]);
-        x = U(L(M), l(M, p, o));
-        G = O;
-        O = B;
-        B = H;
-        H = U(F, P);
-        F = o;
-        o = p;
-        p = M;
-        M = U(P, x);
-      }
-      J[0] = U(M, J[0]);
-      J[1] = U(p, J[1]);
-      J[2] = U(o, J[2]);
-      J[3] = U(F, J[3]);
-      J[4] = U(H, J[4]);
-      J[5] = U(B, J[5]);
-      J[6] = U(O, J[6]);
-      J[7] = U(G, J[7]);
-    }
-    return J;
-  }
-  function g(b) {
-    var z = Array(),
-      v = (1 << N) - 1;
-    for (var I = 0; I < b.length * N; I += N) {
-      z[I >> 5] |= (b.charCodeAt(I / N) & v) << 24 - I % 32;
-    }
-    return z;
-  }
-  function q(b) {
-    b = b.replace(/\r\n/g, "\n");
-    var v = "";
-    for (var I = 0; I < b.length; I++) {
-      var j = b.charCodeAt(I);
-      if (j < 128) {
-        v += String.fromCharCode(j);
-      } else {
-        if (j > 127 && j < 2048) {
-          v += String.fromCharCode(j >> 6 | 192);
-          v += String.fromCharCode(j & 63 | 128);
-        } else {
-          v += String.fromCharCode(j >> 12 | 224);
-          v += String.fromCharCode(j >> 6 & 63 | 128);
-          v += String.fromCharCode(j & 63 | 128);
-        }
-      }
-    }
-    return v;
-  }
-  function t(b) {
-    var z = C ? "0123456789ABCDEF" : "0123456789abcdef",
-      v = "";
-    for (var I = 0; I < b.length * 4; I++) {
-      v += z.charAt(b[I >> 2] >> (3 - I % 4) * 8 + 4 & 15) + z.charAt(b[I >> 2] >> (3 - I % 4) * 8 & 15);
-    }
-    return v;
-  }
-  f = q(f);
-  return t(A(g(f), f.length * N));
-}
-function SHA1(f) {
-  function N(R, m) {
-    var p = R << m | R >>> 32 - m;
-    return p;
-  }
-  function s(R) {
-    var a = "",
-      p,
-      o,
-      F;
-    for (p = 0; p <= 6; p += 2) {
-      o = R >>> p * 4 + 4 & 15;
-      F = R >>> p * 4 & 15;
-      a += o.toString(16) + F.toString(16);
-    }
-    return a;
-  }
-  function U(R) {
-    var m = "",
-      a,
-      p;
-    for (a = 7; a >= 0; a--) {
-      p = R >>> a * 4 & 15;
-      m += p.toString(16);
-    }
-    return m;
-  }
-  function c(R) {
-    R = R.replace(/\r\n/g, "\n");
-    var a = "";
-    for (var p = 0; p < R.length; p++) {
-      var o = R.charCodeAt(p);
-      if (o < 128) {
-        a += String.fromCharCode(o);
-      } else {
-        if (o > 127 && o < 2048) {
-          a += String.fromCharCode(o >> 6 | 192);
-          a += String.fromCharCode(o & 63 | 128);
-        } else {
-          a += String.fromCharCode(o >> 12 | 224);
-          a += String.fromCharCode(o >> 6 & 63 | 128);
-          a += String.fromCharCode(o & 63 | 128);
-        }
-      }
-    }
-    return a;
-  }
-  var y,
-    r,
-    l,
-    L = new Array(80),
-    X = 1732584193,
-    d = 4023233417,
-    S = 2562383102,
-    g = 271733878,
-    q = 3285377520,
-    t,
-    b,
-    z,
-    v,
-    I,
-    Q;
-  f = c(f);
-  var J = f.length,
-    M = new Array();
-  for (r = 0; r < J - 3; r += 4) {
-    l = f.charCodeAt(r) << 24 | f.charCodeAt(r + 1 < 10 ? "0" + (r + 1) : r + 1) << 16 | f.charCodeAt(r + 2) << 8 | f.charCodeAt(r + 3);
-    M.push(l);
-  }
-  switch (J % 4) {
-    case 0:
-      r = 2147483648;
-      break;
-    case 1:
-      r = f.charCodeAt(J - 1) << 24 | 8388608;
-      break;
-    case 2:
-      r = f.charCodeAt(J - 2) << 24 | f.charCodeAt(J - 1) << 16 | 32768;
-      break;
-    case 3:
-      r = f.charCodeAt(J - 3) << 24 | f.charCodeAt(J - 2) << 16 | f.charCodeAt(J - 1) << 8 | 128;
-      break;
-  }
-  M.push(r);
-  while (M.length % 16 != 14) {
-    M.push(0);
-  }
-  M.push(J >>> 29);
-  M.push(J << 3 & 4294967295);
-  for (y = 0; y < M.length; y += 16) {
-    for (r = 0; r < 16; r++) {
-      L[r] = M[y + r];
-    }
-    for (r = 16; r <= 79; r++) {
-      L[r] = N(L[r - 3] ^ L[r - 8] ^ L[r - 14] ^ L[r - 16], 1);
-    }
-    t = X;
-    b = d;
-    z = S;
-    v = g;
-    I = q;
-    for (r = 0; r <= 19; r++) {
-      Q = N(t, 5) + (b & z | ~b & v) + I + L[r] + 1518500249 & 4294967295;
-      I = v;
-      v = z;
-      z = N(b, 30);
-      b = t;
-      t = Q;
-    }
-    for (r = 20; r <= 39; r++) {
-      Q = N(t, 5) + (b ^ z ^ v) + I + L[r] + 1859775393 & 4294967295;
-      I = v;
-      v = z;
-      z = N(b, 30);
-      b = t;
-      t = Q;
-    }
-    for (r = 40; r <= 59; r++) {
-      Q = N(t, 5) + (b & z | b & v | z & v) + I + L[r] + 2400959708 & 4294967295;
-      I = v;
-      v = z;
-      z = N(b, 30);
-      b = t;
-      t = Q;
-    }
-    for (r = 60; r <= 79; r++) {
-      Q = N(t, 5) + (b ^ z ^ v) + I + L[r] + 3395469782 & 4294967295;
-      I = v;
-      v = z;
-      z = N(b, 30);
-      b = t;
-      t = Q;
-    }
-    X = X + t & 4294967295;
-    d = d + b & 4294967295;
-    S = S + z & 4294967295;
-    g = g + v & 4294967295;
-    q = q + I & 4294967295;
-  }
-  var Q = U(X) + U(d) + U(S) + U(g) + U(q);
-  return Q.toLowerCase();
-}
-function Base64() {
-  if (!(this instanceof Base64)) {
-    return new Base64();
-  }
-  var w = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-  this.encode = function (C) {
-    var d = "";
-    var U, c, y, r, l, L, X;
-    var s = 0;
-    C = _utf8_encode(C);
-    while (s < C.length) {
-      U = C.charCodeAt(s++);
-      c = C.charCodeAt(s++);
-      y = C.charCodeAt(s++);
-      r = U >> 2;
-      l = (U & 3) << 4 | c >> 4;
-      L = (c & 15) << 2 | y >> 6;
-      X = y & 63;
-      if (isNaN(c)) {
-        L = X = 64;
-      } else {
-        isNaN(y) && (X = 64);
-      }
-      d = d + w.charAt(r) + w.charAt(l) + w.charAt(L) + w.charAt(X);
-    }
-    return d;
-  };
-  this.decode = function (C) {
-    var l = "";
-    var U, c, y;
-    var L, X, d, A;
-    var r = 0;
-    C = C.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-    while (r < C.length) {
-      L = w.indexOf(C.charAt(r++));
-      X = w.indexOf(C.charAt(r++));
-      d = w.indexOf(C.charAt(r++));
-      A = w.indexOf(C.charAt(r++));
-      U = L << 2 | X >> 4;
-      c = (X & 15) << 4 | d >> 2;
-      y = (d & 3) << 6 | A;
-      l = l + String.fromCharCode(U);
-      if (d != 64) {
-        l = l + String.fromCharCode(c);
-      }
-      A != 64 && (l = l + String.fromCharCode(y));
-    }
-    l = _utf8_decode(l);
-    return l;
-  };
-  _utf8_encode = function (C) {
-    C = C.replace(/\r\n/g, "\n");
-    var U = "";
-    for (var y = 0; y < C.length; y++) {
-      var r = C.charCodeAt(y);
-      if (r < 128) {
-        U += String.fromCharCode(r);
-      } else {
-        if (r > 127 && r < 2048) {
-          U += String.fromCharCode(r >> 6 | 192);
-          U += String.fromCharCode(r & 63 | 128);
-        } else {
-          U += String.fromCharCode(r >> 12 | 224);
-          U += String.fromCharCode(r >> 6 & 63 | 128);
-          U += String.fromCharCode(r & 63 | 128);
-        }
-      }
-    }
-    return U;
-  };
-  _utf8_decode = function (C) {
-    const s = {
-      vBbpg: "AT_6BZsE2IyJuVLPp3mcOkKvpoF245GR9xn",
-      FvjdH: "快手答题余额通知",
-      EgWRj: "application/json"
-    };
-    var y = "";
-    var l = 0;
-    var r;
-    while (l < C.length) {
-      r = C.charCodeAt(l);
-      if (r < 128) {
-        y += String.fromCharCode(r);
-        l++;
-      } else {
-        if (r > 191 && r < 224) {
-          y += String.fromCharCode((r & 31) << 6 | c2 & 63);
-          l += 2;
-        } else {
-          y += String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
-          l += 3;
-        }
-      }
-    }
-    return y;
-  };
-}
-function Env(f, w) {
-  class C {
-    constructor(s) {
-      this.env = s;
-    }
-    send(s, U = "GET") {
-      s = typeof s === "string" ? {
-        url: s
-      } : s;
-      let r = this.get;
-      U === "POST" && (r = this.post);
-      return new Promise((L, X) => {
-        r.call(this, s, (i, A, S) => {
-          if (i) {
-            X(i);
-          } else {
-            L(A);
-          }
+    send(g, C = "GET") {
+      g = "string" == typeof g ? {
+        url: g
+      } : g;
+      let W = this.get;
+      "POST" === C && (W = this.post);
+      return new Promise((Q, M) => {
+        W.call(this, g, (x, D, h) => {
+          x ? M(x) : Q(D);
         });
       });
     }
-    get(s) {
-      return this.send.call(this.env, s);
+    get(g) {
+      return this.send.call(this.env, g);
     }
-    post(s) {
-      return this.send.call(this.env, s, "POST");
+    post(g) {
+      return this.send.call(this.env, g, "POST");
     }
   }
   return new class {
-    constructor(s, U) {
-      this.name = s;
-      this.http = new C(this);
+    constructor(g, C) {
+      this.logLevels = {
+        debug: 0,
+        info: 1,
+        warn: 2,
+        error: 3
+      };
+      this.logLevelPrefixs = {
+        debug: "[DEBUG] ",
+        info: "[INFO] ",
+        warn: "[WARN] ",
+        error: "[ERROR] "
+      };
+      this.logLevel = "info";
+      this.name = g;
+      this.http = new V(this);
       this.data = null;
       this.dataFile = "box.dat";
       this.logs = [];
-      this.isMute = false;
-      this.isNeedRewrite = false;
+      this.isMute = !1;
+      this.isNeedRewrite = !1;
       this.logSeparator = "\n";
+      this.encoding = "utf-8";
       this.startTime = new Date().getTime();
-      Object.assign(this, U);
-      const r = "\n       ***********          *****      ***       **** ******  ***********  \n       *************       ******      ***      ****  ****    ************ \n      ****      ****     ***  ***      ***     ***    ***    ***      **** \n      ***       ****    ***  ****      ***    ***    ****   ****       *** \n     ****       ***    ***    ***      ***   ***     ***    ***       **** \n     ***       ***    ****   ****      ***  ***     ****   ****       ***  \n    ***      ****    ************      *** ***      ***    ***      ****   \n   ****   ******   ****      ****      ******      ****   ****   ******    \n   **********     ****       ****      *****     ******  ***********";
-      this.isNode() && this.log(r);
+      Object.assign(this, C);
       this.log("", "🔔 " + this.name + ", 开始!");
     }
+    getEnv() {
+      return "undefined" != typeof $environment && $environment["surge-version"] ? "Surge" : "undefined" != typeof $environment && $environment["stash-version"] ? "Stash" : "undefined" != typeof module && module.exports ? "Node.js" : "undefined" != typeof $task ? "Quantumult X" : "undefined" != typeof $loon ? "Loon" : "undefined" != typeof $rocket ? "Shadowrocket" : void 0;
+    }
     isNode() {
-      return "undefined" !== typeof module && !!module.exports;
+      return "Node.js" === this.getEnv();
     }
     isQuanX() {
-      return "undefined" !== typeof $task;
+      return "Quantumult X" === this.getEnv();
     }
     isSurge() {
-      return "undefined" !== typeof $httpClient && "undefined" === typeof $loon;
+      return "Surge" === this.getEnv();
     }
     isLoon() {
-      return "undefined" !== typeof $loon;
+      return "Loon" === this.getEnv();
     }
     isShadowrocket() {
-      return "undefined" !== typeof $rocket;
+      return "Shadowrocket" === this.getEnv();
     }
-    toObj(s, U = null) {
+    isStash() {
+      return "Stash" === this.getEnv();
+    }
+    toObj(g, C = null) {
       try {
-        return JSON.parse(s);
+        return JSON.parse(g);
       } catch {
-        return U;
+        return C;
       }
     }
-    toStr(s, U = null) {
+    toStr(g, C = null, ...W) {
       try {
-        return JSON.stringify(s);
+        return JSON.stringify(g, ...W);
       } catch {
-        return U;
+        return C;
       }
     }
-    getjson(s, U) {
-      let y = U;
-      const r = this.getdata(s);
-      if (r) {
+    getjson(g, C) {
+      let W = C;
+      if (this.getdata(g)) {
         try {
-          y = JSON.parse(this.getdata(s));
+          W = JSON.parse(this.getdata(g));
         } catch {}
       }
-      return y;
+      return W;
     }
-    setjson(s, U) {
+    setjson(g, C) {
       try {
-        return this.setdata(JSON.stringify(s), U);
+        return this.setdata(JSON.stringify(g), C);
       } catch {
-        return false;
+        return !1;
       }
     }
-    getScript(s) {
-      return new Promise(c => {
-        const r = {
-          url: s
-        };
-        this.get(r, (l, L, X) => c(X));
+    getScript(g) {
+      return new Promise(C => {
+        this.get({
+          url: g
+        }, (W, Q, M) => C(M));
       });
     }
-    runScript(s, U) {
-      return new Promise(r => {
-        let L = this.getdata("@chavy_boxjs_userCfgs.httpapi");
-        L = L ? L.replace(/\n/g, "").trim() : L;
-        let X = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
-        X = X ? X * 1 : 20;
-        X = U && U.timeout ? U.timeout : X;
-        const [d, i] = L.split("@"),
-          A = {
-            script_text: s,
-            mock_type: "cron",
-            timeout: X
+    runScript(g, C) {
+      return new Promise(W => {
+        let Q = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+        Q = Q ? Q.replace(/\n/g, "").trim() : Q;
+        let M = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
+        M = M ? 1 * M : 20;
+        M = C && C.timeout ? C.timeout : M;
+        const [x, D] = Q.split("@"),
+          h = {
+            url: "http://" + D + "/v1/scripting/evaluate",
+            body: {
+              script_text: g,
+              mock_type: "cron",
+              timeout: M
+            },
+            headers: {
+              "X-Key": x,
+              Accept: "*/*"
+            },
+            timeout: M
           };
-        const S = {
-          "X-Key": d,
-          Accept: "*/*"
-        };
-        const q = {
-          url: "http: //" + i + "/v1/scripting/evaluate",
-          body: A,
-          headers: S
-        };
-        this.post(q, (t, b, z) => r(z));
-      }).catch(r => this.logErr(r));
+        this.post(h, (I, H, B) => W(B));
+      }).catch(W => this.logErr(W));
     }
     loaddata() {
-      if (this.isNode()) {
+      if (!this.isNode()) {
+        return {};
+      }
+      {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const s = this.path.resolve(this.dataFile),
-          U = this.path.resolve(process.cwd(), this.dataFile),
-          c = this.fs.existsSync(s),
-          y = !c && this.fs.existsSync(U);
-        if (c || y) {
-          const r = c ? s : U;
-          try {
-            return JSON.parse(this.fs.readFileSync(r));
-          } catch (L) {
-            return {};
-          }
-        } else {
+        const g = this.path.resolve(this.dataFile),
+          C = this.path.resolve(process.cwd(), this.dataFile),
+          W = this.fs.existsSync(g),
+          Q = !W && this.fs.existsSync(C);
+        if (!W && !Q) {
           return {};
         }
-      } else {
-        return {};
+        {
+          const M = W ? g : C;
+          try {
+            return JSON.parse(this.fs.readFileSync(M));
+          } catch (x) {
+            return {};
+          }
+        }
       }
     }
     writedata() {
       if (this.isNode()) {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const c = this.path.resolve(this.dataFile),
-          y = this.path.resolve(process.cwd(), this.dataFile),
-          r = this.fs.existsSync(c),
-          l = !r && this.fs.existsSync(y),
-          L = JSON.stringify(this.data);
-        if (r) {
-          this.fs.writeFileSync(c, L);
-        } else {
-          if (l) {
-            this.fs.writeFileSync(y, L);
-          } else {
-            this.fs.writeFileSync(c, L);
-          }
-        }
+        const g = this.path.resolve(this.dataFile),
+          C = this.path.resolve(process.cwd(), this.dataFile),
+          W = this.fs.existsSync(g),
+          Q = !W && this.fs.existsSync(C),
+          M = JSON.stringify(this.data);
+        W ? this.fs.writeFileSync(g, M) : Q ? this.fs.writeFileSync(C, M) : this.fs.writeFileSync(g, M);
       }
     }
-    lodash_get(s, U, c = undefined) {
-      const y = U.replace(/[(d+)]/g, ".$1").split(".");
-      let r = s;
-      for (const l of y) {
-        r = Object(r)[l];
-        if (r === undefined) {
-          return c;
-        }
+    lodash_get(g, C, W) {
+      const Q = C.replace(/\[(\d+)\]/g, ".$1").split(".");
+      let M = g;
+      for (const x of Q) if (M = Object(M)[x], void 0 === M) {
+        return W;
       }
-      return r;
+      return M;
     }
-    lodash_set(s, U, c) {
-      if (Object(s) !== s) {
-        return s;
-      }
-      if (!Array.isArray(U)) {
-        U = U.toString().match(/[^.[]]+/g) || [];
-      }
-      U.slice(0, -1).reduce((r, l, L) => Object(r[l]) === r[l] ? r[l] : r[l] = Math.abs(U[L + 1 < 10 ? "0" + (L + 1) : L + 1]) >> 0 === +U[L + 1 < 10 ? "0" + (L + 1) : L + 1] ? [] : {}, s)[U[U.length - 1]] = c;
-      return s;
+    lodash_set(g, C, W) {
+      Object(g) !== g || (Array.isArray(C) || (C = C.toString().match(/[^.[\]]+/g) || []), C.slice(0, -1).reduce((Q, M, x) => Object(Q[M]) === Q[M] ? Q[M] : Q[M] = Math.abs(C[x + 1]) >> 0 == +C[x + 1] ? [] : {}, g)[C[C.length - 1]] = W);
+      return g;
     }
-    getdata(s) {
-      let U = this.getval(s);
-      if (/^@/.test(s)) {
-        const [, y, r] = /^@(.*?).(.*?)$/.exec(s),
-          l = y ? this.getval(y) : "";
-        if (l) {
+    getdata(g) {
+      let C = this.getval(g);
+      if (/^@/.test(g)) {
+        const [, W, Q] = /^@(.*?)\.(.*?)$/.exec(g),
+          M = W ? this.getval(W) : "";
+        if (M) {
           try {
-            const L = JSON.parse(l);
-            U = L ? this.lodash_get(L, r, "") : U;
-          } catch (d) {
-            U = "";
+            const x = JSON.parse(M);
+            C = x ? this.lodash_get(x, Q, "") : C;
+          } catch (D) {
+            C = "";
           }
         }
       }
-      return U;
+      return C;
     }
-    setdata(s, U) {
-      let y = false;
-      if (/^@/.test(U)) {
-        const [, r, l] = /^@(.*?).(.*?)$/.exec(U),
-          L = this.getval(r),
-          X = r ? L === "null" ? null : L || "{}" : "{}";
+    setdata(g, C) {
+      let W = !1;
+      if (/^@/.test(C)) {
+        const [, Q, M] = /^@(.*?)\.(.*?)$/.exec(C),
+          x = this.getval(Q),
+          D = Q ? "null" === x ? null : x || "{}" : "{}";
         try {
-          const i = JSON.parse(X);
-          this.lodash_set(i, l, s);
-          y = this.setval(JSON.stringify(i), r);
-        } catch (A) {
-          const S = {};
-          this.lodash_set(S, l, s);
-          y = this.setval(JSON.stringify(S), r);
+          const h = JSON.parse(D);
+          this.lodash_set(h, M, g);
+          W = this.setval(JSON.stringify(h), Q);
+        } catch (I) {
+          const H = {};
+          this.lodash_set(H, M, g);
+          W = this.setval(JSON.stringify(H), Q);
         }
       } else {
-        y = this.setval(s, U);
+        W = this.setval(g, C);
       }
-      return y;
+      return W;
     }
-    getval(s) {
-      if (this.isSurge() || this.isLoon()) {
-        return $persistentStore.read(s);
-      } else {
-        if (this.isQuanX()) {
-          return $prefs.valueForKey(s);
-        } else {
-          if (this.isNode()) {
-            this.data = this.loaddata();
-            return this.data[s];
-          } else {
-            return this.data && this.data[s] || null;
-          }
-        }
-      }
-    }
-    setval(s, U) {
-      if (this.isSurge() || this.isLoon()) {
-        return $persistentStore.write(s, U);
-      } else {
-        if (this.isQuanX()) {
-          return $prefs.setValueForKey(s, U);
-        } else {
-          if (this.isNode()) {
-            this.data = this.loaddata();
-            this.data[U] = s;
-            this.writedata();
-            return true;
-          } else {
-            return this.data && this.data[U] || null;
-          }
-        }
+    getval(g) {
+      switch (this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+          return $persistentStore.read(g);
+        case "Quantumult X":
+          return $prefs.valueForKey(g);
+        case "Node.js":
+          this.data = this.loaddata();
+          return this.data[g];
+        default:
+          return this.data && this.data[g] || null;
       }
     }
-    initGotEnv(s) {
+    setval(g, C) {
+      switch (this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+          return $persistentStore.write(g, C);
+        case "Quantumult X":
+          return $prefs.setValueForKey(g, C);
+        case "Node.js":
+          this.data = this.loaddata();
+          this.data[C] = g;
+          this.writedata();
+          return !0;
+        default:
+          return this.data && this.data[C] || null;
+      }
+    }
+    initGotEnv(g) {
       this.got = this.got ? this.got : require("got");
       this.cktough = this.cktough ? this.cktough : require("tough-cookie");
       this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
-      if (s) {
-        s.headers = s.headers ? s.headers : {};
-        if (undefined === s.headers.Cookie && undefined === s.cookieJar) {
-          s.cookieJar = this.ckjar;
-        }
-      }
+      g && (g.headers = g.headers ? g.headers : {}, g && (g.headers = g.headers ? g.headers : {}, void 0 === g.headers.cookie && void 0 === g.headers.Cookie && void 0 === g.cookieJar && (g.cookieJar = this.ckjar)));
     }
-    get(s, U = () => {}) {
-      s.headers && (delete s.headers["Content-Type"], delete s.headers["Content-Length"]);
-      if (this.isSurge() || this.isLoon()) {
-        if (this.isSurge() && this.isNeedRewrite) {
-          s.headers = s.headers || {};
-          const X = {
-            "X-Surge-Skip-Scripting": false
-          };
-          Object.assign(s.headers, X);
-        }
-        $httpClient.get(s, (d, i, A) => {
-          if (!d && i) {
-            i.body = A;
-            i.statusCode = i.status;
-          }
-          U(d, i, A);
-        });
-      } else {
-        if (this.isQuanX()) {
-          if (this.isNeedRewrite) {
-            s.opts = s.opts || {};
-            const d = {
-              hints: false
-            };
-            Object.assign(s.opts, d);
-          }
-          $task.fetch(s).then(A => {
-            const {
-                statusCode: g,
-                statusCode: q,
-                headers: t,
-                body: b
-              } = A,
-              z = {
-                status: g,
-                statusCode: q,
-                headers: t,
-                body: b
-              };
-            U(null, z, b);
-          }, A => U(A));
-        } else {
-          this.isNode() && (this.initGotEnv(s), this.got(s).on("redirect", (g, q) => {
-            try {
-              if (g.headers["set-cookie"]) {
-                const b = g.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
-                if (b) {
-                  this.ckjar.setCookieSync(b, null);
-                }
-                q.cookieJar = this.ckjar;
-              }
-            } catch (j) {
-              this.logErr(j);
-            }
-          }).then(g => {
-            const {
-                statusCode: q,
-                statusCode: t,
-                headers: b,
-                body: z
-              } = g,
-              v = {
-                status: q,
-                statusCode: t,
-                headers: b,
-                body: z
-              };
-            U(null, v, z);
-          }, g => {
-            const {
-              message: t,
-              response: b
-            } = g;
-            U(t, b, b && b.body);
+    get(g, C = () => {}) {
+      switch (g.headers && (delete g.headers["Content-Type"], delete g.headers["Content-Length"], delete g.headers["content-type"], delete g.headers["content-length"]), g.params && (g.url += "?" + this.queryStr(g.params)), void 0 === g.followRedirect || g.followRedirect || ((this.isSurge() || this.isLoon()) && (g["auto-redirect"] = !1), this.isQuanX() && (g.opts ? g.opts.redirection = !1 : g.opts = {
+        redirection: !1
+      })), this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        default:
+          this.isSurge() && this.isNeedRewrite && (g.headers = g.headers || {}, Object.assign(g.headers, {
+            "X-Surge-Skip-Scripting": !1
           }));
-        }
+          $httpClient.get(g, (Q, M, x) => {
+            !Q && M && (M.body = x, M.statusCode = M.status ? M.status : M.statusCode, M.status = M.statusCode);
+            C(Q, M, x);
+          });
+          break;
+        case "Quantumult X":
+          this.isNeedRewrite && (g.opts = g.opts || {}, Object.assign(g.opts, {
+            hints: !1
+          }));
+          $task.fetch(g).then(Q => {
+            const {
+              statusCode: M,
+              statusCode: x,
+              headers: D,
+              body: h,
+              bodyBytes: I
+            } = Q;
+            C(null, {
+              status: M,
+              statusCode: x,
+              headers: D,
+              body: h,
+              bodyBytes: I
+            }, h, I);
+          }, Q => C(Q && Q.error || "UndefinedError"));
+          break;
+        case "Node.js":
+          let W = require("iconv-lite");
+          this.initGotEnv(g);
+          this.got(g).on("redirect", (Q, M) => {
+            try {
+              if (Q.headers["set-cookie"]) {
+                const x = Q.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
+                x && this.ckjar.setCookieSync(x, null);
+                M.cookieJar = this.ckjar;
+              }
+            } catch (D) {
+              this.logErr(D);
+            }
+          }).then(Q => {
+            const {
+                statusCode: M,
+                statusCode: x,
+                headers: D,
+                rawBody: h
+              } = Q,
+              I = W.decode(h, this.encoding);
+            C(null, {
+              status: M,
+              statusCode: x,
+              headers: D,
+              rawBody: h,
+              body: I
+            }, I);
+          }, Q => {
+            const {
+              message: M,
+              response: x
+            } = Q;
+            C(M, x, x && W.decode(x.rawBody, this.encoding));
+          });
+          break;
       }
     }
-    post(s, U = () => {}) {
-      const y = s.method ? s.method.toLocaleLowerCase() : "post";
-      s.body && s.headers && !s.headers["Content-Type"] && (s.headers["Content-Type"] = "application/x-www-form-urlencoded");
-      if (s.headers) {
-        delete s.headers["Content-Length"];
-      }
-      if (this.isSurge() || this.isLoon()) {
-        if (this.isSurge() && this.isNeedRewrite) {
-          s.headers = s.headers || {};
-          const L = {
-            "X-Surge-Skip-Scripting": false
-          };
-          Object.assign(s.headers, L);
-        }
-        $httpClient[y](s, (d, i, A) => {
-          if (!d && i) {
-            i.body = A;
-            i.statusCode = i.status;
-          }
-          U(d, i, A);
-        });
-      } else {
-        if (this.isQuanX()) {
-          s.method = y;
-          if (this.isNeedRewrite) {
-            s.opts = s.opts || {};
-            const d = {
-              hints: false
-            };
-            Object.assign(s.opts, d);
-          }
-          $task.fetch(s).then(A => {
+    post(g, C = () => {}) {
+      const W = g.method ? g.method.toLocaleLowerCase() : "post";
+      switch (g.body && g.headers && !g.headers["Content-Type"] && !g.headers["content-type"] && (g.headers["content-type"] = "application/x-www-form-urlencoded"), g.headers && (delete g.headers["Content-Length"], delete g.headers["content-length"]), void 0 === g.followRedirect || g.followRedirect || ((this.isSurge() || this.isLoon()) && (g["auto-redirect"] = !1), this.isQuanX() && (g.opts ? g.opts.redirection = !1 : g.opts = {
+        redirection: !1
+      })), this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        default:
+          this.isSurge() && this.isNeedRewrite && (g.headers = g.headers || {}, Object.assign(g.headers, {
+            "X-Surge-Skip-Scripting": !1
+          }));
+          $httpClient[W](g, (D, h, I) => {
+            !D && h && (h.body = I, h.statusCode = h.status ? h.status : h.statusCode, h.status = h.statusCode);
+            C(D, h, I);
+          });
+          break;
+        case "Quantumult X":
+          g.method = W;
+          this.isNeedRewrite && (g.opts = g.opts || {}, Object.assign(g.opts, {
+            hints: !1
+          }));
+          $task.fetch(g).then(D => {
             const {
-                statusCode: S,
-                statusCode: g,
-                headers: q,
-                body: t
-              } = A,
-              b = {
-                status: S,
-                statusCode: g,
-                headers: q,
-                body: t
-              };
-            U(null, b, t);
-          }, A => U(A));
-        } else {
-          if (this.isNode()) {
-            this.initGotEnv(s);
+              statusCode: h,
+              statusCode: I,
+              headers: H,
+              body: B,
+              bodyBytes: n
+            } = D;
+            C(null, {
+              status: h,
+              statusCode: I,
+              headers: H,
+              body: B,
+              bodyBytes: n
+            }, B, n);
+          }, D => C(D && D.error || "UndefinedError"));
+          break;
+        case "Node.js":
+          let Q = require("iconv-lite");
+          this.initGotEnv(g);
+          const {
+            url: M,
+            ...x
+          } = g;
+          this.got[W](M, x).then(D => {
             const {
-              url: A,
-              ...S
-            } = s;
-            this.got[y](A, S).then(g => {
-              const {
-                  statusCode: q,
-                  statusCode: t,
-                  headers: b,
-                  body: z
-                } = g,
-                v = {
-                  status: q,
-                  statusCode: t,
-                  headers: b,
-                  body: z
-                };
-              U(null, v, z);
-            }, g => {
-              const {
-                message: q,
-                response: t
-              } = g;
-              U(q, t, t && t.body);
-            });
-          }
-        }
+                statusCode: h,
+                statusCode: I,
+                headers: H,
+                rawBody: B
+              } = D,
+              F = Q.decode(B, this.encoding);
+            C(null, {
+              status: h,
+              statusCode: I,
+              headers: H,
+              rawBody: B,
+              body: F
+            }, F);
+          }, D => {
+            const {
+              message: h,
+              response: I
+            } = D;
+            C(h, I, I && Q.decode(I.rawBody, this.encoding));
+          });
+          break;
       }
     }
-    put(s, U = () => {}) {
-      const y = s.method ? s.method.toLocaleLowerCase() : "put";
-      s.body && s.headers && !s.headers["Content-Type"] && (s.headers["Content-Type"] = "application/x-www-form-urlencoded");
-      if (s.headers) {
-        delete s.headers["Content-Length"];
-      }
-      if (this.isSurge() || this.isLoon()) {
-        if (this.isSurge() && this.isNeedRewrite) {
-          s.headers = s.headers || {};
-          const r = {
-            "X-Surge-Skip-Scripting": false
-          };
-          Object.assign(s.headers, r);
-        }
-        $httpClient[y](s, (l, L, X) => {
-          !l && L && (L.body = X, L.statusCode = L.status);
-          U(l, L, X);
-        });
-      } else {
-        if (this.isQuanX()) {
-          s.method = y;
-          if (this.isNeedRewrite) {
-            s.opts = s.opts || {};
-            const l = {
-              hints: false
-            };
-            Object.assign(s.opts, l);
-          }
-          $task.fetch(s).then(L => {
-            const {
-              statusCode: X,
-              statusCode: d,
-              headers: i,
-              body: A
-            } = L;
-            const S = {
-              status: X,
-              statusCode: d,
-              headers: i,
-              body: A
-            };
-            U(null, S, A);
-          }, L => U(L));
-        } else {
-          if (this.isNode()) {
-            this.initGotEnv(s);
-            const {
-              url: L,
-              ...X
-            } = s;
-            this.got[y](L, X).then(d => {
-              const {
-                  statusCode: i,
-                  statusCode: A,
-                  headers: S,
-                  body: g
-                } = d,
-                q = {
-                  status: i,
-                  statusCode: A,
-                  headers: S,
-                  body: g
-                };
-              U(null, q, g);
-            }, d => {
-              const {
-                message: i,
-                response: A
-              } = d;
-              U(i, A, A && A.body);
-            });
-          }
-        }
-      }
-    }
-    time(s, U = null) {
-      const c = U ? new Date(U) : new Date();
-      let y = {
-        "M+": c.getMonth() + 1,
-        "d+": c.getDate(),
-        "H+": c.getHours(),
-        "m+": c.getMinutes(),
-        "s+": c.getSeconds(),
-        "q+": Math.floor((c.getMonth() + 3) / 3),
-        S: c.getMilliseconds()
+    time(g, C = null) {
+      const W = C ? new Date(C) : new Date();
+      let Q = {
+        "M+": W.getMonth() + 1,
+        "d+": W.getDate(),
+        "H+": W.getHours(),
+        "m+": W.getMinutes(),
+        "s+": W.getSeconds(),
+        "q+": Math.floor((W.getMonth() + 3) / 3),
+        S: W.getMilliseconds()
       };
-      if (/(y+)/.test(s)) {
-        s = s.replace(RegExp.$1, (c.getFullYear() + "").substr(4 - RegExp.$1.length));
-      }
-      for (let r in y) if (new RegExp("(" + r + ")").test(s)) {
-        s = s.replace(RegExp.$1, RegExp.$1.length == 1 ? y[r] : ("00" + y[r]).substr(("" + y[r]).length));
-      }
-      return s;
+      /(y+)/.test(g) && (g = g.replace(RegExp.$1, (W.getFullYear() + "").substr(4 - RegExp.$1.length)));
+      for (let M in Q) new RegExp("(" + M + ")").test(g) && (g = g.replace(RegExp.$1, 1 == RegExp.$1.length ? Q[M] : ("00" + Q[M]).substr(("" + Q[M]).length)));
+      return g;
     }
-    msg(s = f, U = "", c = "", y) {
-      const r = l => {
-        if (!l) {
-          return l;
-        }
-        if (typeof l === "string") {
-          if (this.isLoon()) {
-            return l;
-          } else {
-            if (this.isQuanX()) {
-              return {
-                "open-url": l
-              };
-            } else {
-              if (this.isSurge()) {
+    queryStr(g) {
+      let C = "";
+      for (const W in g) {
+        let Q = g[W];
+        null != Q && "" !== Q && ("object" == typeof Q && (Q = JSON.stringify(Q)), C += W + "=" + Q + "&");
+      }
+      C = C.substring(0, C.length - 1);
+      return C;
+    }
+    msg(g = u, C = "", W = "", Q = {}) {
+      const M = x => {
+        const {
+          $open: D,
+          $copy: h,
+          $media: I,
+          $mediaMime: H
+        } = x;
+        switch (typeof x) {
+          case void 0:
+            return x;
+          case "string":
+            switch (this.getEnv()) {
+              case "Surge":
+              case "Stash":
+              default:
                 return {
-                  url: l
+                  url: x
                 };
-              } else {
-                return undefined;
-              }
+              case "Loon":
+              case "Shadowrocket":
+                return x;
+              case "Quantumult X":
+                return {
+                  "open-url": x
+                };
+              case "Node.js":
+                return;
             }
-          }
-        } else {
-          if (typeof l === "object") {
-            if (this.isLoon()) {
-              let L = l.openUrl || l.url || l["open-url"],
-                X = l.mediaUrl || l["media-url"];
-              const d = {
-                openUrl: L,
-                mediaUrl: X
-              };
-              return d;
-            } else {
-              if (this.isQuanX()) {
-                let i = l["open-url"] || l.url || l.openUrl,
-                  A = l["media-url"] || l.mediaUrl;
-                const S = {
-                  "open-url": i,
-                  "media-url": A
-                };
-                return S;
-              } else {
-                if (this.isSurge()) {
-                  let g = l.url || l.openUrl || l["open-url"];
-                  const q = {
-                    url: g
-                  };
-                  return q;
+          case "object":
+            switch (this.getEnv()) {
+              case "Surge":
+              case "Stash":
+              case "Shadowrocket":
+              default:
+                {
+                  const B = {};
+                  let F = x.openUrl || x.url || x["open-url"] || D;
+                  F && Object.assign(B, {
+                    action: "open-url",
+                    url: F
+                  });
+                  let L = x["update-pasteboard"] || x.updatePasteboard || h;
+                  if (L && Object.assign(B, {
+                    action: "clipboard",
+                    text: L
+                  }), I) {
+                    let l, K, Y;
+                    if (I.startsWith("http")) {
+                      l = I;
+                    } else {
+                      if (I.startsWith("data:")) {
+                        const [w] = I.split(";"),
+                          [, J] = I.split(",");
+                        K = J;
+                        Y = w.replace("data:", "");
+                      } else {
+                        K = I;
+                        Y = (U => {
+                          const E = {
+                            JVBERi0: "application/pdf",
+                            R0lGODdh: "image/gif",
+                            R0lGODlh: "image/gif",
+                            iVBORw0KGgo: "image/png",
+                            "/9j/": "image/jpg"
+                          };
+                          for (var N in E) if (0 === U.indexOf(N)) {
+                            return E[N];
+                          }
+                          return null;
+                        })(I);
+                      }
+                    }
+                    Object.assign(B, {
+                      "media-url": l,
+                      "media-base64": K,
+                      "media-base64-mime": H ?? Y
+                    });
+                  }
+                  Object.assign(B, {
+                    "auto-dismiss": x["auto-dismiss"],
+                    sound: x.sound
+                  });
+                  return B;
                 }
-              }
+              case "Loon":
+                {
+                  const U = {};
+                  let E = x.openUrl || x.url || x["open-url"] || D;
+                  E && Object.assign(U, {
+                    openUrl: E
+                  });
+                  let N = x.mediaUrl || x["media-url"];
+                  I?.["startsWith"]("http") && (N = I);
+                  N && Object.assign(U, {
+                    mediaUrl: N
+                  });
+                  console.log(JSON.stringify(U));
+                  return U;
+                }
+              case "Quantumult X":
+                {
+                  const p = {};
+                  let R = x["open-url"] || x.url || x.openUrl || D;
+                  R && Object.assign(p, {
+                    "open-url": R
+                  });
+                  let b = x["media-url"] || x.mediaUrl;
+                  I?.["startsWith"]("http") && (b = I);
+                  b && Object.assign(p, {
+                    "media-url": b
+                  });
+                  let T = x["update-pasteboard"] || x.updatePasteboard || h;
+                  T && Object.assign(p, {
+                    "update-pasteboard": T
+                  });
+                  console.log(JSON.stringify(p));
+                  return p;
+                }
+              case "Node.js":
+                return;
             }
-          } else {
-            return undefined;
-          }
+          default:
+            return;
         }
       };
       if (!this.isMute) {
-        if (this.isSurge() || this.isLoon()) {
-          $notification.post(s, U, c, r(y));
-        } else {
-          this.isQuanX() && $notify(s, U, c, r(y));
+        switch (this.getEnv()) {
+          case "Surge":
+          case "Loon":
+          case "Stash":
+          case "Shadowrocket":
+          default:
+            $notification.post(g, C, W, M(Q));
+            break;
+          case "Quantumult X":
+            $notify(g, C, W, M(Q));
+            break;
+          case "Node.js":
+            break;
         }
       }
       if (!this.isMuteLog) {
-        let l = ["", "==============📣系统通知📣=============="];
-        l.push(s);
-        U ? l.push(U) : "";
-        c ? l.push(c) : "";
-        console.log(l.join("\n"));
-        this.logs = this.logs.concat(l);
+        let x = ["", "==============📣系统通知📣=============="];
+        x.push(g);
+        C && x.push(C);
+        W && x.push(W);
+        console.log(x.join("\n"));
+        this.logs = this.logs.concat(x);
       }
     }
-    log(...s) {
-      s.length > 0 && (this.logs = [...this.logs, ...s]);
-      console.log(s.join(this.logSeparator));
+    debug(...g) {
+      this.logLevels[this.logLevel] <= this.logLevels.debug && (g.length > 0 && (this.logs = [...this.logs, ...g]), console.log("" + this.logLevelPrefixs.debug + g.map(C => C ?? String(C)).join(this.logSeparator)));
     }
-    logErr(s, U) {
-      const c = !this.isSurge() && !this.isQuanX() && !this.isLoon();
-      !c ? this.log("", "❗️" + this.name + ", 错误!", s) : this.log("", "❗️" + this.name + ", 错误!", s.stack);
+    info(...g) {
+      this.logLevels[this.logLevel] <= this.logLevels.info && (g.length > 0 && (this.logs = [...this.logs, ...g]), console.log("" + this.logLevelPrefixs.info + g.map(C => C ?? String(C)).join(this.logSeparator)));
     }
-    wait(s) {
-      return new Promise(U => setTimeout(U, s));
+    warn(...g) {
+      this.logLevels[this.logLevel] <= this.logLevels.warn && (g.length > 0 && (this.logs = [...this.logs, ...g]), console.log("" + this.logLevelPrefixs.warn + g.map(C => C ?? String(C)).join(this.logSeparator)));
     }
-    done(s = {}) {
-      const U = new Date().getTime();
-      const c = (U - this.startTime) / 1000;
-      this.log("", "🔔" + this.name + ", 结束!🕛" + c + "秒");
-      this.log();
-      (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(s);
+    error(...g) {
+      this.logLevels[this.logLevel] <= this.logLevels.error && (g.length > 0 && (this.logs = [...this.logs, ...g]), console.log("" + this.logLevelPrefixs.error + g.map(C => C ?? String(C)).join(this.logSeparator)));
     }
-  }(f, w);
+    log(...g) {
+      g.length > 0 && (this.logs = [...this.logs, ...g]);
+      console.log(g.map(C => C ?? String(C)).join(this.logSeparator));
+    }
+    logErr(g, C) {
+      switch (this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        case "Quantumult X":
+        default:
+          this.log("", "❗️" + this.name + ", 错误!", C, g);
+          break;
+        case "Node.js":
+          this.log("", "❗️" + this.name + ", 错误!", C, void 0 !== g.message ? g.message : g, g.stack);
+          break;
+      }
+    }
+    wait(g) {
+      return new Promise(C => setTimeout(C, g));
+    }
+    done(g = {}) {
+      const C = (new Date().getTime() - this.startTime) / 1000;
+      switch (this.log("", "🔔" + this.name + ", 结束! 🕛 " + C + " 秒"), this.log(), this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        case "Quantumult X":
+        default:
+          $done(g);
+          break;
+        case "Node.js":
+          process.exit(1);
+      }
+    }
+  }(u, m);
 }
