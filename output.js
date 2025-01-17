@@ -1,37 +1,38 @@
-//Fri Jan 17 2025 08:36:12 GMT+0000 (Coordinated Universal Time)
+//Fri Jan 17 2025 08:58:00 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
-const $ = new Env("顺义创城"),
-  version = "V1.0.0",
-  appName = "syccapp";
-let syccapp = $.getjson(appName, []);
+const $ = new Env("喜马拉雅极速版"),
+  version = "V1.0.5",
+  appName = "xmlyjsbapp";
+let xmlyjsbapp = $.getjson(appName, []);
 const fs = $.isNode() ? require("fs") : "",
   WebSocket = $.isNode() ? require("ws") : "",
   file = "david_cookies.js";
-$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", W => {}));
+$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", M => {}));
 const http = $.isNode() ? require("http") : "",
-  notify = $.isNode() ? require("./sendNotify") : "";
-const COOKIES = $.isNode() ? require("./david_cookies") : "";
+  notify = $.isNode() ? require("./sendNotify") : "",
+  COOKIES = $.isNode() ? require("./david_cookies") : "";
 let userId = $.getdata("tguserid") || 1,
-  activeCode = $.getdata("syccactivecode") || 0,
-  syccuserck = $.getval("syccuserck") || 1,
-  apiHost = $.getval("apiHost") || "http://106.15.104.124:8080";
+  activeCode = $.getdata("xmlyjsbactivecode") || 0,
+  xmlyjsbuserck = $.getval("xmlyjsbuserck") || 1;
+let apiHost = $.getval("apiHost") || "http://106.15.104.124:8080";
 $.getval("apiHosts") && (apiHost = $.getval("apiHosts"));
+let flushCash = $.getval("cleanCache") || false;
 const debug = 0;
-let tz = $.getval("tz") || "1";
+let tz = $.getval("tz") || "1",
+  helpUtils = undefined,
+  CryptoJS = undefined,
+  saveFile = false,
+  xmlyjsb_ck_file = "xmlyjsb_cookies.json";
 var hour = "",
   minute = "";
 let sendlogs = "",
-  sycclogs = [];
-let wss = [],
+  xmlyjsblogs = [],
+  wss = [],
   channels_status = [],
   reconectCounts = [],
   requestObjects = [],
   requestSigns = [],
-  accountErrors = [],
-  taskScores = [3, 5, 10, 3, 5, 10, 1, 2, 1],
-  taskNames = ["消消卡第一关", "消消卡第二关", "消消卡第三关", "创城拼图第一关", "创城拼图第二关", "创城拼图第三关", "关注或点赞", "浏览创城动态", "分享朋友圈"],
-  taskIds = [12, 16, 17, 29, 30, 31, 15, 3, 7, 5, 18, 14],
   httpResult = "",
   userAuth = "",
   scriptAuth = "",
@@ -49,11 +50,12 @@ let wss = [],
   numbers = 3,
   vipDate = "";
 if ($.isNode()) {
-  process.env.SYCCAPP ? syccapp = JSON.parse(process.env.SYCCAPP) : syccapp = COOKIES.SYCC;
+  process.env.XMLYJSBAPP ? xmlyjsbapp = JSON.parse(process.env.XMLYJSBAPP) : xmlyjsbapp = COOKIES.XMLYJSB;
   userId = process.env.TGUSERID;
-  activeCode = process.env.SYCCACTIVECODE;
+  activeCode = process.env.XMLYJSBACTIVECODE;
   process.env.APIHOST && (apiHost = process.env.APIHOST);
   process.env.APIHOSTS && (apiHost = process.env.APIHOSTS);
+  process.env.CLEANCACHE && (flushCash = JSON.parse(process.env.CLEANCACHE));
   hour = new Date(new Date().getTime()).getHours();
   minute = new Date(new Date().getTime()).getMinutes();
   $.log("🔔 当前环境: Node, 当前时间：" + hour + "点");
@@ -66,26 +68,26 @@ if ($.isNode()) {
   if (typeof $request !== "undefined") {
     await getCk();
   } else {
-    if (!syccapp) {
+    if (!xmlyjsbapp) {
       $.log("📢 很抱歉，😭 没有找到账号信息！你确定配置账号信息了吗？");
       return;
     }
     $.log("📢 开始检测服务器接口状态>>>");
-    let e = false;
-    const a = apiHost.split("&"),
-      y = a.length;
-    for (let S = 0; S < y; S++) {
+    let p = false;
+    const s = apiHost.split("&"),
+      w = s.length;
+    for (let n = 0; n < w; n++) {
       if ($.isNode()) {
-        e = await checkAddress("" + a[S], 2500);
+        p = await checkAddress("" + s[n], 2500);
       } else {
-        $.isSurge() || $.isLoon() ? e = await httpClientRequest("" + a[S], 2500) : e = await fetchRequest("" + a[S], 2500);
+        $.isSurge() || $.isLoon() ? p = await httpClientRequest("" + s[n], 2500) : p = await fetchRequest("" + s[n], 2500);
       }
-      if (e == true) {
-        apiHost = a[S];
-        $.log("📢 接口" + (S + 1) + "[" + a[S] + "]服务器接口正常! 🎉");
+      if (p == true) {
+        apiHost = s[n];
+        $.log("📢 接口" + (n + 1) + "[" + s[n] + "]服务器接口正常! 🎉");
         break;
       }
-      if (S == y - 1 && e == false) {
+      if (n == w - 1 && p == false) {
         $.log("📢 抱歉，所有接口都不可用, 请前往交流群置顶获取最新的接口地址! 😭");
         $.msg($.name, "所有接口都不可用, 请尽快前往交流群置顶获取最新的接口地址!");
         return;
@@ -100,8 +102,8 @@ if ($.isNode()) {
     $.log("🔔 当前脚本版本号: " + version + "，最新版本号: " + newest_version);
     if (vipDate != "") {
       let q = new Date(vipDate).getTime(),
-        M = new Date().getTime();
-      if (M > q) {
+        P = new Date().getTime();
+      if (P > q) {
         $.log("❗️ 抱歉，VIP到期了，请及时付费。");
         return;
       }
@@ -130,9 +132,9 @@ if ($.isNode()) {
     }
     if (vipDate != "") {
       if (isCharge == true) {
-        let P = new Date(vipDate).getTime(),
-          D = new Date().getTime();
-        if (D > P) {
+        let t = new Date(vipDate).getTime(),
+          V = new Date().getTime();
+        if (V > t) {
           $.log("❗️ 抱歉，VIP到期了，请及时付费。");
           return;
         } else {
@@ -149,82 +151,92 @@ if ($.isNode()) {
         }
       }
     }
-    multiAccount > 1 && $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一次可以运行" + numbers * multiAccount + "个账号。");
-    buyCount > 1 && $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一共可以运行" + runTotalCounts + "次, 已经运行了" + runedCounts + "次。");
+    if (multiAccount > 1) {
+      $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一次可以运行" + numbers * multiAccount + "个账号。");
+    }
+    if (buyCount > 1) {
+      $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一共可以运行" + runTotalCounts + "次, 已经运行了" + runedCounts + "次。");
+    }
     if (runAuth != true) {
       $.log("❗️ 抱歉,  该用户今天可能已经达到最大运行次数，明天再试吧！");
       return;
     }
-    if (syccapp.length > numbers * multiAccount) {
+    if (xmlyjsbapp.length > numbers * multiAccount) {
       $.log("❗️ 当前用户一次最多运行" + numbers * multiAccount + "个账号，需要增加账号请查看置顶说明。");
       return;
     }
-    if (syccapp.length == 0) {
+    if (xmlyjsbapp.length == 0) {
       $.log("先抓取账号ck，再运行脚本吧！");
       return;
     }
-    if (runedCounts + syccapp.length > runTotalCounts) {
-      $.log("📢 一共发现了" + syccapp.length + "个账号");
-      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (syccapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
+    if (runedCounts + xmlyjsbapp.length > runTotalCounts) {
+      $.log("📢 一共发现了" + xmlyjsbapp.length + "个账号");
+      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (xmlyjsbapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
       return;
     }
-    if (vipDate != "") {
-      $.log("📢 你的会员有效期到： " + vipDate);
+    vipDate != "" && $.log("📢 你的会员有效期到： " + vipDate);
+    helpUtils = await loadUtils(flushCash);
+    CryptoJS = helpUtils.createCryptoJS();
+    $.log("📢 一共发现了" + xmlyjsbapp.length + "个账号");
+    if ($.isNode()) {
+      !fs.existsSync(xmlyjsb_ck_file) ? xmlyjsb_cks = {} : xmlyjsb_cks = JSON.parse(fs.readFileSync(xmlyjsb_ck_file, "utf8"));
     }
-    $.log("📢 一共发现了" + syccapp.length + "个账号");
-    let c = [],
-      H = syccapp.length,
-      X = 0;
-    if ($.isNode() && process.env.SYCC_THREAD_COUNT) {
-      X = parseInt(process.env.SYCC_THREAD_COUNT);
+    let J = [],
+      C = xmlyjsbapp.length,
+      S = 0;
+    if ($.isNode() && process.env.XMLYJSB_THREAD_COUNT) {
+      S = parseInt(process.env.XMLYJSB_THREAD_COUNT);
     } else {
-      X = H;
+      S = C;
     }
-    let n = syccapp.length;
-    if (X >= H) {
-      X = H;
-      n = 1;
-      $.log("📢 你设置的线程数是" + X + "，账号个数是" + H + "，" + n + "次可全部跑完。");
-      for (let J4 = 0; J4 < syccapp.length; J4++) {
-        c.push(runMultiTasks(J4));
-        sycclogs[J4] = "";
+    let v = xmlyjsbapp.length;
+    if (S >= C) {
+      S = C;
+      v = 1;
+      $.log("📢 你设置的线程数是" + S + "，账号个数是" + C + "，" + v + "次可全部跑完。");
+      for (let M0 = 0; M0 < xmlyjsbapp.length; M0++) {
+        J.push(runMultiTasks(M0));
+        xmlyjsblogs[M0] = "";
         if ($.isNode()) {
-          channels_status[J4] = 0;
-          accountErrors[J4] = false;
-          await init_ws(J4);
+          channels_status[M0] = 0;
+          await init_ws(M0);
         } else {
-          channels_status[J4] = 1;
+          channels_status[M0] = 1;
         }
       }
-      await Promise.allSettled(c).then(J8 => {
+      await Promise.allSettled(J).then(M4 => {
+        if ($.isNode() && saveFile) {
+          $.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数");
+          fs.writeFileSync(xmlyjsb_ck_file, JSON.stringify(xmlyjsb_cks, null, 2));
+        }
         $.log("日志整理功能如下：");
         $.log("---------------日志整理开始--------------");
-        for (let JY = 0; JY < syccapp.length; JY++) {
-          $.log(sycclogs[JY]);
-          sendlogs += sycclogs[JY];
+        for (let M7 = 0; M7 < xmlyjsbapp.length; M7++) {
+          $.log(xmlyjsblogs[M7]);
+          sendlogs += xmlyjsblogs[M7];
         }
         $.log("---------------日志整理结束--------------");
         sendMsg(sendlogs);
       });
     } else {
-      n = Math.ceil(H / X);
-      $.log("📢 你设置的线程数是" + X + "，账号个数是" + H + "，计算后分" + n + "次执行，一次可执行" + X + "个账号，最后一次如果不够" + X + "个账号，剩多少个账号就跑几个账号。");
-      for (let J8 = 0; J8 < n; J8++) {
-        for (let JJ = J8 * X; JJ < X * (J8 + 1) && JJ < H; JJ++) {
-          c.push(runMultiTasks(JJ));
-          sycclogs[JJ] = "";
-          accountErrors[JJ] = false;
-          channels_status[JJ] = 1;
-          await init_ws(JJ);
+      v = Math.ceil(C / S);
+      $.log("📢 你设置的线程数是" + S + "，账号个数是" + C + "，计算后分" + v + "次执行，一次可执行" + S + "个账号，最后一次如果不够" + S + "个账号，剩多少个账号就跑几个账号。");
+      for (let M6 = 0; M6 < v; M6++) {
+        for (let M8 = M6 * S; M8 < S * (M6 + 1) && M8 < C; M8++) {
+          J.push(runMultiTasks(M8));
+          xmlyjsblogs[M8] = "";
+          channels_status[M8] = 1;
+          await init_ws(M8);
         }
-        await Promise.allSettled(c).then(Jd => {
-          c = [];
-          if (J8 == n - 1) {
+        await Promise.allSettled(J).then(MM => {
+          J = [];
+          if (M6 == v - 1) {
+            $.isNode() && saveFile && ($.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数"), fs.writeFileSync(xmlyjsb_ck_file, JSON.stringify(xmlyjsb_cks, null, 2)));
             $.log("日志整理功能如下：");
             $.log("---------------日志整理开始--------------");
-            for (let JE = 0; JE < syccapp.length; JE++) {
-              $.log(sycclogs[JE]);
-              sendlogs += sycclogs[JE];
+            for (let Ms = 0; Ms < xmlyjsbapp.length; Ms++) {
+              $.log(xmlyjsblogs[Ms]);
+              sendlogs += xmlyjsblogs[Ms];
             }
             $.log("---------------日志整理结束--------------");
             sendMsg(sendlogs);
@@ -233,151 +245,614 @@ if ($.isNode()) {
       }
     }
   }
-})().catch(W => $.logErr(W)).finally(() => $.done());
-async function runMultiTasks(W) {
-  return new Promise((e, a) => {
-    $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 开始执行 working......");
-    runSubTask(e, W);
+})().catch(M => $.logErr(M)).finally(() => $.done());
+async function runMultiTasks(M) {
+  return new Promise((p, s) => {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 开始执行 working......");
+    runSubTask(p, M);
   });
 }
-async function init_ws(W) {
+async function init_ws(M) {
   if ($.isNode()) {
-    if (reconectCounts[W] > 0) {
-      $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 尝试重新连接服务器>>>>>>");
+    if (reconectCounts[M] > 0) {
+      $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 尝试重新连接服务器>>>>>>");
     }
-    wss[W] = new WebSocket(apiHost.replace("http", "ws") + "/ws");
-    wss[W].on("open", function a() {
-      $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 签名通道已连接");
+    wss[M] = new WebSocket(apiHost.replace("http", "ws") + "/ws");
+    wss[M].on("open", function s() {
+      $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签名通道已连接");
     });
-    wss[W].on("close", function y() {
-      $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
+    wss[M].on("close", function w() {
+      $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
     });
-    wss[W].on("error", function c() {
-      $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 签名通道已关闭，原因是出现错误");
-      channels_status[W] = 1;
-      reconectCounts[W]++;
-      if (reconectCounts[W] <= 3) {
-        init_ws(W);
+    wss[M].on("error", function J() {
+      $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签名通道已关闭，原因是出现错误");
+      channels_status[M] = 1;
+      reconectCounts[M]++;
+      if (reconectCounts[M] <= 3) {
+        init_ws(M);
       }
     });
   }
 }
-async function runSubTask(W, E) {
-  await userInfo(E);
-  !syccapp[E].money ? await exchange(E, "1788826595521810434") : await exchange(E, "1562334019131645953");
-  await signin(E);
-  for (let c = 0; c < taskNames.length; c++) {
-    let X = taskNames[c],
-      h = taskIds[c],
-      S = taskScores[c];
-    await addScore(E, S, h, X);
-    await $.wait(randomNum(3000, 5000));
+async function runSubTask(M, a) {
+  $.isNode() && (await $.wait(3000, 5000));
+  await userInfo(a);
+  await account(a);
+  hour > 5 && (await cashPageInfo(a));
+  if (minute < 10) {
+    await addListenTime(a, 375 * (hour + 1) + helpUtils.randomNum(3, 60));
   }
-  $.isNode() && (await wss[E].close());
+  await listenInfo(a);
+  await signInfo(a);
+  await drinkInfo(a);
+  await topicInfo(a);
+  await redPacketInfo(a);
+  await doTasks(a);
+  $.isNode() && (await wss[a].close());
   await runComplete(appName, userId);
-  W();
+  M();
 }
 async function getCk() {
-  if ($request.url.match(/\/passport\/UnionLogin/)) {
-    const a = $request.body;
-    let y = syccuserck - 1;
-    if (syccapp[y]) {
-      syccapp[y].token_body = a;
-    } else {
-      const H = {
-        token_body: a
-      };
-      syccapp[y] = H;
+  const p = {
+    kjLBn: function (w, J) {
+      return w > J;
+    },
+    tRbmM: function (w, J) {
+      return w !== J;
+    },
+    GrkMo: "YAUfI",
+    gmyBN: function (w, J) {
+      return w - J;
+    },
+    yxMRQ: function (w, J) {
+      return w === J;
+    },
+    Qbwpf: "TXNhd",
+    qGgRx: "WeCzx",
+    JSFvX: function (w, J) {
+      return w === J;
+    },
+    mpGMF: "mdIBD",
+    MvEbf: "xmlyjsbapp",
+    Kszmc: function (w, J) {
+      return w + J;
     }
-    $.setdata(JSON.stringify(syccapp, null, 2), "syccapp");
-    $.msg($.name, "快音账号" + (y + 1) + "Token获取成功！🎉");
+  };
+  const s = p;
+  if ($request.url.match(/\/task\/record/)) {
+    if (s.tRbmM(s.GrkMo, s.GrkMo)) {
+      let J = s.data;
+      s.kjLBn(J.length, 0) && (C = J[0]);
+      return J;
+    } else {
+      const J = $request.headers.Cookie;
+      let C = s.gmyBN(xmlyjsbuserck, 1);
+      if (xmlyjsbapp[C]) {
+        s.yxMRQ(s.Qbwpf, s.qGgRx) ? (v.log(R + ": " + n + "请求失败"), H.log(f.stringify(Q)), E.logErr(D)) : xmlyjsbapp[C].cookie = J;
+      } else {
+        if (s.JSFvX(s.mpGMF, s.mpGMF)) {
+          const v = {
+            cookie: J
+          };
+          xmlyjsbapp[C] = v;
+        } else {
+          s = w[J].ua;
+        }
+      }
+      $.setdata(JSON.stringify(xmlyjsbapp, null, 2), s.MvEbf);
+      $.msg($.name, "喜马拉雅极速版账号" + s.Kszmc(C, 1) + "Cookie获取成功！🎉");
+    }
   }
 }
-async function userInfo(W) {
-  const e = "https://admin.shunyi.wenming.city/jeecg-boot/applet/user/userInfo";
-  let a = "";
-  await getReqObject(e, a, W);
-  await httpRequest("get", requestObjects[W], printCaller());
-  let y = httpResult;
-  if (y != null && y.code == 200) {
-    $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 用户名=> " + y.result.phone);
-    sycclogs[W] += "[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 用户名=> " + y.result.phone + "\n";
-    syccapp[W].mobile = y.result.phone;
-    $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 积分=> " + y.result.score);
-    sycclogs[W] += "[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 积分=> " + y.result.score + "\n";
+async function userInfo(M) {
+  const p = "https://passport.ximalaya.com/web/login/user";
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null && w.ret == 0) {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 用户名=> " + w.nickname);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 用户名=> " + w.nickname + "\n";
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 手机号=> " + w.mobile);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 手机号=> " + w.mobile + "\n";
+    xmlyjsbapp[M].uid = w.uid;
   } else {
-    $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 用户名信息=> " + y.message);
-    sycclogs[W] += "[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 用户名信息=> " + y.message + "\n";
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 用户名信息=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 用户名信息=> " + w.msg + "\n";
   }
 }
-async function signin(W) {
-  const e = "https://admin.shunyi.wenming.city/jeecg-boot/applet/ccScoreRecord/signIn";
-  let a = "";
-  await getReqObject(e, a, W);
-  await httpRequest("post", requestObjects[W], printCaller());
-  let y = httpResult;
-  if (y != null && y.code == 200) {
-    $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 签到任务完成");
-    sycclogs[W] += "[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 签到任务完成\n";
+async function account(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/account/coin";
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null) {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 金币=> " + w.total);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 金币=> " + w.total + "\n";
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 余额=> " + (w.total / 10000).toFixed(2) + "元");
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 余额=> " + (w.total / 10000).toFixed(2) + "元 \n";
   } else {
-    $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 签到任务=> " + y.message);
-    sycclogs[W] += "[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 完成任务=> " + y.message + "\n";
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 账户信息=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 账户信息=> " + w.msg + "\n";
   }
 }
-async function addScore(W, E, e, a) {
-  const c = "https://admin.shunyi.wenming.city/jeecg-boot/applet/user/addScore?score=" + E + "&type=" + e;
-  let H = "";
-  await getReqObject(c, H, W);
-  await httpRequest("get", requestObjects[W], printCaller());
-  let X = httpResult;
-  if (X != null && X.code == 200) {
-    $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 完成任务(" + a + ")获得=> " + E + "积分");
-    sycclogs[W] += "[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 完成任务(" + a + ")获得=> " + E + "积分\n";
+async function refreshToken(M) {
+  const p = "https://passport.ximalaya.com/user-http-app/v1/token/refresh";
+  let s = "";
+  await getReqObject(p, s, M);
+  requestObjects[M].headers["Content-Type"] = "application/x-www-form-urlencoded";
+  await httpRequest("post", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null && w.ret == 0) {
+    if (w.newToken != null) {
+      $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 刷新token=> " + w.data.newToken);
+    }
   } else {
-    $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 完成任务(" + a + ")=> " + X.message);
-    sycclogs[W] += "[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 完成任务(" + a + ")=> " + X.message + "\n";
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 刷新token=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 刷新token=> " + w.msg + "\n";
   }
 }
-async function exchange(E, e) {
-  const y = "https://admin.shunyi.wenming.city/jeecg-boot/applet/award/exchangeAward",
-    c = {
-      awardIds: [e],
-      phone: syccapp[E].mobile
+async function addListenTime(M, a) {
+  const s = "https://mobwsa.ximalaya.com/pizza-category/ball/saveListenTime";
+  let w = helpUtils.ts13(),
+    J = CryptoJS.MD5("currenttimemillis=" + w + "&listentime=" + a + "&uid=" + xmlyjsbapp[M].uid + "&q35435432sadks2i3546p2ndkcaqiwurhqfebt4kn").toString();
+  let C = "activtyId=listenAward&currentTimeMillis=" + w + "&listenTime=" + a + "&nativeListenTime=" + a + "&signature=" + J + "&uid=" + xmlyjsbapp[M].uid;
+  await getReqObject(s, C, M);
+  requestObjects[M].headers["Content-Type"] = "application/x-www-form-urlencoded";
+  await httpRequest("post", requestObjects[M], printCaller());
+  let S = httpResult;
+  S != null ? ($.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 阅读时长增加到=> " + (S.nativeListenTime / 60).toFixed(1) + "分钟"), xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 阅读时长增加到=> " + (S.nativeListenTime / 60).toFixed(1) + "分钟\n") : ($.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 阅读时长增加=> " + S.msg), xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 阅读时长增加=> " + S.msg + "\n");
+}
+async function doTasks(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/task/record?taskLabels=1,2";
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null) {
+    let J = w.taskList;
+    for (let C = 0; C < J.length; C++) {
+      let S = J[C];
+      if (S.taskId == 65) {
+        let R = S.step - S.process;
+        for (let H = 0; H < R; H++) {
+          let Q = await getToken(M);
+          await $.wait(helpUtils.randomNum(10000, 15000));
+          await getScore(M, Q, 2, S.title + "(" + (S.process + H + 1) + "/" + S.step + ")");
+        }
+      }
+    }
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 任务中心=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 任务中心=> " + w.msg + "\n";
+  }
+}
+async function signInfo(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/check-in/record?time=" + helpUtils.ts13();
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null) {
+    let J = w.receivedToday;
+    if (J == null || J == false) {
+      let S = w.checkInDetails[w.thatDay - 1];
+      await signIn(M, S.checkInAward);
+    }
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签到记录=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签到记录=> " + w.msg + "\n";
+  }
+}
+async function signIn(M, a) {
+  const s = "https://m.ximalaya.com/speed/web-earn/check-in/check";
+  let w = helpUtils.createDayjs(),
+    J = w().format("YYYYMMDD");
+  await selectChannel(M, "date=" + J + "&uid=" + xmlyjsbapp[M].uid);
+  let C = requestSigns[M],
+    S = "{\"checkData\":\"" + C + "\",\"makeUp\":false}";
+  await getReqObject(s, S, M);
+  await httpRequest("post", requestObjects[M], printCaller());
+  let v = httpResult;
+  if (v != null) {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签到=> 签到成功，获得" + a + "金币");
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签到=> 签到成功，获得" + a + "金币\n";
+    let R = await getToken(M);
+    await $.wait(helpUtils.randomNum(10000, 15000));
+    await getScore(M, R, 1, "每日签到看广告奖励");
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签到=> " + v.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 签到=> " + v.msg + "\n";
+  }
+}
+async function getToken(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/ad/token";
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null) {
+    return w.id;
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 获取广告token=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 获取广告token=> " + w.msg + "\n";
+  }
+}
+async function getScore(M, a, p, s) {
+  const J = "https://m.ximalaya.com/speed/web-earn/ad/score";
+  let C = CryptoJS.MD5("businesstype=" + p + "&token=" + a + "&uid=" + xmlyjsbapp[M].uid + "&q35435432sadks2i3546p2ndkcaqiwurhqfebt4kn").toString();
+  let S = "{\"sign\":\"" + C + "\",\"businessType\":" + p + "}";
+  await getReqObject(J, S, M);
+  await httpRequest("post", requestObjects[M], printCaller());
+  let v = httpResult;
+  if (v != null) {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + s + "=> " + v.coin + "金币");
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + s + "=> " + v.coin + "金币\n";
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + s + "=> " + v.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: " + s + "=> " + v.msg + "\n";
+  }
+}
+async function redPacketInfo(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/redPacket/config";
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null && w.code == 0) {
+    if (w.data.waitTime == 0) {
+      let C = w.data.stageId;
+      await receiveRedPacketReward(M, 1, C);
+      await $.wait(helpUtils.randomNum(10000, 15000));
+      await receiveRedPacketReward(M, 2, C);
+    }
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 宝箱信息=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 宝箱信息=> " + w.msg + "\n";
+  }
+}
+async function receiveRedPacketReward(a, p, s) {
+  const J = "https://m.ximalaya.com/speed/web-earn/redPacket/receive/v2";
+  let C = helpUtils.ts13();
+  await selectChannel(a, "stageId=" + s + "&receiveType=" + p + "&timestamp=" + C + "&uid=" + xmlyjsbapp[a].uid);
+  let S = requestSigns[a];
+  const v = {
+    receiveType: p,
+    signature: S,
+    timestamp: C,
+    stageId: s
+  };
+  await getReqObject(J, JSON.stringify(v), a);
+  await httpRequest("post", requestObjects[a], printCaller());
+  let n = httpResult;
+  if (n != null && n.code == 0) {
+    if (p == 1) {
+      $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 打开宝箱=> 获得" + n.data.score + "金币");
+      xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 打开宝箱=> 获得" + n.data.score + "金币\n";
+    } else {
+      $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 开宝箱看广告得双倍奖励=> 获得" + n.data.score + "金币");
+      xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 开宝箱看广告得双倍奖励=> 获得" + n.data.score + "金币\n";
+    }
+  } else {
+    $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 宝箱奖励=> " + n.msg);
+    xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 宝箱奖励=> " + n.msg + "\n";
+  }
+}
+async function topicInfo(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/topic/user";
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null && w.code == 0) {
+    w.data.stamina > 0 && (await startQuestion(M));
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 宝箱信息=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 宝箱信息=> " + w.msg + "\n";
+  }
+}
+async function startQuestion(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/topic/start";
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null && w.code == 0) {
+    let J = w.data.paperId,
+      C = w.data.topics.length,
+      S = w.data.topics[C - 1].topicId;
+    await $.wait(helpUtils.randomNum(10000, 15000));
+    await receiveQuestionReward(M, 1, J, S, C);
+    await $.wait(helpUtils.randomNum(10000, 15000));
+    await receiveQuestionReward(M, 2, J, S, C);
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 宝箱信息=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 宝箱信息=> " + w.msg + "\n";
+  }
+}
+async function receiveQuestionReward(a, p, s, w, J) {
+  const S = "https://m.ximalaya.com/speed/web-earn/topic/reward/v2";
+  let v = helpUtils.ts13();
+  await selectChannel(a, "lastTopicId=" + w + "&numOfAnswers=" + J + "&receiveType=" + p + "&timestamp=" + v + "&uid=" + xmlyjsbapp[a].uid);
+  let R = requestSigns[a];
+  const n = {
+    numOfAnswers: J,
+    paperId: s,
+    signature: R,
+    timestamp: v,
+    receiveType: p,
+    lastTopicId: w
+  };
+  await getReqObject(S, JSON.stringify(n), a);
+  await httpRequest("post", requestObjects[a], printCaller());
+  let f = httpResult;
+  if (f != null && f.code == 0) {
+    if (p == 1) {
+      $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 答题成功=> 获得" + f.data.reward + "金币");
+      xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 答题成功=> " + f.data.reward + "金币\n";
+    } else {
+      $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 答题成功看广告=> 翻了" + f.data.multiple + "倍，获得" + f.data.reward + "金币");
+      xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 答题成功看广告=> 翻了" + f.data.multiple + "倍，获得" + f.data.reward + "金币\n";
+    }
+  } else {
+    $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 答题奖励=> " + f.msg);
+    xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 答题奖励=> " + f.msg + "\n";
+  }
+}
+async function drinkInfo(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/drink/detail?timestamp=" + helpUtils.ts13();
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null && w.code == 0) {
+    let C = w.data.drinks;
+    for (let S = 0; S < C.length; S++) {
+      let v = C[S];
+      if (v.receiveStatus == 2) {
+        await receiveDrinkReward(M, v, 1);
+        await $.wait(helpUtils.randomNum(10000, 15000));
+        await receiveDrinkReward(M, v, 2);
+      } else {
+        if (v.receiveStatus == 4) {
+          await $.wait(helpUtils.randomNum(10000, 15000));
+          await receiveDrinkReward(M, v, 3);
+        }
+      }
+    }
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 每日喝水信息=> " + w.msg);
+    xmlyjsblogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 每日喝水信息=> " + w.msg + "\n";
+  }
+}
+async function receiveDrinkReward(a, p, s) {
+  const J = "https://m.ximalaya.com/speed/web-earn/drink/receive/v2";
+  let C = helpUtils.ts13();
+  await selectChannel(a, "stageId=" + p.stageId + "&isDouble=" + s + "&timestamp=" + C + "&uid=" + xmlyjsbapp[a].uid);
+  let S = requestSigns[a];
+  const v = {
+    isDouble: s,
+    timestamp: C,
+    signature: S,
+    stageId: p.stageId
+  };
+  await getReqObject(J, JSON.stringify(v), a);
+  await httpRequest("post", requestObjects[a], printCaller());
+  let n = httpResult;
+  if (n != null && n.code == 0) {
+    if (s == 1) {
+      $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "(" + p.description + ")=> 获得" + n.data.score + "金币");
+      xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "(" + p.description + ")=> " + n.data.score + "金币\n";
+    } else {
+      if (s == 2) {
+        $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "_看广告=> 获得" + n.data.score + "金币");
+        xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "_看广告=> 获得" + n.data.score + "金币\n";
+      } else {
+        $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "_(补)=> 获得" + n.data.score + "金币");
+        xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "_(补)=> 获得" + n.data.score + "金币\n";
+      }
+    }
+  } else {
+    $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "=> " + n.msg);
+    xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "=> " + n.msg + "\n";
+  }
+}
+async function listenInfo(a) {
+  const s = "https://m.ximalaya.com/speed/web-earn/listen/b/coin/config?ts=" + helpUtils.ts13();
+  let w = "";
+  await getReqObject(s, w, a);
+  await httpRequest("get", requestObjects[a], printCaller());
+  let J = httpResult;
+  if (J != null && J.code == 0) {
+    let C = J.data.coinList,
+      S = J.data.positionList;
+    const v = {
+      videoAdType: 1,
+      positionId: 0,
+      positionName: "",
+      coinSceneId: 0
     };
-  await getReqObject(y, JSON.stringify(c), E);
-  await httpRequest("post", requestObjects[E], printCaller());
-  let X = httpResult;
-  if (X != null && X.code == 200) {
-    $.log("[账号" + (E + 1 < 10 ? "0" + (E + 1) : E + 1) + "]: 兑换=> " + X.message);
-    sycclogs[E] += "[账号" + (E + 1 < 10 ? "0" + (E + 1) : E + 1) + "]: 兑换=> " + X.message + "\n";
+    let n = S.find(Q => Q.positionName == "sub_listentime_double_video"),
+      H = S.find(Q => Q.positionName == "sub_listentime_video"),
+      f = 375 * (hour + 1);
+    for (let Q = 0; Q < C.length; Q++) {
+      let E = C[Q];
+      if (E.coinStatus == 1 && f >= E.listenTime) {
+        if (Q == C.length - 1) {
+          await receiveListenReward(a, E, J.data.priodId, H);
+          await $.wait(helpUtils.randomNum(10000, 15000));
+          await receiveListenReward(a, E, J.data.priodId, n);
+          await $.wait(helpUtils.randomNum(5000, 10000));
+        } else {
+          await receiveListenReward(a, E, J.data.priodId, v);
+          await $.wait(helpUtils.randomNum(10000, 15000));
+          await receiveListenReward(a, E, J.data.priodId, n);
+          await $.wait(helpUtils.randomNum(5000, 10000));
+        }
+      } else {
+        E.coinStatus == 3 && E.hasDouble == false && (await receiveListenReward(a, E, J.data.priodId, n));
+      }
+    }
   } else {
-    $.log("[账号" + (E + 1 < 10 ? "0" + (E + 1) : E + 1) + "]: 兑换=> " + X.message);
-    sycclogs[E] += "[账号" + (E + 1 < 10 ? "0" + (E + 1) : E + 1) + "]: 兑换=> " + X.message + "\n";
+    $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 听书奖励信息=> " + J.msg);
+    xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 听书奖励信息=> " + J.msg + "\n";
   }
 }
-function getScriptAuth(W, E, e) {
-  return new Promise((y, c) => {
-    const X = apiHost + "/script/permissions/lastest",
-      n = {
-        appName: W,
-        userId: E,
-        activityCode: e,
+async function receiveListenReward(a, p, s, w) {
+  const C = "https://m.ximalaya.com/speed/web-earn/listen/b/award";
+  let S = helpUtils.ts13(),
+    v = "priodId=" + s + "&stageId=" + p.stageId + "&listenTime=" + p.listenTime + "&coinSceneId=" + w.coinSceneId + "&positionId=" + w.positionId + "&positionName=" + w.positionName + "&timestamp=" + S + "&randomDouble=" + w.videoAdType;
+  await selectChannel(a, v);
+  let R = requestSigns[a];
+  const n = {
+    stageId: p.stageId,
+    positionName: w.positionName,
+    randomDouble: w.videoAdType,
+    priodId: s,
+    signature: R,
+    positionId: w.positionId,
+    coinSceneId: w.coinSceneId,
+    timestamp: S,
+    listenTime: p.listenTime
+  };
+  await getReqObject(C, JSON.stringify(n), a);
+  await httpRequest("post", requestObjects[a], printCaller());
+  let f = httpResult;
+  if (f != null && f.code == 0) {
+    if (w.videoAdType == 1) {
+      $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "(" + p.comment + ")=> 获得" + f.data.coinNum + "金币");
+      xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "(" + p.comment + ")=> " + f.data.coinNum + "金币\n";
+    } else {
+      w.videoAdType == 2 && ($.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "_看广告=> 获得" + f.data.coinNum + "金币"), xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "_看广告=> 获得" + f.data.coinNum + "金币\n");
+    }
+  } else {
+    $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "=> " + f.msg);
+    xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: " + p.title + "=> " + f.msg + "\n";
+  }
+}
+async function receiveYesterdayReward(a, p) {
+  let w = helpUtils.ts13();
+  const J = "https://m.ximalaya.com/speed/web-earn/account/showAward/receive?ts=" + w;
+  await selectChannel(a, "stageId=" + p + "&timestamp=" + w + "&uid=" + xmlyjsbapp[a].uid);
+  let C = requestSigns[a];
+  const S = {
+    stageId: p,
+    signature: C,
+    timestamp: w
+  };
+  await getReqObject(J, JSON.stringify(S), a);
+  await httpRequest("post", requestObjects[a], printCaller());
+  let R = httpResult;
+  if (R != null && R.ret == 0) {
+    $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 昨日盈利奖励=> " + R.data.extraAward + "金币");
+    xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 昨日盈利奖励=> " + R.data.extraAward + "金币\n";
+  } else {
+    $.log("[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 昨日盈利奖励=> " + R.msg);
+    xmlyjsblogs[a] += "[账号" + (a + 1 < 10 ? "0" + (a + 1) : a + 1) + "]: 昨日盈利奖励=> " + R.msg + "\n";
+  }
+}
+async function thirdAccountInfo(M) {
+  const p = "https://m.ximalaya.com/speed/web-earn/account/third-pay-account/3";
+  let s = "";
+  let w = null;
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let J = httpResult;
+  if (J != null && J.code == 0) {
+    let C = J.data;
+    if (C.length > 0) {
+      w = C[0];
+    }
+    return w;
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 账户信息=> " + J.msg);
+    qjxslogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 账户信息=> " + J.msg + "\n";
+  }
+}
+async function withdraw(M, a) {
+  const s = "https://m.ximalaya.com/speed/web-earn/account/take-out";
+  let w = await thirdAccountInfo(M);
+  if (w == null) {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 账户信息=> 请绑定支付宝，再尝试提现");
+    qjxslogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 账户信息=> 请绑定支付宝，再尝试提现\n";
+    return;
+  }
+  let J = helpUtils.ts13();
+  let C = "accountType=" + w.accountType + "&accountNumber=" + w.accountNumber + "&amount=" + a + "&timestamp=" + J + "&uid=" + xmlyjsbapp[M].uid;
+  await selectChannel(M, C);
+  let S = requestSigns[M],
+    v = {
+      signature: S,
+      timestamp: parseInt(J),
+      name: w.name,
+      accountType: w.accountType,
+      accountNumber: w.accountNumber,
+      amount: a,
+      takeOutType: 2
+    };
+  await getReqObject(s, JSON.stringify(v), M);
+  await httpRequest("post", requestObjects[M], printCaller());
+  let R = httpResult;
+  if (R != null && R.code == 0) {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 提现=> 成功提现" + a + "元");
+    qjxslogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 提现=> 成功提现" + a + "元\n";
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 提现结果=> " + R.msg);
+    qjxslogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 提现结果=> " + R.msg + "\n";
+  }
+}
+async function cashPageInfo(M) {
+  const p = "https://m.ximalaya.com/growth-ssr-speed-welfare-center/page/withdraw?_full_with_transparent_bar=1";
+  let s = "";
+  await getReqObject(p, s, M);
+  await httpRequest("get", requestObjects[M], printCaller());
+  let w = httpResult;
+  if (w != null) {
+    const C = helpUtils.createCheerio(),
+      S = C.load(w);
+    let v = JSON.parse(S("#__NEXT_DATA__").text()),
+      R = v.props.pageProps.config.continuousDays,
+      n = v.props.pageProps.coin.total,
+      H = v.props.pageProps.config.alipayTakeOutInfo.activityTakeOutInfo.activityList,
+      Q = H.find(D => D.amount == 20),
+      E = H.find(D => D.amount == 50);
+    if (E && E.takeOutTimes > 0 && E.leastContinuousDays <= R && n >= 500000) {
+      await withdraw(M, 50);
+    } else {
+      if (Q && Q.takeOutTimes > 0 && Q.leastContinuousDays <= R && n >= 200000) {
+        await withdraw(M, 20);
+      }
+    }
+  } else {
+    $.log("[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 提现页面信息=> " + w.msg);
+    qjxslogs[M] += "[账号" + (M + 1 < 10 ? "0" + (M + 1) : M + 1) + "]: 提现页面信息=> " + w.msg + "\n";
+  }
+}
+function getScriptAuth(M, a, p) {
+  return new Promise((w, J) => {
+    const v = apiHost + "/script/permissions/lastest",
+      R = {
+        appName: M,
+        userId: a,
+        activityCode: p,
         version: version
       };
-    const S = {
+    const H = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const l = {
-      url: X,
-      headers: S,
-      body: JSON.stringify(n)
+    const f = {
+      url: v,
+      headers: H,
+      body: JSON.stringify(R)
     };
-    $.post(l, async (i, p, v) => {
-      if (v && v != null && v.replace(/\"/g, "").length > 50) {
-        const A = v.replace(/\"/g, "").slice(34),
-          L = new Base64();
-        result = JSON.parse(L.decode(A));
+    $.post(f, async (Q, E, D) => {
+      if (D && D != null && D.replace(/\"/g, "").length > 50) {
+        const q = D.replace(/\"/g, "").slice(34);
+        helpUtils = await loadUtils(flushCash);
+        CryptoJS = helpUtils.createCryptoJS();
+        result = JSON.parse(CryptoJS.enc.Base64.parse(q).toString(CryptoJS.enc.Utf8));
         try {
           newest_version = result.version;
           userAuth = result.userAuth;
@@ -394,1645 +869,1147 @@ function getScriptAuth(W, E, e) {
           invicode = result.invicate;
           numbers = result.accountNumbers;
           vipDate = result.vipDate;
-        } catch (M) {
-          $.log(M);
+        } catch (U) {
+          $.log(U);
         }
       } else {
         $.log("请求服务器接口出现错误，请检查网络连接情况");
       }
-      y();
+      w();
     });
   });
 }
-function runComplete(W, E) {
-  return new Promise((a, y) => {
-    const X = apiHost + "/script/run/add",
-      n = {
-        appName: W,
-        userId: E,
+function runComplete(M, a) {
+  return new Promise((s, w) => {
+    const C = apiHost + "/script/run/add",
+      S = {
+        appName: M,
+        userId: a,
         activityCode: activeCode,
         version: version
       };
-    const S = {
+    const R = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const l = {
-      url: X,
-      headers: S,
-      body: JSON.stringify(n)
+    const n = {
+      url: C,
+      headers: R,
+      body: JSON.stringify(S)
     };
-    $.post(l, async (i, p, v) => {
-      a();
+    $.post(n, async (H, f, Q) => {
+      s();
     });
   });
 }
-function checkAddress(W, E) {
-  return new Promise((a, y) => {
-    const H = setTimeout(() => {
-        a(false);
-      }, E),
-      X = http.get(W, n => {
-        clearTimeout(H);
-        if (n.statusCode === 404) {
-          a(true);
+function loadToken(a) {
+  let w = xmlyjsbapp[a].mobile;
+  xmlyjsb_item = xmlyjsb_cks["" + w];
+  if (xmlyjsb_item) {
+    xmlyjsbapp[a].refreshToken = xmlyjsb_item.refreshToken;
+    xmlyjsbapp[a].accessToken = xmlyjsb_item.accessToken;
+    return true;
+  } else {
+    return false;
+  }
+}
+function saveToken(M) {
+  xmlyjsb_cks[xmlyjsbapp[M].mobile] = {
+    refreshToken: xmlyjsbapp[M].refreshToken,
+    accessToken: xmlyjsbapp[M].accessToken,
+    ts: ts13()
+  };
+}
+async function loadUtils(M) {
+  let p = $.getdata("Utils_Code") || "";
+  if (!M && p && Object.keys(p).length) {
+    $.log("📢 缓存中存在JS-Utils");
+    eval(p);
+    return creatUtils();
+  }
+  $.log("📢 开始初始化JS-Utils");
+  return new Promise(async w => {
+    $.getScript("http://script.david2024.top/scripts/tools/JS-Utils.js").then(S => {
+      $.setdata(S, "Utils_Code");
+      eval(S);
+      $.log("📢 JS-Utils加载成功");
+      w(creatUtils());
+    });
+  });
+}
+function checkAddress(M, a) {
+  return new Promise((s, w) => {
+    const S = setTimeout(() => {
+        s(false);
+      }, a),
+      v = http.get(M, R => {
+        clearTimeout(S);
+        if (R.statusCode === 404) {
+          s(true);
         } else {
-          a(false);
+          s(false);
         }
       });
-    X.on("error", n => {
-      clearTimeout(H);
-      a(false);
+    v.on("error", R => {
+      clearTimeout(S);
+      s(false);
     });
-    X.on("timeout", () => {
-      X.abort();
-      y(new Error("请求超时"));
+    v.on("timeout", () => {
+      v.abort();
+      w(new Error("请求超时"));
     });
   });
 }
-async function fetchRequest(W, E = 3000) {
-  return new Promise((a, y) => {
-    const X = {
-      url: W + "/docs"
+async function fetchRequest(M, a = 3000) {
+  return new Promise((s, w) => {
+    const S = {
+      url: M + "/docs"
     };
     setTimeout(() => {
-      a(false);
-    }, E);
-    $.get(X, async (n, h, S) => {
-      if (h.status == 401) {
-        a(true);
+      s(false);
+    }, a);
+    $.get(S, async (v, R, n) => {
+      if (R.status == 401) {
+        s(true);
       } else {
-        a(false);
+        s(false);
       }
     });
   });
 }
-async function httpClientRequest(W, E = 3000) {
-  return new Promise((a, y) => {
-    const X = {
-      url: W + "/"
+async function httpClientRequest(M, a = 3000) {
+  return new Promise((s, w) => {
+    const C = {
+      url: M + "/"
     };
     setTimeout(() => {
-      a(false);
-    }, E);
-    $httpClient.get(X, async (n, h, S) => {
-      if (S == "{\"detail\":\"Not Found\"}") {
-        a(true);
+      s(false);
+    }, a);
+    $httpClient.get(C, async (S, v, R) => {
+      if (R == "{\"detail\":\"Not Found\"}") {
+        s(true);
       } else {
-        a(false);
+        s(false);
       }
     });
   });
 }
-async function redisGet(W, E, e) {
-  return new Promise((y, c) => {
-    const X = apiHost + "/redis/hash/get/" + E + "/" + e,
-      n = {
+async function redisGet(M, a, p) {
+  return new Promise((w, J) => {
+    const S = apiHost + "/redis/hash/get/" + a + "/" + p,
+      v = {
         "Content-Type": "application/json",
         accept: "application/json"
       };
-    const h = {
-      url: X,
-      headers: n
+    const R = {
+      url: S,
+      headers: v
     };
-    $.get(h, async (l, p, v) => {
-      const A = v.replace(/\"/g, "");
-      answerTexts[W] = A;
-      y();
+    $.get(R, async (H, f, Q) => {
+      const E = Q.replace(/\"/g, "");
+      answerTexts[M] = E;
+      w();
     });
   });
 }
-function redisSet(W, E, e) {
-  return new Promise((y, c) => {
-    const n = apiHost + "/redis/hash/set",
-      h = {
-        key: W,
-        hashKey: E,
-        hashValue: e
+function redisSet(M, a, p) {
+  return new Promise((w, J) => {
+    const v = apiHost + "/redis/hash/set",
+      R = {
+        key: M,
+        hashKey: a,
+        hashValue: p
       };
-    const l = {
+    const H = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const i = {
-      url: n,
-      headers: l,
-      body: JSON.stringify(h)
+    const f = {
+      url: v,
+      headers: H,
+      body: JSON.stringify(R)
     };
-    $.post(i, async (p, v, T) => {
-      y();
+    $.post(f, async (Q, E, D) => {
+      w();
     });
   });
 }
-function redisPop(W) {
-  return new Promise((e, a) => {
-    const H = apiHost + "/redis/set/pop/" + W,
-      X = {
+function redisPop(M) {
+  return new Promise((p, s) => {
+    const J = apiHost + "/redis/set/pop/" + M,
+      C = {
         "Content-Type": "application/json",
         accept: "application/json"
       };
-    const n = {
-      url: H,
-      headers: X
+    const S = {
+      url: J,
+      headers: C
     };
-    $.get(n, async (S, l, i) => {
-      const v = i.replace(/\"/g, "");
-      popCookie = v;
-      e();
+    $.get(S, async (R, n, H) => {
+      const Q = H.replace(/\"/g, "");
+      popCookie = Q;
+      p();
     });
   });
 }
-async function getReqObject(e, a, y) {
-  let H = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.55(0x1800372c) NetType/WIFI Language/zh_CN";
-  if (syccapp[y].ua && syccapp[y].ua != "") {
-    H = syccapp[y].ua;
+async function getReqObject(p, s, w) {
+  let C = "ting_v3.0.31_c5(CFNetwork, iOS 16.6.1, iPhone10,2) ;xmly(lite)/3.0.31/ios_1";
+  xmlyjsbapp[w].ua && xmlyjsbapp[w].ua != "" && (C = xmlyjsbapp[w].ua);
+  let S = getHostname(p);
+  const v = {
+    "Content-Type": "application/json",
+    "User-Agent": C,
+    Cookie: xmlyjsbapp[w].cookie,
+    Host: S
+  };
+  const R = {
+    url: p,
+    headers: v
+  };
+  if (s) {
+    R.body = s;
   }
-  let X = getHostname(e);
-  const n = {};
-  n["Content-Type"] = "application/json";
-  n["User-Agent"] = H;
-  n["X-Applet-Token"] = syccapp[y].token;
-  n.Host = X;
-  const h = {};
-  h.url = e;
-  h.headers = n;
-  let S = h;
-  a && (S.body = a, S.headers["Content-Length"] = a.length);
-  requestObjects[y] = S;
-  return S;
+  requestObjects[w] = R;
+  return R;
 }
-function getReqObject_(e, a, y) {
-  let H = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
-  if (syccapp[y].ua && syccapp[y].ua != "") {
-    H = syccapp[y].ua;
-  }
-  let X = getHostname(e);
-  const n = {
+function getReqObject_(p, s, w) {
+  let C = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
+  xmlyjsbapp[w].ua && xmlyjsbapp[w].ua != "" && (C = xmlyjsbapp[w].ua);
+  let S = getHostname(p);
+  const v = {
     "Content-Type": "application/x-www-form-urlencoded",
-    "User-Agent": H,
-    Authorization: syccapp[y].auth,
-    Host: X
+    "User-Agent": C,
+    Authorization: xmlyjsbapp[w].auth,
+    Host: S
   };
-  const h = {
-    url: e,
-    headers: n
+  const R = {
+    url: p,
+    headers: v
   };
-  if (a) {
-    h.body = a;
+  if (s) {
+    R.body = s;
   }
-  requestObjects[y] = h;
-  return h;
+  requestObjects[w] = R;
+  return R;
 }
-async function httpRequest(W, E, e) {
+async function httpRequest(M, a, p) {
   httpResult = null;
-  return new Promise(y => {
-    $[W](E, async (H, X, n) => {
+  return new Promise(w => {
+    $[M](a, async (C, S, v) => {
       try {
-        if (H) {
-          $.log(e + ": " + W + "请求失败");
-          $.log(JSON.stringify(H));
-          $.logErr(H);
+        if (C) {
+          $.log(p + ": " + M + "请求失败");
+          $.log(JSON.stringify(C));
+          $.logErr(C);
         } else {
-          if (safeGet(n)) {
-            httpResult = JSON.parse(n);
+          const E = new URL(a.url);
+          if (E.pathname.indexOf("page/withdraw") != -1) {
+            httpResult = v;
           } else {
-            const v = new URL(E.url);
-            $.log(v.pathname + "发起" + W + "请求时，出现错误，请处理");
+            if (safeGet(v)) {
+              httpResult = JSON.parse(v);
+              debug == 1 && $.log(httpResult);
+            } else {
+              const q = new URL(a.url);
+              $.log(q.pathname + "发起" + M + "请求时，出现错误，请处理");
+            }
           }
         }
-      } catch (L) {
-        $.logErr(L, X);
+      } catch (d) {
+        $.logErr(d, S);
       } finally {
-        y(httpResult);
+        w(httpResult);
       }
     });
   });
 }
-async function selectChannel(W, E) {
-  channels_status[W] == 0 ? await getSign_(W, E) : await getSign(W, E);
+async function selectChannel(M, a) {
+  if (channels_status[M] == 0) {
+    await getSign_(M, a);
+  } else {
+    await getSign(M, a);
+  }
 }
-function getSign_(W, E) {
-  return new Promise((a, y) => {
-    function H(X) {
-      let h = X.toString("utf8");
-      requestSigns[W] = h;
-      wss[W].removeListener("message", H);
-      a(h);
+function getSign_(M, a) {
+  return new Promise((s, w) => {
+    function C(S) {
+      let n = S.toString("utf8");
+      requestSigns[M] = n;
+      wss[M].removeListener("message", C);
+      s(n);
     }
-    wss[W].on("message", H);
-    if (wss[W].readyState === 1) {
-      const n = {
+    wss[M].on("message", C);
+    if (wss[M].readyState === 1) {
+      const S = {
         method: appName,
         params: {}
       };
-      n.params.content = E;
-      n.params.appName = appName;
-      n.params.uuid = userId;
-      wss[W].send(JSON.stringify(n), h => {
-        if (h) {
-          y(h);
-        }
+      S.params.content = a;
+      S.params.appName = appName;
+      S.params.uuid = userId;
+      wss[M].send(JSON.stringify(S), v => {
+        v && w(v);
       });
     } else {
-      a(getSign(W, E));
-      wss[W].removeListener("message", H);
+      s(getSign(M, a));
+      wss[M].removeListener("message", C);
     }
   });
 }
-function getSign(W, E) {
-  return new Promise((a, y) => {
-    const X = apiHost + "/sign/sycc",
-      n = {
-        content: E,
+function getSign(M, a) {
+  return new Promise((s, w) => {
+    const S = apiHost + "/sign/xmly",
+      v = {
+        content: a,
         appName: appName,
         uuid: userId
       };
-    const S = {
+    const n = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const l = {
-      url: X,
-      headers: S,
-      body: JSON.stringify(n)
+    const H = {
+      url: S,
+      headers: n,
+      body: JSON.stringify(v)
     };
-    $.post(l, async (p, v, T) => {
-      const A = T.replace(/\"/g, "");
-      requestSigns[W] = A;
-      a();
+    $.post(H, async (f, Q, E) => {
+      const D = E.replace(/\"/g, "");
+      requestSigns[M] = D;
+      s();
     });
   });
 }
-function sortUrlParams(W, E, e) {
-  const y = url2obj(W);
-  E.forEach(X => {
-    delete y[X];
+function sortUrlParams(M, a, p) {
+  const w = url2obj(M);
+  a.forEach(S => {
+    delete w[S];
   });
-  Object.assign(y, e);
-  const c = Object.keys(y).sort();
-  const H = c.map(X => X + "=" + y[X]).join("&");
-  return H;
+  Object.assign(w, p);
+  const J = Object.keys(w).sort();
+  const C = J.map(S => S + "=" + w[S]).join("&");
+  return C;
 }
-function url2obj(W) {
-  W = W.replace(/\"/g, "");
-  var e;
-  var a = {};
-  var y = W.slice(W.indexOf("?") + 1).split("&");
-  for (var c = 0; c < y.length; c++) {
-    e = y[c].split("=");
-    a[e[0]] = e[1];
+function url2obj(a) {
+  a = a.replace(/\"/g, "");
+  var w,
+    J = {},
+    C = a.slice(a.indexOf("?") + 1).split("&");
+  for (var S = 0; S < C.length; S++) {
+    w = C[S].split("=");
+    J[w[0]] = w[1];
   }
-  return a;
+  return J;
 }
-function convertStringToJson(E) {
-  const y = E.replace(/[{} ]/g, ""),
-    c = y.split(","),
-    H = {};
-  c.forEach(X => {
-    const [h, S] = X.split("=");
-    H[h] = S;
+function convertStringToJson(M) {
+  const p = M.replace(/[{} ]/g, ""),
+    s = p.split(","),
+    w = {};
+  s.forEach(J => {
+    const [C, S] = J.split("=");
+    w[C] = S;
   });
-  return H;
+  return w;
 }
-function getHostname(W) {
-  let e = W.substr(W.indexOf("//") + 2);
-  let a = e.substr(0, e.indexOf("/"));
-  let y = "",
-    c = a.indexOf(":");
-  if (c > 0) {
-    y = a.substr(0, c);
+function getHostname(a) {
+  let w = a.substr(a.indexOf("//") + 2),
+    J = w.substr(0, w.indexOf("/")),
+    C = "",
+    S = J.indexOf(":");
+  if (S > 0) {
+    C = J.substr(0, S);
   } else {
-    y = a;
+    C = J;
   }
-  return y;
+  return C;
 }
-function calculateTimeDifference(E, e) {
-  var h = new Date(E);
-  var n = new Date(e);
-  var S = n - h;
-  var X = Math.floor(S / 1000);
-  return X;
+function calculateTimeDifference(a, p) {
+  var n = new Date(a);
+  var R = new Date(p);
+  var v = R - n;
+  var S = Math.floor(v / 1000);
+  return S;
 }
-function cutString(W, E) {
-  if (W.length * 2 <= E) {
-    return W;
+function cutString(M, a) {
+  if (M.length * 2 <= a) {
+    return M;
   }
-  var a = 0,
-    y = "";
-  for (var c = 0; c < W.length; c++) {
-    y = y + W.charAt(c);
-    if (W.charCodeAt(c) > 128) {
-      a = a + 2;
-      if (a >= E) {
-        return y.substring(0, y.length - 1) + "...";
+  var w = 0;
+  var J = "";
+  for (var C = 0; C < M.length; C++) {
+    J = J + M.charAt(C);
+    if (M.charCodeAt(C) > 128) {
+      w = w + 2;
+      if (w >= a) {
+        return J.substring(0, J.length - 1) + "...";
       }
     } else {
-      a = a + 1;
-      if (a >= E) {
-        return y.substring(0, y.length - 2) + "...";
+      w = w + 1;
+      if (w >= a) {
+        return J.substring(0, J.length - 2) + "...";
       }
     }
   }
-  return y;
+  return J;
 }
 function printCaller() {
   return new Error().stack.split("\n")[3].split("@")[0];
 }
-function safeGet(W) {
+function safeGet(M) {
   try {
-    if (typeof JSON.parse(W) == "object") {
+    if (typeof JSON.parse(M) == "object") {
       return true;
     }
-  } catch (c) {
-    console.log(c);
+  } catch (w) {
+    console.log(w);
     console.log("服务器访问数据为空，请检查自身设备网络情况");
     return false;
   }
 }
-function jsonToUrl(W) {
-  var e = Object.keys(W).map(function (a) {
-    return encodeURIComponent(a) + "=" + encodeURIComponent(W[a]);
+function jsonToUrl(M) {
+  var p = Object.keys(M).map(function (s) {
+    return encodeURIComponent(s) + "=" + encodeURIComponent(M[s]);
   }).join("&");
-  return e;
+  return p;
 }
-function compileStr(W) {
-  var e = String.fromCharCode(W.charCodeAt(0) + W.length);
-  for (var a = 1; a < W.length; a++) {
-    e += String.fromCharCode(W.charCodeAt(a) + W.charCodeAt(a - 1));
+function compileStr(M) {
+  var p = String.fromCharCode(M.charCodeAt(0) + M.length);
+  for (var s = 1; s < M.length; s++) {
+    p += String.fromCharCode(M.charCodeAt(s) + M.charCodeAt(s - 1));
   }
-  return escape(e);
+  return escape(p);
 }
-function uncompileStr(W) {
-  W = unescape(W);
-  var e = String.fromCharCode(W.charCodeAt(0) - W.length);
-  for (var a = 1; a < W.length; a++) {
-    e += String.fromCharCode(W.charCodeAt(a) - e.charCodeAt(a - 1));
+function uncompileStr(M) {
+  M = unescape(M);
+  var p = String.fromCharCode(M.charCodeAt(0) - M.length);
+  for (var s = 1; s < M.length; s++) {
+    p += String.fromCharCode(M.charCodeAt(s) - p.charCodeAt(s - 1));
   }
-  return e;
-}
-function randomNum(W, E) {
-  switch (arguments.length) {
-    case 1:
-      return parseInt(Math.random() * W + 1);
-      break;
-    case 2:
-      return parseInt(Math.random() * (E - W + 1) + W);
-      break;
-    default:
-      return 0;
-      break;
-  }
+  return p;
 }
 function randomMac() {
   return "XX:XX:XX:XX:XX:XX".replace(/X/g, function () {
     return "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16));
   });
 }
-function guid() {
-  function E() {
-    return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
-  }
-  return E() + E() + "-" + E() + "-" + E() + "-" + E() + "-" + E() + E() + E();
-}
-function phone_num(W) {
-  if (W.length == 11) {
-    let a = W.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-    return a;
-  } else {
-    return W;
-  }
-}
-function txt_api(W) {
-  return new Promise((e, a) => {
-    const H = "https://v1.hitokoto.cn/?c=e",
-      X = {
+function txt_api(M) {
+  return new Promise((p, s) => {
+    const J = "https://v1.hitokoto.cn/?c=e",
+      C = {
         accept: "application/json"
       };
-    const n = {
-      url: H,
-      headers: X
+    const S = {
+      url: J,
+      headers: C
     };
-    $.get(n, async (S, l, p) => {
-      let v = JSON.parse(p),
-        T = v.hitokoto;
-      contents[W] = T + " " + T;
-      e();
+    $.get(S, async (R, n, H) => {
+      let E = JSON.parse(H),
+        D = E.hitokoto;
+      contents[M] = D + " " + D;
+      p();
     });
   });
 }
 function getTime_8() {
-  return new Promise((E, e) => {
-    const y = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
-      c = {
-        url: y
+  return new Promise((a, p) => {
+    const J = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
+      C = {
+        url: J
       };
-    $.get(c, async (X, n, h) => {
-      E(h);
+    $.get(C, async (v, R, n) => {
+      a(n);
     });
   });
 }
-function ts13() {
-  return Math.round(new Date().getTime()).toString();
-}
-function ts10() {
-  return Math.round(new Date().getTime() / 1000).toString();
-}
 function message() {
-  tz == 1 && $.msg($.name, "", $.message);
+  if (tz == 1) {
+    $.msg($.name, "", $.message);
+  }
 }
-async function sendMsg(W) {
+async function sendMsg(M) {
   if (hour == 9 || hour == 12 || hour == 18) {
     if (tz == 1) {
       if ($.isNode()) {
-        await notify.sendNotify($.name, W);
+        await notify.sendNotify($.name, M);
       } else {
-        $.msg($.name, "", W);
+        $.msg($.name, "", M);
       }
     } else {
-      $.log(W);
+      $.log(M);
     }
   }
 }
-async function wxPush(W, E, e) {
-  return new Promise((y, c) => {
-    const H = "https://wxpusher.zjiecode.com/api/send/message",
-      X = {
+async function wxPush(M, a, p) {
+  return new Promise((w, J) => {
+    const S = "https://wxpusher.zjiecode.com/api/send/message",
+      v = {
         appToken: "AT_6BZsE2IyJuVLPp3mcOkKvpoF245GR9xn",
-        content: E,
+        content: a,
         summary: "快手答题余额通知",
         contentType: 1,
-        uids: [e],
+        uids: [p],
         verifyPay: false
       };
-    const h = {
+    const n = {
       "Content-Type": "application/json"
     };
-    const S = {
-      url: H,
-      headers: h,
-      body: JSON.stringify(X)
+    const H = {
+      url: S,
+      headers: n,
+      body: JSON.stringify(v)
     };
-    $.post(S, async (l, p, v) => {
-      y();
+    $.post(H, async (f, Q, E) => {
+      w();
     });
   });
 }
-function randomString(W, E) {
-  E = E || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let a = "";
-  for (let y = 0; y < W; y++) {
-    let H = Math.floor(Math.random() * E.length);
-    a += E.substring(H, H + 1);
-  }
-  return a;
-}
-function MD5_Encrypt(W) {
-  function S(JL, JB) {
-    return JL << JB | JL >>> 32 - JB;
-  }
-  function T(JL, JB) {
-    var JN, Jq, JM, JR, Jx;
-    JM = 2147483648 & JL;
-    JR = 2147483648 & JB;
-    JN = 1073741824 & JL;
-    Jq = 1073741824 & JB;
-    Jx = (1073741823 & JL) + (1073741823 & JB);
-    return JN & Jq ? 2147483648 ^ Jx ^ JM ^ JR : JN | Jq ? 1073741824 & Jx ? 3221225472 ^ Jx ^ JM ^ JR : 1073741824 ^ Jx ^ JM ^ JR : Jx ^ JM ^ JR;
-  }
-  function R(JL, JB, JN) {
-    return JL & JB | ~JL & JN;
-  }
-  function Q(JL, JB, JN) {
-    return JL & JN | JB & ~JN;
-  }
-  function V(JL, JB, JN) {
-    return JL ^ JB ^ JN;
-  }
-  function P(JL, JB, JN) {
-    return JB ^ (JL | ~JN);
-  }
-  function Z(JL, JB, JN, Jq, JM, JR, Jx) {
-    JL = T(JL, T(T(R(JB, JN, Jq), JM), Jx));
-    return T(S(JL, JR), JB);
-  }
-  function J0(JL, JB, JN, Jq, JM, JR, Jx) {
-    JL = T(JL, T(T(Q(JB, JN, Jq), JM), Jx));
-    return T(S(JL, JR), JB);
-  }
-  function J1(JL, JB, JN, Jq, JM, JR, Jx) {
-    JL = T(JL, T(T(V(JB, JN, Jq), JM), Jx));
-    return T(S(JL, JR), JB);
-  }
-  function J2(JL, JB, JN, Jq, JM, JR, Jx) {
-    JL = T(JL, T(T(P(JB, JN, Jq), JM), Jx));
-    return T(S(JL, JR), JB);
-  }
-  function J3(JL) {
-    for (var JB, JN = JL.length, Jq = JN + 8, JM = (Jq - Jq % 64) / 64, JR = 16 * (JM + 1), Jx = new Array(JR - 1), Jz = 0, JQ = 0; JN > JQ;) {
-      JB = (JQ - JQ % 4) / 4;
-      Jz = JQ % 4 * 8;
-      Jx[JB] = Jx[JB] | JL.charCodeAt(JQ) << Jz;
-      JQ++;
+function Env(M, a) {
+  class w {
+    constructor(J) {
+      this.env = J;
     }
-    JB = (JQ - JQ % 4) / 4;
-    Jz = JQ % 4 * 8;
-    Jx[JB] = Jx[JB] | 128 << Jz;
-    Jx[JR - 2] = JN << 3;
-    Jx[JR - 1] = JN >>> 29;
-    return Jx;
-  }
-  function J4(JL) {
-    var JB,
-      JN,
-      Jq = "",
-      JM = "";
-    for (JN = 0; 3 >= JN; JN++) {
-      JB = JL >>> 8 * JN & 255;
-      JM = "0" + JB.toString(16);
-      Jq += JM.substr(JM.length - 2, 2);
-    }
-    return Jq;
-  }
-  function J5(JL) {
-    JL = JL.replace(/\r\n/g, "\n");
-    for (var JN = "", Jq = 0; Jq < JL.length; Jq++) {
-      var JM = JL.charCodeAt(Jq);
-      128 > JM ? JN += String.fromCharCode(JM) : JM > 127 && 2048 > JM ? (JN += String.fromCharCode(JM >> 6 | 192), JN += String.fromCharCode(63 & JM | 128)) : (JN += String.fromCharCode(JM >> 12 | 224), JN += String.fromCharCode(JM >> 6 & 63 | 128), JN += String.fromCharCode(63 & JM | 128));
-    }
-    return JN;
-  }
-  var J6,
-    J7,
-    J8,
-    J9,
-    JJ,
-    JY,
-    Ju,
-    Jr,
-    Jd,
-    JU = [],
-    JW = 7,
-    JE = 12,
-    Je = 17,
-    Ja = 22,
-    Jy = 5,
-    Jc = 9,
-    JH = 14,
-    JX = 20,
-    Jn = 4,
-    Jh = 11,
-    JS = 16,
-    Jl = 23,
-    Ji = 6,
-    Jp = 10,
-    Jv = 15,
-    JT = 21;
-  for (W = J5(W), JU = J3(W), JY = 1732584193, Ju = 4023233417, Jr = 2562383102, Jd = 271733878, J6 = 0; J6 < JU.length; J6 += 16) {
-    J7 = JY;
-    J8 = Ju;
-    J9 = Jr;
-    JJ = Jd;
-    JY = Z(JY, Ju, Jr, Jd, JU[J6 + 0], JW, 3614090360);
-    Jd = Z(Jd, JY, Ju, Jr, JU[J6 + 1], JE, 3905402710);
-    Jr = Z(Jr, Jd, JY, Ju, JU[J6 + 2], Je, 606105819);
-    Ju = Z(Ju, Jr, Jd, JY, JU[J6 + 3], Ja, 3250441966);
-    JY = Z(JY, Ju, Jr, Jd, JU[J6 + 4], JW, 4118548399);
-    Jd = Z(Jd, JY, Ju, Jr, JU[J6 + 5], JE, 1200080426);
-    Jr = Z(Jr, Jd, JY, Ju, JU[J6 + 6], Je, 2821735955);
-    Ju = Z(Ju, Jr, Jd, JY, JU[J6 + 7], Ja, 4249261313);
-    JY = Z(JY, Ju, Jr, Jd, JU[J6 + 8], JW, 1770035416);
-    Jd = Z(Jd, JY, Ju, Jr, JU[J6 + 9], JE, 2336552879);
-    Jr = Z(Jr, Jd, JY, Ju, JU[J6 + 10], Je, 4294925233);
-    Ju = Z(Ju, Jr, Jd, JY, JU[J6 + 11], Ja, 2304563134);
-    JY = Z(JY, Ju, Jr, Jd, JU[J6 + 12], JW, 1804603682);
-    Jd = Z(Jd, JY, Ju, Jr, JU[J6 + 13], JE, 4254626195);
-    Jr = Z(Jr, Jd, JY, Ju, JU[J6 + 14], Je, 2792965006);
-    Ju = Z(Ju, Jr, Jd, JY, JU[J6 + 15], Ja, 1236535329);
-    JY = J0(JY, Ju, Jr, Jd, JU[J6 + 1], Jy, 4129170786);
-    Jd = J0(Jd, JY, Ju, Jr, JU[J6 + 6], Jc, 3225465664);
-    Jr = J0(Jr, Jd, JY, Ju, JU[J6 + 11], JH, 643717713);
-    Ju = J0(Ju, Jr, Jd, JY, JU[J6 + 0], JX, 3921069994);
-    JY = J0(JY, Ju, Jr, Jd, JU[J6 + 5], Jy, 3593408605);
-    Jd = J0(Jd, JY, Ju, Jr, JU[J6 + 10], Jc, 38016083);
-    Jr = J0(Jr, Jd, JY, Ju, JU[J6 + 15], JH, 3634488961);
-    Ju = J0(Ju, Jr, Jd, JY, JU[J6 + 4], JX, 3889429448);
-    JY = J0(JY, Ju, Jr, Jd, JU[J6 + 9], Jy, 568446438);
-    Jd = J0(Jd, JY, Ju, Jr, JU[J6 + 14], Jc, 3275163606);
-    Jr = J0(Jr, Jd, JY, Ju, JU[J6 + 3], JH, 4107603335);
-    Ju = J0(Ju, Jr, Jd, JY, JU[J6 + 8], JX, 1163531501);
-    JY = J0(JY, Ju, Jr, Jd, JU[J6 + 13], Jy, 2850285829);
-    Jd = J0(Jd, JY, Ju, Jr, JU[J6 + 2], Jc, 4243563512);
-    Jr = J0(Jr, Jd, JY, Ju, JU[J6 + 7], JH, 1735328473);
-    Ju = J0(Ju, Jr, Jd, JY, JU[J6 + 12], JX, 2368359562);
-    JY = J1(JY, Ju, Jr, Jd, JU[J6 + 5], Jn, 4294588738);
-    Jd = J1(Jd, JY, Ju, Jr, JU[J6 + 8], Jh, 2272392833);
-    Jr = J1(Jr, Jd, JY, Ju, JU[J6 + 11], JS, 1839030562);
-    Ju = J1(Ju, Jr, Jd, JY, JU[J6 + 14], Jl, 4259657740);
-    JY = J1(JY, Ju, Jr, Jd, JU[J6 + 1], Jn, 2763975236);
-    Jd = J1(Jd, JY, Ju, Jr, JU[J6 + 4], Jh, 1272893353);
-    Jr = J1(Jr, Jd, JY, Ju, JU[J6 + 7], JS, 4139469664);
-    Ju = J1(Ju, Jr, Jd, JY, JU[J6 + 10], Jl, 3200236656);
-    JY = J1(JY, Ju, Jr, Jd, JU[J6 + 13], Jn, 681279174);
-    Jd = J1(Jd, JY, Ju, Jr, JU[J6 + 0], Jh, 3936430074);
-    Jr = J1(Jr, Jd, JY, Ju, JU[J6 + 3], JS, 3572445317);
-    Ju = J1(Ju, Jr, Jd, JY, JU[J6 + 6], Jl, 76029189);
-    JY = J1(JY, Ju, Jr, Jd, JU[J6 + 9], Jn, 3654602809);
-    Jd = J1(Jd, JY, Ju, Jr, JU[J6 + 12], Jh, 3873151461);
-    Jr = J1(Jr, Jd, JY, Ju, JU[J6 + 15], JS, 530742520);
-    Ju = J1(Ju, Jr, Jd, JY, JU[J6 + 2], Jl, 3299628645);
-    JY = J2(JY, Ju, Jr, Jd, JU[J6 + 0], Ji, 4096336452);
-    Jd = J2(Jd, JY, Ju, Jr, JU[J6 + 7], Jp, 1126891415);
-    Jr = J2(Jr, Jd, JY, Ju, JU[J6 + 14], Jv, 2878612391);
-    Ju = J2(Ju, Jr, Jd, JY, JU[J6 + 5], JT, 4237533241);
-    JY = J2(JY, Ju, Jr, Jd, JU[J6 + 12], Ji, 1700485571);
-    Jd = J2(Jd, JY, Ju, Jr, JU[J6 + 3], Jp, 2399980690);
-    Jr = J2(Jr, Jd, JY, Ju, JU[J6 + 10], Jv, 4293915773);
-    Ju = J2(Ju, Jr, Jd, JY, JU[J6 + 1], JT, 2240044497);
-    JY = J2(JY, Ju, Jr, Jd, JU[J6 + 8], Ji, 1873313359);
-    Jd = J2(Jd, JY, Ju, Jr, JU[J6 + 15], Jp, 4264355552);
-    Jr = J2(Jr, Jd, JY, Ju, JU[J6 + 6], Jv, 2734768916);
-    Ju = J2(Ju, Jr, Jd, JY, JU[J6 + 13], JT, 1309151649);
-    JY = J2(JY, Ju, Jr, Jd, JU[J6 + 4], Ji, 4149444226);
-    Jd = J2(Jd, JY, Ju, Jr, JU[J6 + 11], Jp, 3174756917);
-    Jr = J2(Jr, Jd, JY, Ju, JU[J6 + 2], Jv, 718787259);
-    Ju = J2(Ju, Jr, Jd, JY, JU[J6 + 9], JT, 3951481745);
-    JY = T(JY, J7);
-    Ju = T(Ju, J8);
-    Jr = T(Jr, J9);
-    Jd = T(Jd, JJ);
-  }
-  var JA = J4(JY) + J4(Ju) + J4(Jr) + J4(Jd);
-  return JA.toLowerCase();
-}
-function SHA256(W) {
-  var e = 8,
-    a = 0;
-  function y(B, N) {
-    var q = (B & 65535) + (N & 65535),
-      M = (B >> 16) + (N >> 16) + (q >> 16);
-    return M << 16 | q & 65535;
-  }
-  function c(B, N) {
-    return B >>> N | B << 32 - N;
-  }
-  function H(B, N) {
-    return B >>> N;
-  }
-  function X(B, N, q) {
-    return B & N ^ ~B & q;
-  }
-  function n(B, N, q) {
-    return B & N ^ B & q ^ N & q;
-  }
-  function h(B) {
-    return c(B, 2) ^ c(B, 13) ^ c(B, 22);
-  }
-  function l(B) {
-    return c(B, 6) ^ c(B, 11) ^ c(B, 25);
-  }
-  function i(B) {
-    return c(B, 7) ^ c(B, 18) ^ H(B, 3);
-  }
-  function p(B) {
-    return c(B, 17) ^ c(B, 19) ^ H(B, 10);
-  }
-  function v(B, N) {
-    var M = new Array(1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298),
-      x = new Array(1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225),
-      z = new Array(64),
-      Q,
-      F,
-      o,
-      V,
-      P,
-      D,
-      t,
-      w,
-      G,
-      C,
-      I,
-      Z;
-    B[N >> 5] |= 128 << 24 - N % 32;
-    B[(N + 64 >> 9 << 4) + 15] = N;
-    for (var G = 0; G < B.length; G += 16) {
-      Q = x[0];
-      F = x[1];
-      o = x[2];
-      V = x[3];
-      P = x[4];
-      D = x[5];
-      t = x[6];
-      w = x[7];
-      for (var C = 0; C < 64; C++) {
-        if (C < 16) {
-          z[C] = B[C + G];
-        } else {
-          z[C] = y(y(y(p(z[C - 2]), z[C - 7]), i(z[C - 15])), z[C - 16]);
-        }
-        I = y(y(y(y(w, l(P)), X(P, D, t)), M[C]), z[C]);
-        Z = y(h(Q), n(Q, F, o));
-        w = t;
-        t = D;
-        D = P;
-        P = y(V, I);
-        V = o;
-        o = F;
-        F = Q;
-        Q = y(I, Z);
-      }
-      x[0] = y(Q, x[0]);
-      x[1] = y(F, x[1]);
-      x[2] = y(o, x[2]);
-      x[3] = y(V, x[3]);
-      x[4] = y(P, x[4]);
-      x[5] = y(D, x[5]);
-      x[6] = y(t, x[6]);
-      x[7] = y(w, x[7]);
-    }
-    return x;
-  }
-  function T(B) {
-    var N = Array(),
-      q = (1 << e) - 1;
-    for (var M = 0; M < B.length * e; M += e) {
-      N[M >> 5] |= (B.charCodeAt(M / e) & q) << 24 - M % 32;
-    }
-    return N;
-  }
-  function A(B) {
-    B = B.replace(/\r\n/g, "\n");
-    var q = "";
-    for (var M = 0; M < B.length; M++) {
-      var x = B.charCodeAt(M);
-      if (x < 128) {
-        q += String.fromCharCode(x);
-      } else {
-        if (x > 127 && x < 2048) {
-          q += String.fromCharCode(x >> 6 | 192);
-          q += String.fromCharCode(x & 63 | 128);
-        } else {
-          q += String.fromCharCode(x >> 12 | 224);
-          q += String.fromCharCode(x >> 6 & 63 | 128);
-          q += String.fromCharCode(x & 63 | 128);
-        }
-      }
-    }
-    return q;
-  }
-  function L(B) {
-    var q = a ? "0123456789ABCDEF" : "0123456789abcdef",
-      M = "";
-    for (var x = 0; x < B.length * 4; x++) {
-      M += q.charAt(B[x >> 2] >> (3 - x % 4) * 8 + 4 & 15) + q.charAt(B[x >> 2] >> (3 - x % 4) * 8 & 15);
-    }
-    return M;
-  }
-  W = A(W);
-  return L(v(T(W), W.length * e));
-}
-function SHA1(e) {
-  function y(K, V) {
-    var P = K << V | K >>> 32 - V;
-    return P;
-  }
-  function c(K) {
-    var V = "",
-      P,
-      t,
-      w;
-    for (P = 0; P <= 6; P += 2) {
-      t = K >>> P * 4 + 4 & 15;
-      w = K >>> P * 4 & 15;
-      V += t.toString(16) + w.toString(16);
-    }
-    return V;
-  }
-  function H(K) {
-    var s = "",
-      V,
-      P;
-    for (V = 7; V >= 0; V--) {
-      P = K >>> V * 4 & 15;
-      s += P.toString(16);
-    }
-    return s;
-  }
-  function X(K) {
-    K = K.replace(/\r\n/g, "\n");
-    var V = "";
-    for (var P = 0; P < K.length; P++) {
-      var t = K.charCodeAt(P);
-      if (t < 128) {
-        V += String.fromCharCode(t);
-      } else {
-        if (t > 127 && t < 2048) {
-          V += String.fromCharCode(t >> 6 | 192);
-          V += String.fromCharCode(t & 63 | 128);
-        } else {
-          V += String.fromCharCode(t >> 12 | 224);
-          V += String.fromCharCode(t >> 6 & 63 | 128);
-          V += String.fromCharCode(t & 63 | 128);
-        }
-      }
-    }
-    return V;
-  }
-  var n,
-    h,
-    S,
-    l = new Array(80);
-  var p = 1732584193;
-  var v = 4023233417,
-    T = 2562383102,
-    L = 271733878,
-    N = 3285377520,
-    q,
-    M,
-    R,
-    x,
-    z,
-    Q;
-  e = X(e);
-  var F = e.length;
-  var o = new Array();
-  for (h = 0; h < F - 3; h += 4) {
-    S = e.charCodeAt(h) << 24 | e.charCodeAt(h + 1 < 10 ? "0" + (h + 1) : h + 1) << 16 | e.charCodeAt(h + 2) << 8 | e.charCodeAt(h + 3);
-    o.push(S);
-  }
-  switch (F % 4) {
-    case 0:
-      h = 2147483648;
-      break;
-    case 1:
-      h = e.charCodeAt(F - 1) << 24 | 8388608;
-      break;
-    case 2:
-      h = e.charCodeAt(F - 2) << 24 | e.charCodeAt(F - 1) << 16 | 32768;
-      break;
-    case 3:
-      h = e.charCodeAt(F - 3) << 24 | e.charCodeAt(F - 2) << 16 | e.charCodeAt(F - 1) << 8 | 128;
-      break;
-  }
-  o.push(h);
-  while (o.length % 16 != 14) {
-    o.push(0);
-  }
-  o.push(F >>> 29);
-  o.push(F << 3 & 4294967295);
-  for (n = 0; n < o.length; n += 16) {
-    for (h = 0; h < 16; h++) {
-      l[h] = o[n + h];
-    }
-    for (h = 16; h <= 79; h++) {
-      l[h] = y(l[h - 3] ^ l[h - 8] ^ l[h - 14] ^ l[h - 16], 1);
-    }
-    q = p;
-    M = v;
-    R = T;
-    x = L;
-    z = N;
-    for (h = 0; h <= 19; h++) {
-      Q = y(q, 5) + (M & R | ~M & x) + z + l[h] + 1518500249 & 4294967295;
-      z = x;
-      x = R;
-      R = y(M, 30);
-      M = q;
-      q = Q;
-    }
-    for (h = 20; h <= 39; h++) {
-      Q = y(q, 5) + (M ^ R ^ x) + z + l[h] + 1859775393 & 4294967295;
-      z = x;
-      x = R;
-      R = y(M, 30);
-      M = q;
-      q = Q;
-    }
-    for (h = 40; h <= 59; h++) {
-      Q = y(q, 5) + (M & R | M & x | R & x) + z + l[h] + 2400959708 & 4294967295;
-      z = x;
-      x = R;
-      R = y(M, 30);
-      M = q;
-      q = Q;
-    }
-    for (h = 60; h <= 79; h++) {
-      Q = y(q, 5) + (M ^ R ^ x) + z + l[h] + 3395469782 & 4294967295;
-      z = x;
-      x = R;
-      R = y(M, 30);
-      M = q;
-      q = Q;
-    }
-    p = p + q & 4294967295;
-    v = v + M & 4294967295;
-    T = T + R & 4294967295;
-    L = L + x & 4294967295;
-    N = N + z & 4294967295;
-  }
-  var Q = H(p) + H(v) + H(T) + H(L) + H(N);
-  return Q.toLowerCase();
-}
-function Base64() {
-  if (!(this instanceof Base64)) {
-    return new Base64();
-  }
-  var E = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-  this.encode = function (a) {
-    var p = "";
-    var y, c, H, X, n, h, S;
-    var l = 0;
-    a = _utf8_encode(a);
-    while (l < a.length) {
-      y = a.charCodeAt(l++);
-      c = a.charCodeAt(l++);
-      H = a.charCodeAt(l++);
-      X = y >> 2;
-      n = (y & 3) << 4 | c >> 4;
-      h = (c & 15) << 2 | H >> 6;
-      S = H & 63;
-      if (isNaN(c)) {
-        h = S = 64;
-      } else {
-        isNaN(H) && (S = 64);
-      }
-      p = p + E.charAt(X) + E.charAt(n) + E.charAt(h) + E.charAt(S);
-    }
-    return p;
-  };
-  this.decode = function (a) {
-    var v = "";
-    var c, H, X;
-    var n, h, S, l;
-    var p = 0;
-    a = a.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-    while (p < a.length) {
-      n = E.indexOf(a.charAt(p++));
-      h = E.indexOf(a.charAt(p++));
-      S = E.indexOf(a.charAt(p++));
-      l = E.indexOf(a.charAt(p++));
-      c = n << 2 | h >> 4;
-      H = (h & 15) << 4 | S >> 2;
-      X = (S & 3) << 6 | l;
-      v = v + String.fromCharCode(c);
-      if (S != 64) {
-        v = v + String.fromCharCode(H);
-      }
-      if (l != 64) {
-        v = v + String.fromCharCode(X);
-      }
-    }
-    v = _utf8_decode(v);
-    return v;
-  };
-  _utf8_encode = function (a) {
-    a = a.replace(/\r\n/g, "\n");
-    var H = "";
-    for (var X = 0; X < a.length; X++) {
-      var h = a.charCodeAt(X);
-      if (h < 128) {
-        H += String.fromCharCode(h);
-      } else {
-        if (h > 127 && h < 2048) {
-          H += String.fromCharCode(h >> 6 | 192);
-          H += String.fromCharCode(h & 63 | 128);
-        } else {
-          H += String.fromCharCode(h >> 12 | 224);
-          H += String.fromCharCode(h >> 6 & 63 | 128);
-          H += String.fromCharCode(h & 63 | 128);
-        }
-      }
-    }
-    return H;
-  };
-  _utf8_decode = function (a) {
-    var X = "";
-    var n = 0;
-    var H;
-    while (n < a.length) {
-      H = a.charCodeAt(n);
-      if (H < 128) {
-        X += String.fromCharCode(H);
-        n++;
-      } else {
-        if (H > 191 && H < 224) {
-          X += String.fromCharCode((H & 31) << 6 | c2 & 63);
-          n += 2;
-        } else {
-          X += String.fromCharCode((H & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
-          n += 3;
-        }
-      }
-    }
-    return X;
-  };
-}
-function Env(W, E) {
-  class a {
-    constructor(y) {
-      this.env = y;
-    }
-    send(y, c = "GET") {
-      y = typeof y === "string" ? {
-        url: y
-      } : y;
-      let n = this.get;
-      if (c === "POST") {
-        n = this.post;
-      }
-      return new Promise((S, l) => {
-        n.call(this, y, (p, v, T) => {
-          if (p) {
-            l(p);
-          } else {
-            S(v);
-          }
+    send(J, C = "GET") {
+      J = "string" == typeof J ? {
+        url: J
+      } : J;
+      let v = this.get;
+      "POST" === C && (v = this.post);
+      return new Promise((R, n) => {
+        v.call(this, J, (Q, E, D) => {
+          Q ? n(Q) : R(E);
         });
       });
     }
-    get(y) {
-      return this.send.call(this.env, y);
+    get(J) {
+      return this.send.call(this.env, J);
     }
-    post(y) {
-      return this.send.call(this.env, y, "POST");
+    post(J) {
+      return this.send.call(this.env, J, "POST");
     }
   }
   return new class {
-    constructor(y, c) {
-      this.name = y;
-      this.http = new a(this);
+    constructor(J, C) {
+      const v = {
+        debug: 0,
+        info: 1,
+        warn: 2,
+        error: 3
+      };
+      const R = {
+        debug: "[DEBUG] ",
+        info: "[INFO] ",
+        warn: "[WARN] ",
+        error: "[ERROR] "
+      };
+      this.logLevels = v;
+      this.logLevelPrefixs = R;
+      this.logLevel = "info";
+      this.name = J;
+      this.http = new w(this);
       this.data = null;
       this.dataFile = "box.dat";
       this.logs = [];
-      this.isMute = false;
-      this.isNeedRewrite = false;
+      this.isMute = !1;
+      this.isNeedRewrite = !1;
       this.logSeparator = "\n";
+      this.encoding = "utf-8";
       this.startTime = new Date().getTime();
-      Object.assign(this, c);
-      const X = "\n       ***********          *****      ***       **** ******  ***********  \n       *************       ******      ***      ****  ****    ************ \n      ****      ****     ***  ***      ***     ***    ***    ***      **** \n      ***       ****    ***  ****      ***    ***    ****   ****       *** \n     ****       ***    ***    ***      ***   ***     ***    ***       **** \n     ***       ***    ****   ****      ***  ***     ****   ****       ***  \n    ***      ****    ************      *** ***      ***    ***      ****   \n   ****   ******   ****      ****      ******      ****   ****   ******    \n   **********     ****       ****      *****     ******  ***********";
-      if (this.isNode()) {
-        this.log(X);
-      }
+      Object.assign(this, C);
       this.log("", "🔔 " + this.name + ", 开始!");
     }
+    getEnv() {
+      return "undefined" != typeof $environment && $environment["surge-version"] ? "Surge" : "undefined" != typeof $environment && $environment["stash-version"] ? "Stash" : "undefined" != typeof module && module.exports ? "Node.js" : "undefined" != typeof $task ? "Quantumult X" : "undefined" != typeof $loon ? "Loon" : "undefined" != typeof $rocket ? "Shadowrocket" : void 0;
+    }
     isNode() {
-      return "undefined" !== typeof module && !!module.exports;
+      return "Node.js" === this.getEnv();
     }
     isQuanX() {
-      return "undefined" !== typeof $task;
+      return "Quantumult X" === this.getEnv();
     }
     isSurge() {
-      return "undefined" !== typeof $httpClient && "undefined" === typeof $loon;
+      return "Surge" === this.getEnv();
     }
     isLoon() {
-      return "undefined" !== typeof $loon;
+      return "Loon" === this.getEnv();
     }
     isShadowrocket() {
-      return "undefined" !== typeof $rocket;
+      return "Shadowrocket" === this.getEnv();
     }
-    toObj(y, c = null) {
+    isStash() {
+      return "Stash" === this.getEnv();
+    }
+    toObj(J, C = null) {
+      const S = {};
+      S.JcFgy = "data:";
       try {
-        return JSON.parse(y);
+        return JSON.parse(J);
       } catch {
-        return c;
+        return C;
       }
     }
-    toStr(y, c = null) {
+    toStr(J, C = null, ...S) {
       try {
-        return JSON.stringify(y);
+        return JSON.stringify(J, ...S);
       } catch {
-        return c;
+        return C;
       }
     }
-    getjson(y, c) {
-      let X = c;
-      const n = this.getdata(y);
-      if (n) {
+    getjson(J, C) {
+      let R = C;
+      if (this.getdata(J)) {
         try {
-          X = JSON.parse(this.getdata(y));
+          R = JSON.parse(this.getdata(J));
         } catch {}
       }
-      return X;
+      return R;
     }
-    setjson(y, c) {
+    setjson(J, C) {
       try {
-        return this.setdata(JSON.stringify(y), c);
+        return this.setdata(JSON.stringify(J), C);
       } catch {
-        return false;
+        return !1;
       }
     }
-    getScript(y) {
-      return new Promise(c => {
-        const H = {
-          url: y
+    getScript(J) {
+      return new Promise(v => {
+        const n = {
+          url: J
         };
-        this.get(H, (X, n, h) => c(h));
+        this.get(n, (H, f, Q) => v(Q));
       });
     }
-    runScript(y, c) {
-      return new Promise(n => {
-        let h = this.getdata("@chavy_boxjs_userCfgs.httpapi");
-        h = h ? h.replace(/\n/g, "").trim() : h;
-        let S = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
-        S = S ? S * 1 : 20;
-        S = c && c.timeout ? c.timeout : S;
-        const [l, i] = h.split("@"),
-          p = {
-            script_text: y,
-            mock_type: "cron",
-            timeout: S
+    runScript(J, C) {
+      return new Promise(v => {
+        let f = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+        f = f ? f.replace(/\n/g, "").trim() : f;
+        let Q = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
+        Q = Q ? 1 * Q : 20;
+        Q = C && C.timeout ? C.timeout : Q;
+        const E = {
+          script_text: J,
+          mock_type: "cron",
+          timeout: Q
+        };
+        const [D, T] = f.split("@"),
+          B = {
+            url: "http://" + T + "/v1/scripting/evaluate",
+            body: E,
+            headers: {
+              "X-Key": D,
+              Accept: "*/*"
+            },
+            timeout: Q
           };
-        const v = {
-          "X-Key": l,
-          Accept: "*/*"
-        };
-        const T = {
-          url: "http: //" + i + "/v1/scripting/evaluate",
-          body: p,
-          headers: v
-        };
-        this.post(T, (L, B, N) => n(N));
-      }).catch(n => this.logErr(n));
+        this.post(B, (q, P, Y) => v(Y));
+      }).catch(v => this.logErr(v));
     }
     loaddata() {
-      if (this.isNode()) {
+      if (!this.isNode()) {
+        return {};
+      }
+      {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const X = this.path.resolve(this.dataFile),
-          n = this.path.resolve(process.cwd(), this.dataFile),
-          h = this.fs.existsSync(X),
-          S = !h && this.fs.existsSync(n);
-        if (h || S) {
-          const l = h ? X : n;
-          try {
-            return JSON.parse(this.fs.readFileSync(l));
-          } catch (p) {
-            return {};
-          }
-        } else {
+        const C = this.path.resolve(this.dataFile),
+          S = this.path.resolve(process.cwd(), this.dataFile),
+          v = this.fs.existsSync(C),
+          R = !v && this.fs.existsSync(S);
+        if (!v && !R) {
           return {};
         }
-      } else {
-        return {};
+        {
+          const H = v ? C : S;
+          try {
+            return JSON.parse(this.fs.readFileSync(H));
+          } catch (Q) {
+            return {};
+          }
+        }
       }
     }
     writedata() {
       if (this.isNode()) {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const H = this.path.resolve(this.dataFile),
-          X = this.path.resolve(process.cwd(), this.dataFile),
-          n = this.fs.existsSync(H),
-          h = !n && this.fs.existsSync(X),
-          S = JSON.stringify(this.data);
+        const S = this.path.resolve(this.dataFile),
+          v = this.path.resolve(process.cwd(), this.dataFile),
+          R = this.fs.existsSync(S),
+          n = !R && this.fs.existsSync(v),
+          H = JSON.stringify(this.data);
+        R ? this.fs.writeFileSync(S, H) : n ? this.fs.writeFileSync(v, H) : this.fs.writeFileSync(S, H);
+      }
+    }
+    lodash_get(J, C, S) {
+      const v = C.replace(/\[(\d+)\]/g, ".$1").split(".");
+      let R = J;
+      for (const n of v) if (R = Object(R)[n], void 0 === R) {
+        return S;
+      }
+      return R;
+    }
+    lodash_set(J, C, S) {
+      Object(J) !== J || (Array.isArray(C) || (C = C.toString().match(/[^.[\]]+/g) || []), C.slice(0, -1).reduce((v, R, n) => Object(v[R]) === v[R] ? v[R] : v[R] = Math.abs(C[n + 1]) >> 0 == +C[n + 1] ? [] : {}, J)[C[C.length - 1]] = S);
+      return J;
+    }
+    getdata(J) {
+      let C = this.getval(J);
+      if (/^@/.test(J)) {
+        const [, v, R] = /^@(.*?)\.(.*?)$/.exec(J),
+          n = v ? this.getval(v) : "";
         if (n) {
-          this.fs.writeFileSync(H, S);
-        } else {
-          h ? this.fs.writeFileSync(X, S) : this.fs.writeFileSync(H, S);
-        }
-      }
-    }
-    lodash_get(y, c, H = undefined) {
-      const h = c.replace(/[(d+)]/g, ".$1").split(".");
-      let S = y;
-      for (const l of h) {
-        S = Object(S)[l];
-        if (S === undefined) {
-          return H;
-        }
-      }
-      return S;
-    }
-    lodash_set(y, c, H) {
-      if (Object(y) !== y) {
-        return y;
-      }
-      if (!Array.isArray(c)) {
-        c = c.toString().match(/[^.[]]+/g) || [];
-      }
-      c.slice(0, -1).reduce((n, h, S) => Object(n[h]) === n[h] ? n[h] : n[h] = Math.abs(c[S + 1 < 10 ? "0" + (S + 1) : S + 1]) >> 0 === +c[S + 1 < 10 ? "0" + (S + 1) : S + 1] ? [] : {}, y)[c[c.length - 1]] = H;
-      return y;
-    }
-    getdata(y) {
-      let H = this.getval(y);
-      if (/^@/.test(y)) {
-        const [, X, n] = /^@(.*?).(.*?)$/.exec(y),
-          h = X ? this.getval(X) : "";
-        if (h) {
           try {
-            const i = JSON.parse(h);
-            H = i ? this.lodash_get(i, n, "") : H;
-          } catch (p) {
-            H = "";
+            const H = JSON.parse(n);
+            C = H ? this.lodash_get(H, R, "") : C;
+          } catch (Q) {
+            C = "";
           }
         }
       }
-      return H;
+      return C;
     }
-    setdata(y, c) {
-      let H = false;
-      if (/^@/.test(c)) {
-        const [, X, n] = /^@(.*?).(.*?)$/.exec(c),
-          h = this.getval(X),
-          S = X ? h === "null" ? null : h || "{}" : "{}";
+    setdata(J, C) {
+      let R = !1;
+      if (/^@/.test(C)) {
+        const [, n, H] = /^@(.*?)\.(.*?)$/.exec(C),
+          f = this.getval(n),
+          Q = n ? "null" === f ? null : f || "{}" : "{}";
         try {
-          const i = JSON.parse(S);
-          this.lodash_set(i, n, y);
-          H = this.setval(JSON.stringify(i), X);
-        } catch (p) {
-          const v = {};
-          this.lodash_set(v, n, y);
-          H = this.setval(JSON.stringify(v), X);
+          const D = JSON.parse(Q);
+          this.lodash_set(D, H, J);
+          R = this.setval(JSON.stringify(D), n);
+        } catch (T) {
+          const B = {};
+          this.lodash_set(B, H, J);
+          R = this.setval(JSON.stringify(B), n);
         }
       } else {
-        H = this.setval(y, c);
+        R = this.setval(J, C);
       }
-      return H;
+      return R;
     }
-    getval(y) {
-      if (this.isSurge() || this.isLoon()) {
-        return $persistentStore.read(y);
-      } else {
-        if (this.isQuanX()) {
-          return $prefs.valueForKey(y);
-        } else {
-          if (this.isNode()) {
-            this.data = this.loaddata();
-            return this.data[y];
-          } else {
-            return this.data && this.data[y] || null;
-          }
-        }
-      }
-    }
-    setval(y, c) {
-      if (this.isSurge() || this.isLoon()) {
-        return $persistentStore.write(y, c);
-      } else {
-        if (this.isQuanX()) {
-          return $prefs.setValueForKey(y, c);
-        } else {
-          if (this.isNode()) {
-            this.data = this.loaddata();
-            this.data[c] = y;
-            this.writedata();
-            return true;
-          } else {
-            return this.data && this.data[c] || null;
-          }
-        }
+    getval(J) {
+      switch (this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+          return $persistentStore.read(J);
+        case "Quantumult X":
+          return $prefs.valueForKey(J);
+        case "Node.js":
+          this.data = this.loaddata();
+          return this.data[J];
+        default:
+          return this.data && this.data[J] || null;
       }
     }
-    initGotEnv(y) {
+    setval(J, C) {
+      switch (this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+          return $persistentStore.write(J, C);
+        case "Quantumult X":
+          return $prefs.setValueForKey(J, C);
+        case "Node.js":
+          this.data = this.loaddata();
+          this.data[C] = J;
+          this.writedata();
+          return !0;
+        default:
+          return this.data && this.data[C] || null;
+      }
+    }
+    initGotEnv(J) {
       this.got = this.got ? this.got : require("got");
       this.cktough = this.cktough ? this.cktough : require("tough-cookie");
       this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
-      if (y) {
-        y.headers = y.headers ? y.headers : {};
-        undefined === y.headers.Cookie && undefined === y.cookieJar && (y.cookieJar = this.ckjar);
-      }
+      J && (J.headers = J.headers ? J.headers : {}, J && (J.headers = J.headers ? J.headers : {}, void 0 === J.headers.cookie && void 0 === J.headers.Cookie && void 0 === J.cookieJar && (J.cookieJar = this.ckjar)));
     }
-    get(y, c = () => {}) {
-      y.headers && (delete y.headers["Content-Type"], delete y.headers["Content-Length"]);
-      if (this.isSurge() || this.isLoon()) {
-        if (this.isSurge() && this.isNeedRewrite) {
-          y.headers = y.headers || {};
-          const S = {
-            "X-Surge-Skip-Scripting": false
-          };
-          Object.assign(y.headers, S);
-        }
-        $httpClient.get(y, (l, i, p) => {
-          !l && i && (i.body = p, i.statusCode = i.status);
-          c(l, i, p);
-        });
-      } else {
-        if (this.isQuanX()) {
-          if (this.isNeedRewrite) {
-            y.opts = y.opts || {};
-            const p = {
-              hints: false
-            };
-            Object.assign(y.opts, p);
-          }
-          $task.fetch(y).then(v => {
-            const {
-                statusCode: A,
-                statusCode: L,
-                headers: B,
-                body: N
-              } = v,
-              q = {
-                status: A,
-                statusCode: L,
-                headers: B,
-                body: N
-              };
-            c(null, q, N);
-          }, v => c(v));
-        } else {
-          this.isNode() && (this.initGotEnv(y), this.got(y).on("redirect", (T, A) => {
-            try {
-              if (T.headers["set-cookie"]) {
-                const q = T.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
-                if (q) {
-                  this.ckjar.setCookieSync(q, null);
-                }
-                A.cookieJar = this.ckjar;
-              }
-            } catch (x) {
-              this.logErr(x);
-            }
-            this.ckjar.setCookieSync(T.headers["set-cookie"].map(Cookie.parse).toString());
-          }).then(T => {
-            const {
-                statusCode: B,
-                statusCode: N,
-                headers: q,
-                body: M
-              } = T,
-              R = {
-                status: B,
-                statusCode: N,
-                headers: q,
-                body: M
-              };
-            c(null, R, M);
-          }, T => {
-            const {
-              message: L,
-              response: B
-            } = T;
-            c(L, B, B && B.body);
-          }));
-        }
-      }
-    }
-    post(y, c = () => {}) {
-      const X = y.method ? y.method.toLocaleLowerCase() : "post";
-      if (y.body && y.headers && !y.headers["Content-Type"]) {
-        y.headers["Content-Type"] = "application/x-www-form-urlencoded";
-      }
-      if (y.headers) {
-        delete y.headers["Content-Length"];
-      }
-      if (this.isSurge() || this.isLoon()) {
-        if (this.isSurge() && this.isNeedRewrite) {
-          y.headers = y.headers || {};
-          const S = {
-            "X-Surge-Skip-Scripting": false
-          };
-          Object.assign(y.headers, S);
-        }
-        $httpClient[X](y, (i, p, v) => {
-          !i && p && (p.body = v, p.statusCode = p.status);
-          c(i, p, v);
-        });
-      } else {
-        if (this.isQuanX()) {
-          y.method = X;
-          if (this.isNeedRewrite) {
-            y.opts = y.opts || {};
-            const p = {
-              hints: false
-            };
-            Object.assign(y.opts, p);
-          }
-          $task.fetch(y).then(T => {
-            const {
-                statusCode: B,
-                statusCode: N,
-                headers: q,
-                body: M
-              } = T,
-              R = {
-                status: B,
-                statusCode: N,
-                headers: q,
-                body: M
-              };
-            c(null, R, M);
-          }, T => c(T));
-        } else {
-          if (this.isNode()) {
-            this.initGotEnv(y);
-            const {
-              url: A,
-              ...L
-            } = y;
-            this.got[X](A, L).then(B => {
-              const {
-                  statusCode: N,
-                  statusCode: q,
-                  headers: M,
-                  body: R
-                } = B,
-                x = {
-                  status: N,
-                  statusCode: q,
-                  headers: M,
-                  body: R
-                };
-              c(null, x, R);
-            }, B => {
-              const {
-                message: N,
-                response: q
-              } = B;
-              c(N, q, q && q.body);
-            });
-          }
-        }
-      }
-    }
-    put(y, c = () => {}) {
-      const n = y.method ? y.method.toLocaleLowerCase() : "put";
-      if (y.body && y.headers && !y.headers["Content-Type"]) {
-        y.headers["Content-Type"] = "application/x-www-form-urlencoded";
-      }
-      if (y.headers) {
-        delete y.headers["Content-Length"];
-      }
-      if (this.isSurge() || this.isLoon()) {
-        if (this.isSurge() && this.isNeedRewrite) {
-          y.headers = y.headers || {};
-          const S = {
-            "X-Surge-Skip-Scripting": false
-          };
-          Object.assign(y.headers, S);
-        }
-        $httpClient[n](y, (i, p, v) => {
-          if (!i && p) {
-            p.body = v;
-            p.statusCode = p.status;
-          }
-          c(i, p, v);
-        });
-      } else {
-        if (this.isQuanX()) {
-          y.method = n;
-          if (this.isNeedRewrite) {
-            y.opts = y.opts || {};
-            const T = {
-              hints: false
-            };
-            Object.assign(y.opts, T);
-          }
-          $task.fetch(y).then(A => {
-            const {
-                statusCode: B,
-                statusCode: N,
-                headers: q,
-                body: M
-              } = A,
-              R = {
-                status: B,
-                statusCode: N,
-                headers: q,
-                body: M
-              };
-            c(null, R, M);
-          }, A => c(A));
-        } else {
-          if (this.isNode()) {
-            this.initGotEnv(y);
-            const {
-              url: A,
-              ...L
-            } = y;
-            this.got[n](A, L).then(B => {
-              const {
-                  statusCode: q,
-                  statusCode: M,
-                  headers: R,
-                  body: x
-                } = B,
-                z = {
-                  status: q,
-                  statusCode: M,
-                  headers: R,
-                  body: x
-                };
-              c(null, z, x);
-            }, B => {
-              const {
-                message: q,
-                response: M
-              } = B;
-              c(q, M, M && M.body);
-            });
-          }
-        }
-      }
-    }
-    time(y, c = null) {
-      const H = c ? new Date(c) : new Date();
-      let X = {
-        "M+": H.getMonth() + 1,
-        "d+": H.getDate(),
-        "H+": H.getHours(),
-        "m+": H.getMinutes(),
-        "s+": H.getSeconds(),
-        "q+": Math.floor((H.getMonth() + 3) / 3),
-        S: H.getMilliseconds()
+    get(J, C = () => {}) {
+      const R = {
+        redirection: !1
       };
-      if (/(y+)/.test(y)) {
-        y = y.replace(RegExp.$1, (H.getFullYear() + "").substr(4 - RegExp.$1.length));
+      switch (J.headers && (delete J.headers["Content-Type"], delete J.headers["Content-Length"], delete J.headers["content-type"], delete J.headers["content-length"]), J.params && (J.url += "?" + this.queryStr(J.params)), void 0 === J.followRedirect || J.followRedirect || ((this.isSurge() || this.isLoon()) && (J["auto-redirect"] = !1), this.isQuanX() && (J.opts ? J.opts.redirection = !1 : J.opts = R)), this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        default:
+          const n = {
+            "X-Surge-Skip-Scripting": !1
+          };
+          this.isSurge() && this.isNeedRewrite && (J.headers = J.headers || {}, Object.assign(J.headers, n));
+          $httpClient.get(J, (Q, E, D) => {
+            !Q && E && (E.body = D, E.statusCode = E.status ? E.status : E.statusCode, E.status = E.statusCode);
+            C(Q, E, D);
+          });
+          break;
+        case "Quantumult X":
+          const H = {};
+          H.hints = !1;
+          this.isNeedRewrite && (J.opts = J.opts || {}, Object.assign(J.opts, H));
+          $task.fetch(J).then(Q => {
+            const {
+                statusCode: E,
+                statusCode: D,
+                headers: T,
+                body: B,
+                bodyBytes: q
+              } = Q,
+              P = {
+                status: E,
+                statusCode: D,
+                headers: T,
+                body: B,
+                bodyBytes: q
+              };
+            C(null, P, B, q);
+          }, Q => C(Q && Q.error || "UndefinedError"));
+          break;
+        case "Node.js":
+          let f = require("iconv-lite");
+          this.initGotEnv(J);
+          this.got(J).on("redirect", (Q, E) => {
+            try {
+              if (Q.headers["set-cookie"]) {
+                const B = Q.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
+                B && this.ckjar.setCookieSync(B, null);
+                E.cookieJar = this.ckjar;
+              }
+            } catch (q) {
+              this.logErr(q);
+            }
+          }).then(Q => {
+            const {
+                statusCode: D,
+                statusCode: T,
+                headers: B,
+                rawBody: q
+              } = Q,
+              P = f.decode(q, this.encoding),
+              Y = {
+                status: D,
+                statusCode: T,
+                headers: B,
+                rawBody: q,
+                body: P
+              };
+            C(null, Y, P);
+          }, Q => {
+            const {
+              message: D,
+              response: T
+            } = Q;
+            C(D, T, T && f.decode(T.rawBody, this.encoding));
+          });
+          break;
       }
-      for (let n in X) if (new RegExp("(" + n + ")").test(y)) {
-        y = y.replace(RegExp.$1, RegExp.$1.length == 1 ? X[n] : ("00" + X[n]).substr(("" + X[n]).length));
-      }
-      return y;
     }
-    msg(y = W, c = "", H = "", X) {
-      const h = S => {
-        if (!S) {
-          return S;
-        }
-        if (typeof S === "string") {
-          if (this.isLoon()) {
-            return S;
-          } else {
-            if (this.isQuanX()) {
-              return {
-                "open-url": S
+    post(J, C = () => {}) {
+      const v = J.method ? J.method.toLocaleLowerCase() : "post",
+        R = {
+          redirection: !1
+        };
+      switch (J.body && J.headers && !J.headers["Content-Type"] && !J.headers["content-type"] && (J.headers["content-type"] = "application/x-www-form-urlencoded"), J.headers && (delete J.headers["Content-Length"], delete J.headers["content-length"]), void 0 === J.followRedirect || J.followRedirect || ((this.isSurge() || this.isLoon()) && (J["auto-redirect"] = !1), this.isQuanX() && (J.opts ? J.opts.redirection = !1 : J.opts = R)), this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        default:
+          const n = {
+            "X-Surge-Skip-Scripting": !1
+          };
+          this.isSurge() && this.isNeedRewrite && (J.headers = J.headers || {}, Object.assign(J.headers, n));
+          $httpClient[v](J, (D, T, B) => {
+            !D && T && (T.body = B, T.statusCode = T.status ? T.status : T.statusCode, T.status = T.statusCode);
+            C(D, T, B);
+          });
+          break;
+        case "Quantumult X":
+          const H = {
+            hints: !1
+          };
+          J.method = v;
+          this.isNeedRewrite && (J.opts = J.opts || {}, Object.assign(J.opts, H));
+          $task.fetch(J).then(D => {
+            const {
+                statusCode: q,
+                statusCode: P,
+                headers: Y,
+                body: d,
+                bodyBytes: U
+              } = D,
+              x = {
+                status: q,
+                statusCode: P,
+                headers: Y,
+                body: d,
+                bodyBytes: U
               };
-            } else {
-              if (this.isSurge()) {
-                return {
-                  url: S
+            C(null, x, d, U);
+          }, D => C(D && D.error || "UndefinedError"));
+          break;
+        case "Node.js":
+          let f = require("iconv-lite");
+          this.initGotEnv(J);
+          const {
+            url: Q,
+            ...E
+          } = J;
+          this.got[v](Q, E).then(D => {
+            const {
+                statusCode: T,
+                statusCode: B,
+                headers: q,
+                rawBody: P
+              } = D,
+              Y = f.decode(P, this.encoding),
+              d = {
+                status: T,
+                statusCode: B,
+                headers: q,
+                rawBody: P,
+                body: Y
+              };
+            C(null, d, Y);
+          }, D => {
+            const {
+              message: T,
+              response: B
+            } = D;
+            C(T, B, B && f.decode(B.rawBody, this.encoding));
+          });
+          break;
+      }
+    }
+    time(J, C = null) {
+      const S = C ? new Date(C) : new Date();
+      let v = {
+        "M+": S.getMonth() + 1,
+        "d+": S.getDate(),
+        "H+": S.getHours(),
+        "m+": S.getMinutes(),
+        "s+": S.getSeconds(),
+        "q+": Math.floor((S.getMonth() + 3) / 3),
+        S: S.getMilliseconds()
+      };
+      /(y+)/.test(J) && (J = J.replace(RegExp.$1, (S.getFullYear() + "").substr(4 - RegExp.$1.length)));
+      for (let R in v) new RegExp("(" + R + ")").test(J) && (J = J.replace(RegExp.$1, 1 == RegExp.$1.length ? v[R] : ("00" + v[R]).substr(("" + v[R]).length)));
+      return J;
+    }
+    queryStr(J) {
+      let C = "";
+      for (const S in J) {
+        let v = J[S];
+        null != v && "" !== v && ("object" == typeof v && (v = JSON.stringify(v)), C += S + "=" + v + "&");
+      }
+      C = C.substring(0, C.length - 1);
+      return C;
+    }
+    msg(J = M, C = "", S = "", v = {}) {
+      const n = H => {
+        const {
+          $open: f,
+          $copy: Q,
+          $media: E,
+          $mediaMime: D
+        } = H;
+        switch (typeof H) {
+          case void 0:
+            return H;
+          case "string":
+            switch (this.getEnv()) {
+              case "Surge":
+              case "Stash":
+              default:
+                const T = {
+                  url: H
                 };
-              } else {
-                return undefined;
-              }
+                return T;
+              case "Loon":
+              case "Shadowrocket":
+                return H;
+              case "Quantumult X":
+                const B = {
+                  "open-url": H
+                };
+                return B;
+              case "Node.js":
+                return;
             }
-          }
-        } else {
-          if (typeof S === "object") {
-            if (this.isLoon()) {
-              let T = S.openUrl || S.url || S["open-url"],
-                A = S.mediaUrl || S["media-url"];
-              const L = {
-                openUrl: T,
-                mediaUrl: A
-              };
-              return L;
-            } else {
-              if (this.isQuanX()) {
-                let N = S["open-url"] || S.url || S.openUrl,
-                  q = S["media-url"] || S.mediaUrl;
-                const M = {
-                  "open-url": N,
-                  "media-url": q
-                };
-                return M;
-              } else {
-                if (this.isSurge()) {
-                  let R = S.url || S.openUrl || S["open-url"];
-                  const x = {
-                    url: R
+          case "object":
+            switch (this.getEnv()) {
+              case "Surge":
+              case "Stash":
+              case "Shadowrocket":
+              default:
+                {
+                  const q = {};
+                  let P = H.openUrl || H.url || H["open-url"] || f;
+                  P && Object.assign(q, {
+                    action: "open-url",
+                    url: P
+                  });
+                  let Y = H["update-pasteboard"] || H.updatePasteboard || Q;
+                  if (Y && Object.assign(q, {
+                    action: "clipboard",
+                    text: Y
+                  }), E) {
+                    let U, x, k;
+                    if (E.startsWith("http")) {
+                      U = E;
+                    } else {
+                      if (E.startsWith("data:")) {
+                        const [y] = E.split(";"),
+                          [, j] = E.split(",");
+                        x = j;
+                        k = y.replace("data:", "");
+                      } else {
+                        x = E;
+                        k = (K => {
+                          const G = {
+                            JVBERi0: "application/pdf",
+                            R0lGODdh: "image/gif",
+                            R0lGODlh: "image/gif",
+                            iVBORw0KGgo: "image/png",
+                            "/9j/": "image/jpg"
+                          };
+                          for (var W in G) if (0 === K.indexOf(W)) {
+                            return G[W];
+                          }
+                          return null;
+                        })(E);
+                      }
+                    }
+                    Object.assign(q, {
+                      "media-url": U,
+                      "media-base64": x,
+                      "media-base64-mime": D ?? k
+                    });
+                  }
+                  const d = {
+                    "auto-dismiss": H["auto-dismiss"],
+                    sound: H.sound
                   };
-                  return x;
+                  Object.assign(q, d);
+                  return q;
                 }
-              }
+              case "Loon":
+                {
+                  const K = {};
+                  let G = H.openUrl || H.url || H["open-url"] || f;
+                  G && Object.assign(K, {
+                    openUrl: G
+                  });
+                  let z = H.mediaUrl || H["media-url"];
+                  E?.["startsWith"]("http") && (z = E);
+                  z && Object.assign(K, {
+                    mediaUrl: z
+                  });
+                  console.log(JSON.stringify(K));
+                  return K;
+                }
+              case "Quantumult X":
+                {
+                  const W = {};
+                  let V = H["open-url"] || H.url || H.openUrl || f;
+                  V && Object.assign(W, {
+                    "open-url": V
+                  });
+                  let F = H["media-url"] || H.mediaUrl;
+                  E?.["startsWith"]("http") && (F = E);
+                  F && Object.assign(W, {
+                    "media-url": F
+                  });
+                  let m = H["update-pasteboard"] || H.updatePasteboard || Q;
+                  m && Object.assign(W, {
+                    "update-pasteboard": m
+                  });
+                  console.log(JSON.stringify(W));
+                  return W;
+                }
+              case "Node.js":
+                return;
             }
-          } else {
-            return undefined;
-          }
+          default:
+            return;
         }
       };
       if (!this.isMute) {
-        if (this.isSurge() || this.isLoon()) {
-          $notification.post(y, c, H, h(X));
-        } else {
-          this.isQuanX() && $notify(y, c, H, h(X));
+        switch (this.getEnv()) {
+          case "Surge":
+          case "Loon":
+          case "Stash":
+          case "Shadowrocket":
+          default:
+            $notification.post(J, C, S, n(v));
+            break;
+          case "Quantumult X":
+            $notify(J, C, S, n(v));
+            break;
+          case "Node.js":
+            break;
         }
       }
       if (!this.isMuteLog) {
-        let p = ["", "==============📣系统通知📣=============="];
-        p.push(y);
-        c ? p.push(c) : "";
-        H ? p.push(H) : "";
-        console.log(p.join("\n"));
-        this.logs = this.logs.concat(p);
+        let H = ["", "==============📣系统通知📣=============="];
+        H.push(J);
+        C && H.push(C);
+        S && H.push(S);
+        console.log(H.join("\n"));
+        this.logs = this.logs.concat(H);
       }
     }
-    log(...y) {
-      y.length > 0 && (this.logs = [...this.logs, ...y]);
-      console.log(y.join(this.logSeparator));
+    debug(...J) {
+      this.logLevels[this.logLevel] <= this.logLevels.debug && (J.length > 0 && (this.logs = [...this.logs, ...J]), console.log("" + this.logLevelPrefixs.debug + J.map(C => C ?? String(C)).join(this.logSeparator)));
     }
-    logErr(y, c) {
-      const H = !this.isSurge() && !this.isQuanX() && !this.isLoon();
-      !H ? this.log("", "❗️" + this.name + ", 错误!", y) : this.log("", "❗️" + this.name + ", 错误!", y.stack);
+    info(...J) {
+      this.logLevels[this.logLevel] <= this.logLevels.info && (J.length > 0 && (this.logs = [...this.logs, ...J]), console.log("" + this.logLevelPrefixs.info + J.map(C => C ?? String(C)).join(this.logSeparator)));
     }
-    wait(y) {
-      return new Promise(c => setTimeout(c, y));
+    warn(...J) {
+      this.logLevels[this.logLevel] <= this.logLevels.warn && (J.length > 0 && (this.logs = [...this.logs, ...J]), console.log("" + this.logLevelPrefixs.warn + J.map(C => C ?? String(C)).join(this.logSeparator)));
     }
-    done(y = {}) {
-      const c = new Date().getTime();
-      const H = (c - this.startTime) / 1000;
-      this.log("", "🔔" + this.name + ", 结束!🕛" + H + "秒");
-      this.log();
-      (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(y);
+    error(...J) {
+      this.logLevels[this.logLevel] <= this.logLevels.error && (J.length > 0 && (this.logs = [...this.logs, ...J]), console.log("" + this.logLevelPrefixs.error + J.map(C => C ?? String(C)).join(this.logSeparator)));
     }
-  }(W, E);
+    log(...J) {
+      J.length > 0 && (this.logs = [...this.logs, ...J]);
+      console.log(J.map(C => C ?? String(C)).join(this.logSeparator));
+    }
+    logErr(J, C) {
+      switch (this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        case "Quantumult X":
+        default:
+          this.log("", "❗️" + this.name + ", 错误!", C, J);
+          break;
+        case "Node.js":
+          this.log("", "❗️" + this.name + ", 错误!", C, void 0 !== J.message ? J.message : J, J.stack);
+          break;
+      }
+    }
+    wait(J) {
+      return new Promise(C => setTimeout(C, J));
+    }
+    done(J = {}) {
+      const C = (new Date().getTime() - this.startTime) / 1000;
+      switch (this.log("", "🔔" + this.name + ", 结束! 🕛 " + C + " 秒"), this.log(), this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        case "Quantumult X":
+        default:
+          $done(J);
+          break;
+        case "Node.js":
+          process.exit(1);
+      }
+    }
+  }(M, a);
 }
