@@ -1,4 +1,4 @@
-//Thu Feb 06 2025 13:59:54 GMT+0000 (Coordinated Universal Time)
+//Tue Feb 11 2025 04:22:10 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
 const $ = new Env("抖音火山版"),
