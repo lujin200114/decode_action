@@ -1,20 +1,20 @@
-//Fri Apr 11 2025 15:26:30 GMT+0000 (Coordinated Universal Time)
+//Sat Apr 26 2025 00:57:56 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
-const $ = new Env("抖音火山版"),
-  version = "V3.0.6",
-  appName = "dyhsbapp";
-let dyhsbapp = $.getjson(appName, []);
+const $ = new Env("抖音极速版"),
+  version = "V3.1.0",
+  appName = "dyjsbapp";
+let dyjsbapp = $.getjson(appName, []);
 const fs = $.isNode() ? require("fs") : "",
   WebSocket = $.isNode() ? require("ws") : "",
   file = "david_cookies.js";
-$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet dyhsbAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    dyhsb: dyhsbAPP\n}\n\nmodule.exports = APPS", l => {}));
+$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", I => {}));
 const http = $.isNode() ? require("http") : "",
   notify = $.isNode() ? require("./sendNotify") : "",
   COOKIES = $.isNode() ? require("./david_cookies") : "";
 let userId = $.getdata("tguserid") || 1,
-  activeCode = $.getdata("dyhsbactivecode") || 0,
-  dyhsbuserck = $.getval("dyhsbuserck") || 1,
+  activeCode = $.getdata("dyjsbactivecode") || 0,
+  dyjsbuserck = $.getval("dyjsbuserck") || 1,
   apiHost = $.getval("apiHost") || "http://106.15.104.124:8080";
 $.getval("apiHosts") && (apiHost = $.getval("apiHosts"));
 const debug = 0;
@@ -22,8 +22,8 @@ let tz = $.getval("tz") || "1";
 var hour = "",
   minute = "";
 let sendlogs = "",
-  dyhsblogs = [];
-let accounts = [],
+  dyjsblogs = [],
+  accounts = [],
   wss = [],
   channels_status = [],
   reconectCounts = [];
@@ -32,8 +32,8 @@ let requestObjects = [],
   httpResult = "",
   signSwitchs = [],
   userAuth = "",
-  scriptAuth = "";
-let newest_version = "",
+  scriptAuth = "",
+  newest_version = "",
   runAuth = "",
   systemNotify = "",
   vipAuth = "",
@@ -41,15 +41,15 @@ let newest_version = "",
   multiAccount = 1,
   buyCount = 1,
   runTotalCounts = 1,
-  runedCounts = 1,
-  userRank = "",
-  invicode = "",
+  runedCounts = 1;
+let userRank = "";
+let invicode = "",
   numbers = 3,
   vipDate = "";
 if ($.isNode()) {
-  process.env.DYHSBAPP ? dyhsbapp = JSON.parse(process.env.DYHSBAPP) : dyhsbapp = COOKIES.DYHSB;
+  process.env.DYJSBAPP ? dyjsbapp = JSON.parse(process.env.DYJSBAPP) : dyjsbapp = COOKIES.DYJSB;
   userId = process.env.TGUSERID;
-  activeCode = process.env.DYHSBACTIVECODE;
+  activeCode = process.env.DYJSBACTIVECODE;
   process.env.APIHOST && (apiHost = process.env.APIHOST);
   process.env.APIHOSTS && (apiHost = process.env.APIHOSTS);
   hour = new Date(new Date().getTime()).getHours();
@@ -64,26 +64,30 @@ if ($.isNode()) {
   if (typeof $request !== "undefined") {
     await getCk();
   } else {
-    if (!dyhsbapp) {
+    if (!dyjsbapp) {
       $.log("📢 很抱歉，😭 没有找到账号信息！你确定配置账号信息了吗？");
       return;
     }
     $.log("📢 开始检测服务器接口状态>>>");
-    let n = false;
-    const B = apiHost.split("&"),
-      c = B.length;
-    for (let R = 0; R < c; R++) {
+    let b = false;
+    const r = apiHost.split("&"),
+      z = r.length;
+    for (let O = 0; O < z; O++) {
       if ($.isNode()) {
-        n = await checkAddress("" + B[R], 2500);
+        b = await checkAddress("" + r[O], 2500);
       } else {
-        $.isSurge() || $.isLoon() ? n = await httpClientRequest("" + B[R], 2500) : n = await fetchRequest("" + B[R], 2500);
+        if ($.isSurge() || $.isLoon()) {
+          b = await httpClientRequest("" + r[O], 2500);
+        } else {
+          b = await fetchRequest("" + r[O], 2500);
+        }
       }
-      if (n == true) {
-        apiHost = B[R];
-        $.log("📢 接口" + (R + 1) + "[" + B[R] + "]服务器接口正常! 🎉");
+      if (b == true) {
+        apiHost = r[O];
+        $.log("📢 接口" + (O + 1) + "[" + r[O] + "]服务器接口正常! 🎉");
         break;
       }
-      if (R == c - 1 && n == false) {
+      if (O == z - 1 && b == false) {
         $.log("📢 抱歉，所有接口都不可用, 请前往交流群置顶获取最新的接口地址! 😭");
         $.msg($.name, "所有接口都不可用, 请尽快前往交流群置顶获取最新的接口地址!");
         return;
@@ -98,8 +102,8 @@ if ($.isNode()) {
     $.log("🔔 当前脚本版本号: " + version + "，最新版本号: " + newest_version);
     if (vipDate != "") {
       let t = new Date(vipDate).getTime(),
-        G = new Date().getTime();
-      if (G > t) {
+        l = new Date().getTime();
+      if (l > t) {
         $.log("❗️ 抱歉，VIP到期了，请及时付费。");
         return;
       }
@@ -129,9 +133,9 @@ if ($.isNode()) {
     if (vipDate != "") {
       if (isCharge == true) {
         $.log("🔔 尊敬的会员：您好，你是付费用户！🔐");
-        let Z = new Date(vipDate).getTime(),
-          w = new Date().getTime();
-        if (w > Z) {
+        let o = new Date(vipDate).getTime(),
+          B = new Date().getTime();
+        if (B > o) {
           $.log("❗️ 抱歉，VIP到期了，请及时付费。");
           return;
         }
@@ -152,489 +156,555 @@ if ($.isNode()) {
       $.log("❗️ 抱歉,  该用户今天可能已经达到最大运行次数，明天再试吧！");
       return;
     }
-    if (dyhsbapp.length > numbers * multiAccount) {
+    if (dyjsbapp.length > numbers * multiAccount) {
       $.log("❗️ 当前用户一次最多运行" + numbers * multiAccount + "个账号，需要增加账号请查看置顶说明。");
       return;
     }
-    if (dyhsbapp.length == 0) {
+    if (dyjsbapp.length == 0) {
       $.log("先抓取账号ck，再运行脚本吧！");
       return;
     }
-    if (runedCounts + dyhsbapp.length > runTotalCounts) {
-      $.log("📢 一共发现了" + dyhsbapp.length + "个账号");
-      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (dyhsbapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
+    if (runedCounts + dyjsbapp.length > runTotalCounts) {
+      $.log("📢 一共发现了" + dyjsbapp.length + "个账号");
+      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (dyjsbapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
       return;
     }
-    if (vipDate != "") {
-      $.log("📢 你的会员有效期到： " + vipDate);
-    }
-    $.log("📢 一共发现了" + dyhsbapp.length + "个账号");
-    let u = [];
-    for (let D = 0; D < dyhsbapp.length; D++) {
-      u.push(runMultiTasks(D));
-      dyhsblogs[D] = "";
-      signSwitchs[D] = 1;
+    vipDate != "" && $.log("📢 你的会员有效期到： " + vipDate);
+    $.log("📢 一共发现了" + dyjsbapp.length + "个账号");
+    let A = [];
+    for (let Y = 0; Y < dyjsbapp.length; Y++) {
+      A.push(runMultiTasks(Y));
+      dyjsblogs[Y] = "";
+      signSwitchs[Y] = 1;
       if ($.isNode()) {
-        channels_status[D] = 1;
-        await init_ws(D);
+        channels_status[Y] = 0;
+        await init_ws(Y);
       } else {
-        channels_status[D] = 1;
+        channels_status[Y] = 1;
       }
     }
-    await Promise.allSettled(u).then(N => {
+    await Promise.allSettled(A).then(e => {
       $.log("日志整理功能如下：");
       $.log("---------------日志整理开始--------------");
-      for (let a = 0; a < dyhsbapp.length; a++) {
-        $.log(dyhsblogs[a]);
-        sendlogs += dyhsblogs[a];
+      for (let U = 0; U < dyjsbapp.length; U++) {
+        $.log(dyjsblogs[U]);
+        sendlogs += dyjsblogs[U];
       }
       $.log("---------------日志整理结束--------------");
       sendMsg(sendlogs);
     });
   }
-})().catch(l => $.logErr(l)).finally(() => $.done());
-async function runMultiTasks(l) {
-  return new Promise((n, B) => {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 开始执行 working......");
-    runSubTask(n, l);
+})().catch(I => $.logErr(I)).finally(() => $.done());
+async function runMultiTasks(I) {
+  return new Promise((b, r) => {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 开始执行 working......");
+    runSubTask(b, I);
   });
 }
-async function init_ws(l) {
+async function init_ws(I) {
   if ($.isNode()) {
-    reconectCounts[l] > 0 && $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 尝试重新连接服务器>>>>>>");
-    wss[l] = new WebSocket(apiHost.replace("http", "ws") + "/ws");
-    wss[l].on("open", function B() {
-      $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 签名通道已连接");
+    if (reconectCounts[I] > 0) {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 尝试重新连接服务器>>>>>>");
+    }
+    wss[I] = new WebSocket(apiHost.replace("http", "ws") + "/ws");
+    wss[I].on("open", function z() {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签名通道已连接");
     });
-    wss[l].on("close", function c() {
-      $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
+    wss[I].on("close", function A() {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
     });
-    wss[l].on("error", function u() {
-      $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 签名通道已关闭，原因是出现错误");
-      channels_status[l] = 1;
-      reconectCounts[l]++;
-      if (reconectCounts[l] <= 3) {
-        init_ws(l);
-      }
+    wss[I].on("error", function n() {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签名通道已关闭，原因是出现错误");
+      channels_status[I] = 1;
+      reconectCounts[I]++;
+      reconectCounts[I] <= 3 && init_ws(I);
     });
   }
 }
-async function runSubTask(l, W) {
-  $.isNode() && (await $.wait(3000, 5000));
-  dyhsbapp[W].url = dyhsbapp[W].url.replace(/\+/g, "");
-  if (dyhsbapp[W].capture) {
-    if (dyhsbapp[W].interface && dyhsbapp[W].interface.split("$").length > 0) {
-      let u = dyhsbapp[W].interface.split("$").length > 1 ? dyhsbapp[W].interface.split("$")[0] : dyhsbapp[W].interface;
-      await getCapture(W, u);
-      $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 抓包结果=> 如何你发现需要抓取的APP自动重启了，恭喜你🎉🎉🎉，可以开始抓包了，期间APP不要重启。");
-      dyhsblogs[W] += "[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 抓包结果=> 如何你发现需要抓取的APP自动重启了，恭喜你🎉🎉🎉，可以开始抓包了，期间APP不要重启。\n";
-    } else {
-      $.log("[账号" + (W + 1 < 10 ? "0" + (W + 1) : W + 1) + "]: 请设置接口地址再运行脚本！");
-    }
-    if ($.isNode()) {
-      await wss[W].close();
-    }
-  } else {
-    await userInfo(W);
-    if (hour > 7 && hour < 23) {
-      await pre_withdraw(W);
-    }
-    await taskPage(W);
-    $.isNode() && (await wss[W].close());
-    await runComplete(appName, userId);
-  }
-  l();
+async function runSubTask(I, G) {
+  await $.wait(3000, 5000);
+  dyjsbapp[G].url = dyjsbapp[G].url.replace(/\+/g, "");
+  await userInfo(G);
+  await appointmentInfo(G);
+  await taskPage(G);
+  $.isNode() && (await wss[G].close());
+  await runComplete(appName, userId);
+  I();
 }
 async function getCk() {
   if ($request.url.match(/\/passport\/UnionLogin/)) {
-    const n = $request.body;
-    let B = dyhsbuserck - 1;
-    if (dyhsbapp[B]) {
-      dyhsbapp[B].token_body = n;
+    const b = $request.body;
+    let r = dyjsbuserck - 1;
+    if (dyjsbapp[r]) {
+      dyjsbapp[r].token_body = b;
     } else {
-      const J = {
-        token_body: n
+      const A = {
+        token_body: b
       };
-      dyhsbapp[B] = J;
+      dyjsbapp[r] = A;
     }
-    $.setdata(JSON.stringify(dyhsbapp, null, 2), "dyhsbapp");
-    $.msg($.name, "快音账号" + (B + 1) + "Token获取成功！🎉");
+    $.setdata(JSON.stringify(dyjsbapp, null, 2), "dyjsbapp");
+    $.msg($.name, "快音账号" + (r + 1) + "Token获取成功！🎉");
   }
 }
-function getReqUrl(l) {
-  let n = ts13(),
-    B = ts10(),
-    c = url2obj(dyhsbapp[l].url);
-  c.ts = B;
-  c._rticket = n;
-  dyhsbapp[l].iid = c.iid;
-  dyhsbapp[l].did = c.device_id;
-  c.version_code = "270700";
-  c.version_name = "27.7.0";
-  c.manifest_version_code = "270701";
-  c.update_version_code = "27709900";
-  c.device_platform = "android";
-  c.luckycat_version_name = "8.13.0-rc.3";
-  c.luckycat_version_code = "890100";
-  delete c.luckydog_base;
-  delete c.luckydog_data;
-  delete c.luckydog_token;
-  delete c.luckydog_sdk_version;
-  delete c.luckydog_api_version;
-  return jsonToUrl(c);
+function getReqUrl(I) {
+  let b = ts13();
+  let r = ts10(),
+    z = url2obj(dyjsbapp[I].url);
+  z.ts = r;
+  z._rticket = b;
+  dyjsbapp[I].iid = z.iid;
+  dyjsbapp[I].did = z.device_id;
+  z.version_code = "310700";
+  z.version_name = "31.7.0";
+  z.manifest_version_code = "310701";
+  z.update_version_code = "31709900";
+  z.device_platform = "android";
+  z.luckycat_version_name = "8.13.0-rc.3";
+  z.luckycat_version_code = "890100";
+  delete z.luckydog_base;
+  delete z.luckydog_data;
+  delete z.luckydog_token;
+  delete z.luckydog_sdk_version;
+  delete z.luckydog_api_version;
+  return jsonToUrl(z);
 }
-async function getSixGodHeader(l, W, n) {
-  let c = "common";
-  dyhsbapp[l].interface && (c = dyhsbapp[l].interface);
-  let u = dyhsbapp[l].iid,
-    J = dyhsbapp[l].did,
-    R = "",
-    f = [];
-  for (let H in n) {
-    if (H == "Content-Type" || H == "Host") {
+async function getSixGodHeader(I, G, b) {
+  let z = "common";
+  if (dyjsbapp[I].interface) {
+    z = dyjsbapp[I].interface;
+  }
+  let A = dyjsbapp[I].iid;
+  let n = dyjsbapp[I].did,
+    O = "",
+    C = [];
+  for (let u in b) {
+    if (u == "Content-Type" || u == "Host") {
       continue;
     }
-    f.push(H.toLowerCase() + "=[" + n[H] + "]");
+    C.push(u.toLowerCase() + "=[" + b[u] + "]");
   }
-  R += f.join(",");
-  R += "";
-  let Q = J + "@" + u + "@" + encodeURIComponent(W) + "@" + encodeURIComponent(R) + "@" + c;
-  await selectChannel(l, Q);
+  O += C.join(",");
+  O += "";
+  let X = n + "@" + A + "@" + encodeURIComponent(G) + "@" + encodeURIComponent(O) + "@" + z;
+  await selectChannel(I, X);
 }
-async function userInfo(l) {
-  let n = getReqUrl(l);
-  const B = "https://api5-normal-lq.amemv.com/aweme/v1/user/profile/self/?" + n;
-  let c = "";
-  await getReqObject(B, c, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 用户信息=> 签名服务异常，停止执行>>>");
+async function userInfo(I) {
+  let b = getReqUrl(I);
+  const r = "https://api5-normal-lq.amemv.com/aweme/v1/user/profile/self/?" + b;
+  let z = "";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户信息=> 签名服务异常，停止执行>>>");
     return;
   }
-  await httpRequest("get", requestObjects[l], printCaller());
-  let u = httpResult;
-  if (u != null && u.status_code == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 用户名=> " + u.user.bind_phone);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 用户名=> " + u.user.bind_phone + "\n";
-    accounts[l] = u.user.bind_phone;
+  await httpRequest("get", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.status_code == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户名=> " + A.user.bind_phone);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户名=> " + A.user.bind_phone + "\n";
+    accounts[I] = A.user.bind_phone;
   } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 用户信息=> " + u.err_tips);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 用户信息=> " + u.err_tips + "\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户信息=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户信息=> " + A.err_tips + "\n";
   }
 }
-async function sign(l) {
-  let n = getReqUrl(l);
-  const B = "https://api5-normal-lq.amemv.com/luckycat/aweme/v1/task/done/sign_in?" + n;
-  let c = "{}";
-  await getReqObject(B, c, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+async function sign(I) {
+  let b = getReqUrl(I);
+  const r = "https://api5-normal-lq.amemv.com/luckycat/aweme/v1/task/done/sign_in?" + b;
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
     return;
   }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let u = httpResult;
-  if (u != null && u.err_no == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 签到=> " + u.data.success_desc + "，获得" + u.data.amount + "音符");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 签到=> " + u.data.success_desc + "，获得" + u.data.amount + "音符\n";
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签到=> " + A.data.success_desc + "，获得" + A.data.amount + "音符");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签到=> " + A.data.success_desc + "，获得" + A.data.amount + "音符\n";
   } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 签到=> " + u.err_tips);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 签到=> " + u.err_tips + "\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签到=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签到=> " + A.err_tips + "\n";
   }
 }
-async function taskPage(l) {
-  let n = getReqUrl(l);
-  const B = "https://hotsoon.snssdk.com/hotsoon/janus/flame/management/panel/?" + n;
-  let c = "";
-  await getReqObject(B, c, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+async function taskPage(I) {
+  let b = getReqUrl(I);
+  const r = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/page?" + b;
+  let z = "";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
     return;
   }
-  await httpRequest("get", requestObjects[l], printCaller());
-  let u = httpResult;
-  if (u && u.data.task_info.data.task_list && u.status_code == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 现有火苗=> " + u.data.user_flame_info.data.flame_left + " 🔥");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 现有火苗=> " + u.data.user_flame_info.data.flame_left + " 🔥\n";
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 可兑换为=> " + (u.data.user_flame_info.data.flame_left / 30000).toFixed(1) + "元");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 可兑换为=> " + (u.data.user_flame_info.data.flame_left / 30000).toFixed(1) + "元\n";
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 现有余额=> " + u.data.user_flame_info.data.can_with_draw_money + "元");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 现有余额=> " + u.data.user_flame_info.data.can_with_draw_money + "元\n";
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 今日领取火苗=> " + u.data.user_flame_info.data.td_flame_count + " 🔥");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 今日领取火苗=> " + u.data.user_flame_info.data.td_flame_count + " 🔥\n";
-    let R = undefined,
-      f = undefined;
-    if (u.data.task_info.data.new_user_task_part) {
-      R = u.data.task_info.data.new_user_task_part.task_list.find(K => K.task_name == "check_in_v2");
-      f = u.data.task_info.data.new_user_task_part.task_list.find(K => K.task_name == "ad");
+  await httpRequest("get", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 音符=> " + A.data.income_data.amount1);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 音符=> " + A.data.income_data.amount1 + "\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 余额=> " + A.data.income_data.amount2 / 100 + "元");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 余额=> " + A.data.income_data.amount2 / 100 + "元\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 音符兑换方式=> " + A.data.income_data.exchange_type_name);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 音符兑换方式=> " + A.data.income_data.exchange_type_name + "\n";
+    if (A.data.income_data.amount2 / 100 >= 30) {
+      await withdraw(I, 3000, accounts[I]);
     } else {
-      R = u.data.task_info.data.task_list.find(F => F.task_name == "check_in_v2");
-      f = u.data.task_info.data.task_list.find(F => F.task_name == "ad");
+      A.data.income_data.amount2 / 100 >= 15 && A.data.income_data.amount2 / 100 < 30 && (await withdraw(I, 1500, accounts[I]));
     }
-    const Q = u.data.treasure_chest_info,
-      T = ts10();
-    if (f && (f.ad_task.last_award_timestamp == 0 || f.ad_task.last_award_timestamp + 1200 + "" <= T)) {
-      await excitation_ad(l, f.task_name, f.ad_task.token, f.ad_task.title);
-      await $.wait(randomNum(15000, 35000));
+    let C = A.data.task_list,
+      X = C.find(M => M.key == "sign_in");
+    if (X && X.completed == false) {
+      await sign(I);
     }
-    if (Q.data.ug_task_info && Q.data.ug_task_info.page_view.can_show == true && Q.data.ug_task_info.page_view.cooldown_end_time + "" <= T) {
-      await openBox(l, Q.data.ug_task_info.page_view.title);
-    } else {
-      !Q.data.ug_task_info && (!Q.data.last_award_timestamp && Q.data.finished_toast != "今日任务已达上限，请明日再来" || Q.data.last_award_timestamp + Q.data.cooling_time + "" <= T) && (await openBox_another(l, Q.data.task_name, Q.data.token, "开宝箱"));
+    let k = C.find(R => R.key == "shopping_gold");
+    k && k.desc.indexOf("浏览低价商品") != -1 && (await shopping(I));
+    if (signSwitchs[I] == 1) {
+      await open_treasure_box(I);
     }
-  } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> " + u.status_message);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> " + u.status_message + "\n";
-  }
-}
-async function openBox(l, W) {
-  let B = getReqUrl(l),
-    c = "https://api5-normal-hl.amemv.com/aweme/ug/incentive/luckyapi/v1/awemeug/treasure_box_ug/done?" + B;
-  let u = "{}";
-  await getReqObject(c, u, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let J = httpResult;
-  if (J != null && J.err_no == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + W + "成功，获得" + J.data.amount + "火苗 🔥");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + W + "成功，获得" + J.data.amount + "火苗 🔥\n";
-    const Q = J.data.button_data.excitation_ad_info.token;
-    await $.wait(randomNum(30000, 60000));
-    await treasure_box_ad(l, "treasure_chest_ad", Q);
-  } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + W + "=> " + J.err_tips);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + W + "=> " + J.err_tips + "\n";
-  }
-}
-async function openBox_another(l, W, n, B) {
-  let u = getReqUrl(l),
-    J = "https://api5-normal-hl.amemv.com/hotsoon/flame/task_system/task_done/?" + u;
-  let R = "task_name=" + W + "&auto_finish=false&token=" + n;
-  await getReqObject(J, R, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let f = httpResult;
-  if (f != null && f.status_code == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "成功，获得" + f.data.task_done_award.flame_amount + "火苗 🔥");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "成功，获得" + f.data.task_done_award.flame_amount + "火苗 🔥\n";
-    const T = f.data.treasure_chest_ad_info.ad_token;
-    await $.wait(randomNum(30000, 60000));
-    await treasure_box_ad(l, "treasure_chest_ad", T);
-  } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "=> " + f.err_tips);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "=> " + f.err_tips + "\n";
-  }
-}
-async function treasure_box_ad(l, W, n) {
-  let c = getReqUrl(l);
-  const u = "https://api5-normal-hl.amemv.com/hotsoon/flame/task_system/task_done/?" + c;
-  let J = "task_name=" + W + "&token=" + n + "&history_total_award_key=";
-  await getReqObject(u, J, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let R = httpResult;
-  if (R != null && R.status_code == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 开宝箱看广告成功，获得" + R.data.task_done_award.flame_amount + "火苗 🔥");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 开宝箱看广告成功，获得" + R.data.task_done_award.flame_amount + "火苗 🔥\n";
-    for (let Q = 0; Q < 3; Q++) {
-      if (Q > 0) {
-        W = "ad_one_more_" + Q;
+    let j = C.find(l => l.key == "excitation_ad");
+    if (j) {
+      let l = JSON.parse(j.status_extra),
+        d = l.completed;
+      if (d == false) {
+        signSwitchs[I] == 1 && (await excitation_ad_detail(I, j));
       }
-      await video_one_more(l, W, "宝箱广告", Q, R.data.task_done_award.history_total_award_key);
     }
   } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 宝箱广告=> 失败");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 宝箱广告=> 失败\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> " + A.err_tips + "\n";
   }
 }
-async function video_one_more(l, W, n, B, c) {
-  let J = getReqUrl(l);
-  const R = "https://api5-normal-hl.amemv.com/hotsoon/flame/task_system/ad/one_more/?" + J;
-  let f = "task_name=" + W + "&one_more_index=" + B;
-  await getReqObject(R, f, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+async function swipeTask(I) {
+  let b = getReqUrl(I),
+    r = "https://api3-normal-c.amemv.com/aweme/ug/lite/read/done/swipe_task?" + b,
+    z = "{\"task_id\":100153,\"task_key\":\"low_vv_swipe_up_task\",\"req_from\":\"normal\",\"pendant_show_scene\":\"\"}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
     return;
   }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let Q = httpResult;
-  if (Q != null && Q.status_code == 0) {
-    if (Q.data.has_one_more == false) {
-      $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + n + "=> 检测不可以再看一次广告");
-      dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + n + "=> 检测不可以再看一次广告\n";
-    } else {
-      $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + n + "=> 检测可以再看一次广告");
-      dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + n + "=> 检测可以再看一次广告\n";
-      let F = Q.data.next_token,
-        v = Q.data.next_task_name;
-      await video_one_reward(l, v, F, n, c);
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.data.success_desc + "，不错哦！获得" + A.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.data.success_desc + "，不错哦！获得" + A.data.amount + "音符 🎉\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.err_tips + "\n";
+  }
+}
+async function open_treasure_box(I) {
+  let b = getReqUrl(I),
+    r = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/done/treasure_task?" + b;
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    let O = A.data.excitation_ad_info ? A.data.excitation_ad_info : A.data.button_data.excitation_ad_info;
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.data.success_desc + "，不错哦！获得" + A.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.data.success_desc + "，不错哦！获得" + A.data.amount + "音符 🎉\n";
+    if (O) {
+      let X = O.ad_id,
+        k = O.req_id,
+        u = A.data.excitation_ad_info ? A.data.excitation_ad_info.score_amount : A.data.button_data.excitation_ad_info.score_amount;
+      await $.wait(randomNum(10000, 15000));
+      await treasure_box_ad(I, X, k, u);
     }
   } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + n + "=> 检测是否可以再看一次广告失败");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + n + "=> 检测是否可以再看一次广告失败\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.err_tips + "\n";
   }
 }
-async function video_one_reward(l, W, n, B, c) {
-  let J = getReqUrl(l);
-  const R = "https://api5-normal-lf.amemv.com/hotsoon/flame/task_system/task_done/?" + J,
-    f = "task_name=" + W + "&token=" + n + "&history_total_award_key=" + encodeURIComponent(c);
-  await getReqObject(R, f, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+async function treasure_box_ad(I, G, b, r, z) {
+  let n = getReqUrl(I);
+  const O = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/done/excitation_ad_treasure_box?" + n + "&md=0";
+  let C = "{\"amount\":\"" + r + "\",\"inspire_modal_add_modal_manage\":false,\"ad_rit\":\"" + G + "\",\"ad_inspire\":\"{\"score_amount\":\"" + r + "\",\"amount\":\"" + r + "\",\"req_id\":\"" + b + "\"}\",\"task_key\":\"excitation_ad_treasure_box\",\"stage_score_amount\":[],\"ad_alias_position\":\"box\",\"need_reward\":true,\"finish_action\":0,\"params_for_special\":\"luckydog_sdk\",\"static_settings_version\":58,\"dynamic_settings_version\":58,\"poll_settings_version\":0}";
+  await getReqObject(O, C, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
     return;
   }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let Q = httpResult;
-  if (Q != null && Q.status_code == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "附加广告=> 获得" + Q.data.task_done_award.flame_amount + "火苗 🔥");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "附加广告=> 获得" + Q.data.task_done_award.flame_amount + "火苗 🔥\n";
-    await $.wait(randomNum(30000, 60000));
-  } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "附加广告=> 任务出错");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "附加广告=> 任务出错\n";
-  }
-}
-async function excitation_ad(l, W, n, B) {
-  let u = getReqUrl(l);
-  const J = "https://api5-normal-hl.amemv.com/hotsoon/flame/task_system/task_done/?" + u;
-  let R = "task_name=" + W + "&token=" + n + "&history_total_award_key=";
-  await getReqObject(J, R, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let f = httpResult;
-  if (f != null && f.status_code == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "广告成功，获得" + f.data.task_done_award.flame_amount + "火苗 🔥");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "广告成功，获得" + f.data.task_done_award.flame_amount + "火苗 🔥\n";
+  await httpRequest("post", requestObjects[I], printCaller());
+  let X = httpResult;
+  if (X != null && X.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> 获得" + X.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> 获得" + X.data.amount + "音符 🎉\n";
+    let j = X.data.aggr_info.aggr_income_id;
     for (let T = 0; T < 3; T++) {
-      if (T > 0) {
-        W = "ad_one_more_" + T;
+      await video_one_more(I, "excitation_ad_treasure_box", G, T, j);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> " + X.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> " + X.err_tips + "\n";
+    await $.wait(randomNum(5000, 9000));
+    if (X.err_tips.indexOf("很遗憾") != -1 && !z) {
+      await treasure_box_ad(I, G, b, r, "try");
+    }
+  }
+}
+async function video_one_more(I, G, b, r, z) {
+  let n = getReqUrl(I);
+  const O = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/excitation_ad/one_more/detail?task_key=" + G + "&rit=" + b + "&creator_id=12315000&one_more_round=" + r + "&" + n;
+  await getReqObject(O, "", I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("get", requestObjects[I], printCaller());
+  let C = httpResult;
+  if (C != null && C.err_no == 0) {
+    if (C.data.has_one_more == true) {
+      await $.wait(randomNum(10000, 15000));
+      await video_one_reward(I, G, b, r, z);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> " + C.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> " + C.err_tips + "\n";
+  }
+}
+async function video_one_reward(I, G, b, r, z) {
+  let n = getReqUrl(I);
+  const O = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/done/excitation_ad/one_more?" + n,
+    C = "{\"task_key\":\"" + G + "\",\"rit\":\"" + b + "\",\"creator_id\":\"12315000\",\"one_more_round\":" + r + ",\"aggr_income_id\":\"" + z + "\"}";
+  await getReqObject(O, C, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let X = httpResult;
+  if (X != null && X.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + X.data.content + "附加广告=> 获得" + X.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + X.data.content + "附加广告=> 获得" + X.data.amount + "音符 🎉\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 附加广告=> " + X.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 附加广告=> " + X.err_tips + "\n";
+  }
+}
+async function excitation_ad(I, G, b, r, z) {
+  let n = getReqUrl(I);
+  const O = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/done/" + G + "?" + n;
+  let C = "{\"amount\":\"18\",\"inspire_modal_add_modal_manage\":false,\"ad_rit\":\"" + b + "\",\"ad_inspire\":\"{\"score_amount\":\"18\",\"req_id\":\"" + r + "\"}\",\"task_key\":\"" + G + "\",\"stage_score_amount\":[],\"ad_alias_position\":\"task\",\"need_reward\":true,\"params_for_special\":\"luckydog_sdk\",\"static_settings_version\":58,\"dynamic_settings_version\":58,\"poll_settings_version\":0}";
+  await getReqObject(O, C, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let X = httpResult;
+  if (X != null && X.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + z + "广告=> 获得" + X.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + z + "广告=> 获得" + X.data.amount + "音符 🎉\n";
+    let T = X.data.aggr_info.aggr_income_id;
+    for (let P = 0; P < 3; P++) {
+      await video_one_more(I, "excitation_ad", b, P, T);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + z + "广告=> " + X.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + z + "广告=> " + X.err_tips + "\n";
+  }
+}
+async function excitation_ad_detail(I, G) {
+  let r = getReqUrl(I);
+  const z = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/" + G.key + "/detail?" + r;
+  let A = "";
+  await getReqObject(z, A, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("get", requestObjects[I], printCaller());
+  let n = httpResult;
+  if (n != null && n.err_no == 0) {
+    let C = JSON.parse(G.status_extra);
+    await excitation_ad(I, G.key, C.ad_id, C.req_id, G.name);
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + G.name + "广告=> " + n.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + G.name + "广告=> " + n.err_tips + "\n";
+  }
+}
+async function withdraw(I, G, b) {
+  let z = getReqUrl(I);
+  const A = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/wallet/take_cash?" + z + "&task_key=take_cash&md=0",
+    n = "{\"is_auto\":false,\"take_cash_type\":3,\"cash_amount\":-" + G + ",\"tab_type\":\"alipay\",\"name\":\"\",\"account\":\"" + b + "\"}";
+  await getReqObject(A, n, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let O = httpResult;
+  if (O != null && O.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现" + G / 100 + "元=> " + O.err_tips + "，提现编号(" + O.data.take_cash_record_id + ")，请注意查收！ 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现" + G / 100 + "元=> " + O.err_tips + "，提现编号(" + O.data.take_cash_record_id + ")，请注意查收！ 🎉\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现支付宝=> " + O.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现支付宝=> " + O.err_tips + "\n";
+  }
+}
+async function shopping(I) {
+  let b = getReqUrl(I);
+  const r = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/task/done/shopping_gold?mode=done&" + b;
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 逛街服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 逛街任务=> 获得" + A.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 逛街任务=> 获得" + A.data.amount + "音符 🎉\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 逛街任务=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 逛街任务=> " + A.err_tips + "\n";
+  }
+}
+async function appointmentInfo(I) {
+  let b = getReqUrl(I);
+  let r = "https://api3-normal-c.amemv.com/aweme/ug/lite/luckyapi/v1/awemelite/appointment/main_page?" + b;
+  if (dyjsbapp[I].appointment) {
+    r = updateURLParameter(r, "iid", dyjsbapp[I].appointment.split("&")[0]);
+    r = updateURLParameter(r, "device_id", dyjsbapp[I].appointment.split("&")[1]);
+  }
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    (A.data.status == 1 || A.data.status == 3) && (await doAppointment(I));
+    if (A.data.status == 2 && A.data.count_down <= 0) {
+      await receiveAppointment(I);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币中心=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币中心=> " + A.err_tips + "\n";
+  }
+}
+async function doAppointment(I) {
+  let b = getReqUrl(I, "iid", "did"),
+    r = "https://api3-normal-c.amemv.com/aweme/ug/lite/luckyapi/v1/awemelite/appointment/action?" + b;
+  if (dyjsbapp[I].appointment) {
+    r = updateURLParameter(r, "iid", dyjsbapp[I].appointment.split("&")[0]);
+    r = updateURLParameter(r, "device_id", dyjsbapp[I].appointment.split("&")[1]);
+  }
+  let z = "{\"coin_widget_installed\":false}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币=> " + A.data.amount + "金币，预约成功，" + A.data.text + ", " + A.data.popup_text);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币=> " + A.data.amount + "金币，预约成功，" + A.data.text + ", " + A.data.popup_text + "\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币中心=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币中心=> " + A.err_tips + "\n";
+  }
+}
+async function receiveAppointment(I) {
+  let b = getReqUrl(I, "iid", "did"),
+    r = "https://api5-normal-hl.amemv.com/aweme/ug/lite/luckyapi/v:version/awemelite/appointment/reward?" + b;
+  dyjsbapp[I].appointment && (r = updateURLParameter(r, "iid", dyjsbapp[I].appointment.split("&")[0]), r = updateURLParameter(r, "device_id", dyjsbapp[I].appointment.split("&")[1]));
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约领取金币=> 成功领取" + A.data.popup.amount + "金币");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约领取金币=> 成功领取" + A.data.popup.amount + "金币\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约领取金币=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约领取金币=> " + A.err_tips + "\n";
+  }
+}
+async function exchangeCoins(I, G) {
+  let r = getReqUrl(I, "iid", "did"),
+    z = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/wallet/exchange_coin?" + r;
+  let A = "{\"exchange_coin\":" + G + "}";
+  await getReqObject(z, A, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let n = httpResult;
+  if (n != null && n.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换现金=> 成功兑换" + G / 10000 + "元");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换现金=> 成功兑换" + G / 10000 + "元\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换现金=> " + n.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换现金=> " + n.err_tips + "\n";
+  }
+}
+async function exchangeSwitch(I, G) {
+  let r = getReqUrl(I, "iid", "did"),
+    z = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/wallet/exchange_type_switch?" + r,
+    A = "{\"exchange_type\":" + G + "}";
+  await getReqObject(z, A, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let n = httpResult;
+  if (n != null && n.err_no == 0) {
+    if (G == 1) {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 自动兑换");
+      dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 自动兑换\n";
+    } else {
+      if (G == 2) {
+        $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 随时兑换");
+        dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 随时兑换\n";
+      } else {
+        $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 兑换方式错误");
+        dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 兑换方式错误\n";
       }
-      await video_one_more(l, W, B, T, f.data.task_done_award.history_total_award_key);
     }
   } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "广告=> " + f.data.prompts);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + B + "广告=> " + f.data.prompts + "\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式兑换=> " + n.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式兑换=> " + n.err_tips + "\n";
   }
 }
-async function excitation_ad_detail(l, W) {
-  let B = getReqUrl(l);
-  const c = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/" + W.key + "/detail?" + B;
-  let u = "";
-  await getReqObject(c, u, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("get", requestObjects[l], printCaller());
-  let J = httpResult;
-  if (J != null && J.err_no == 0) {
-    let Q = JSON.parse(W.status_extra);
-    await excitation_ad(l, W.key, Q.ad_id, Q.req_id, W.name);
-  } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + W.name + "广告=> " + J.err_tips);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: " + W.name + "广告=> " + J.err_tips + "\n";
-  }
-}
-async function pre_withdraw(l) {
-  let n = getReqUrl(l);
-  const B = "https://hotsoon.snssdk.com/hotsoon/janus/flame/withdraw/panel/?" + n;
-  const c = "";
-  await getReqObject(B, c, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 提现=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("get", requestObjects[l], printCaller());
-  let u = httpResult;
-  if (u != null && u.status_code == 0) {
-    let R = u.data.direct_withdraw_package.data.alipay;
-    if (!R) {
-      $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 账号目前被风控，暂时没有提现入口，等等吧！");
-      dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 账号目前被风控，暂时没有提现入口，等等吧！\n";
-      return;
-    }
-    let f = R.find(H => H.amount == 1000),
-      Q = R.find(H => H.amount == 20);
-    f && f.status == 1 && u.data.user_flame_info.data.can_with_draw_money >= f.amount / 100 && (await withdraw(l, f.token, f.amount));
-    if (Q && Q.status == 1 && u.data.user_flame_info.data.can_with_draw_money >= Q.amount / 100) {
-      await withdraw(l, Q.token, Q.amount);
-    }
-  } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 获取提现token=> 失败");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 获取提现token=> 失败\n";
-  }
-}
-async function withdraw(l, W, n) {
-  let c = getReqUrl(l);
-  const u = "https://api5-normal-hl.amemv.com/hotsoon/flame/direct_withdraw/handle/?" + c;
-  const J = "package=" + n + "&input_type=1&payment_platform=0&__hideErrorToast=true&token=" + W;
-  await getReqObject(u, J, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 提现=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let R = httpResult;
-  if (R != null && R.status_code == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 提现" + n / 100 + "元到支付宝=> 已成功，请注意查收！ 🎉");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 提现" + n / 100 + "元到支付宝=> 已成功，请注意查收！ 🎉\n";
-  } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 提现" + n / 100 + "元到支付宝=> 失败");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 提现" + n / 100 + "元到支付宝=> 失败\n";
-  }
-}
-async function shopping(l) {
-  let n = getReqUrl(l);
-  const B = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/task/done/shopping_gold?mode=done&" + n;
-  let c = "{}";
-  await getReqObject(B, c, l);
-  if (signSwitchs[l] == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 任务中心=> 逛街服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[l], printCaller());
-  let u = httpResult;
-  if (u != null && u.err_no == 0) {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 逛街任务=> 获得" + u.data.amount + "音符 🎉");
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 逛街任务=> 获得" + u.data.amount + "音符 🎉\n";
-  } else {
-    $.log("[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 逛街任务=> " + u.err_tips);
-    dyhsblogs[l] += "[账号" + (l + 1 < 10 ? "0" + (l + 1) : l + 1) + "]: 逛街任务=> " + u.err_tips + "\n";
-  }
-}
-function getScriptAuth(l, W, n) {
-  return new Promise((c, u) => {
-    const R = apiHost + "/script/permissions/lastest",
-      f = {
-        appName: l,
-        userId: W,
-        activityCode: n,
+function getScriptAuth(I, G, b) {
+  return new Promise((z, A) => {
+    const O = apiHost + "/script/permissions/lastest",
+      C = {
+        appName: I,
+        userId: G,
+        activityCode: b,
         version: version
       };
-    const T = {
+    const k = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const H = {
-      url: R,
-      headers: T,
-      body: JSON.stringify(f)
+    const u = {
+      url: O,
+      headers: k,
+      body: JSON.stringify(C)
     };
-    $.post(H, async (K, F, v) => {
-      if (v && v != null && v.replace(/\"/g, "").length > 50) {
-        const G = v.replace(/\"/g, "").slice(34),
-          d = new Base64();
-        result = JSON.parse(d.decode(G));
+    $.post(u, async (j, T, P) => {
+      if (P && P != null && P.replace(/\"/g, "").length > 50) {
+        const t = P.replace(/\"/g, "").slice(34),
+          l = new Base64();
+        result = JSON.parse(l.decode(t));
         try {
           newest_version = result.version;
           userAuth = result.userAuth;
@@ -651,446 +721,436 @@ function getScriptAuth(l, W, n) {
           invicode = result.invicate;
           numbers = result.accountNumbers;
           vipDate = result.vipDate;
-        } catch (A) {
-          $.log(A);
+        } catch (S) {
+          $.log(S);
         }
       } else {
         $.log("请求服务器接口出现错误，请检查网络连接情况");
       }
-      c();
+      z();
     });
   });
 }
-function runComplete(l, W) {
-  return new Promise((B, c) => {
-    const J = apiHost + "/script/run/add",
-      R = {
-        appName: l,
-        userId: W,
+function runComplete(I, G) {
+  return new Promise((r, z) => {
+    const O = apiHost + "/script/run/add",
+      C = {
+        appName: I,
+        userId: G,
         activityCode: activeCode,
         version: version
       };
-    const Q = {
+    const k = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const T = {
-      url: J,
-      headers: Q,
-      body: JSON.stringify(R)
+    const u = {
+      url: O,
+      headers: k,
+      body: JSON.stringify(C)
     };
-    $.post(T, async (H, K, F) => {
-      B();
+    $.post(u, async (j, T, P) => {
+      r();
     });
   });
 }
-function checkAddress(l, W) {
-  return new Promise((B, c) => {
-    const R = setTimeout(() => {
-        B(false);
-      }, W),
-      f = http.get(l, Q => {
-        clearTimeout(R);
-        Q.statusCode === 404 ? B(true) : B(false);
+function checkAddress(I, G) {
+  return new Promise((r, z) => {
+    const n = setTimeout(() => {
+        r(false);
+      }, G),
+      O = http.get(I, C => {
+        clearTimeout(n);
+        if (C.statusCode === 404) {
+          r(true);
+        } else {
+          r(false);
+        }
       });
-    f.on("error", Q => {
-      clearTimeout(R);
-      B(false);
+    O.on("error", C => {
+      clearTimeout(n);
+      r(false);
     });
-    f.on("timeout", () => {
-      f.abort();
-      c(new Error("请求超时"));
+    O.on("timeout", () => {
+      O.abort();
+      z(new Error("请求超时"));
     });
   });
 }
-async function fetchRequest(l, W = 3000) {
-  return new Promise((B, c) => {
-    const R = {
-      url: l + "/docs"
+async function fetchRequest(I, G = 3000) {
+  return new Promise((r, z) => {
+    const n = {
+      url: I + "/docs"
     };
     setTimeout(() => {
-      B(false);
-    }, W);
-    $.get(R, async (f, Q, T) => {
-      if (Q.status == 401) {
-        B(true);
+      r(false);
+    }, G);
+    $.get(n, async (O, C, X) => {
+      if (C.status == 401) {
+        r(true);
       } else {
-        B(false);
+        r(false);
       }
     });
   });
 }
-async function httpClientRequest(l, W = 3000) {
-  return new Promise((B, c) => {
-    const J = {
-      url: l + "/"
+async function httpClientRequest(I, G = 3000) {
+  return new Promise((r, z) => {
+    const O = {
+      url: I + "/"
     };
     setTimeout(() => {
-      B(false);
-    }, W);
-    $httpClient.get(J, async (R, f, Q) => {
-      Q == "{\"detail\":\"Not Found\"}" ? B(true) : B(false);
+      r(false);
+    }, G);
+    $httpClient.get(O, async (C, X, k) => {
+      if (k == "{\"detail\":\"Not Found\"}") {
+        r(true);
+      } else {
+        r(false);
+      }
     });
   });
 }
-async function redisGet(l, W, n) {
-  return new Promise((c, u) => {
-    const f = apiHost + "/redis/hash/get/" + W + "/" + n,
-      Q = {
+async function redisGet(I, G, b) {
+  return new Promise((z, A) => {
+    const n = apiHost + "/redis/hash/get/" + G + "/" + b,
+      O = {
         "Content-Type": "application/json",
         accept: "application/json"
       };
-    const T = {
-      url: f,
-      headers: Q
+    const C = {
+      url: n,
+      headers: O
     };
-    $.get(T, async (K, F, v) => {
-      const t = v.replace(/\"/g, "");
-      answerTexts[l] = t;
-      c();
+    $.get(C, async (k, u, j) => {
+      const M = j.replace(/\"/g, "");
+      answerTexts[I] = M;
+      z();
     });
   });
 }
-function redisSet(l, W, n) {
-  return new Promise((c, u) => {
-    const R = apiHost + "/redis/hash/set",
-      f = {
-        key: l,
-        hashKey: W,
-        hashValue: n
+function redisSet(I, G, b) {
+  return new Promise((z, A) => {
+    const C = apiHost + "/redis/hash/set",
+      X = {
+        key: I,
+        hashKey: G,
+        hashValue: b
       };
-    const T = {};
-    T["Content-Type"] = "application/json";
-    T.accept = "application/json";
-    const H = {
-      url: R,
-      headers: T,
-      body: JSON.stringify(f)
-    };
-    $.post(H, async (K, F, v) => {
-      c();
-    });
-  });
-}
-function redisPop(l) {
-  return new Promise((n, B) => {
-    const u = apiHost + "/redis/set/pop/" + l,
-      J = {
-        "Content-Type": "application/json",
-        accept: "application/json"
-      };
-    const R = {
-      url: u,
-      headers: J
-    };
-    $.get(R, async (Q, T, H) => {
-      const F = H.replace(/\"/g, "");
-      popCookie = F;
-      n();
-    });
-  });
-}
-function getCapture(l, W) {
-  return new Promise((B, c) => {
-    const R = apiHost + "/bytes/capture",
-      f = {
-        content: W,
-        appName: appName,
-        uuid: userId
-      };
-    const T = {
+    const u = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const H = {
-      url: R,
-      headers: T,
-      body: JSON.stringify(f)
+    const j = {
+      url: C,
+      headers: u,
+      body: JSON.stringify(X)
     };
-    $.post(H, async (K, F, v) => {
-      const p = v.replace(/\"/g, "");
-      requestSigns[l] = p;
-      B();
+    $.post(j, async (T, P, M) => {
+      z();
     });
   });
 }
-async function getReqObject(n, B, c) {
-  let J = "com.ss.android.ugc.live/300601 (Linux; U; Android 12; zh_CN; 22081212C; Build/SKQ1.220303.001; Cronet/TTNetVersion:d7b9f50e 2024-06-12 QuicVersion:9a4adebb 2024-05-28)";
-  if (dyhsbapp[c].ua && dyhsbapp[c].ua != "") {
-    J = dyhsbapp[c].ua;
-  }
-  let R = getHostname(n),
-    f = ts13();
-  const Q = {
-    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+function redisPop(I) {
+  return new Promise((b, r) => {
+    const A = apiHost + "/redis/set/pop/" + I,
+      n = {
+        "Content-Type": "application/json",
+        accept: "application/json"
+      };
+    const O = {
+      url: A,
+      headers: n
+    };
+    $.get(O, async (X, k, u) => {
+      const T = u.replace(/\"/g, "");
+      popCookie = T;
+      b();
+    });
+  });
+}
+async function getReqObject(b, r, z) {
+  let n = "com.ss.android.ugc.aweme.lite/310701 (Linux; U; Android 12; zh_CN; 22081212C; Build/SKQ1.220303.001; Cronet/TTNetVersion:b714bfef 2024-09-13 QuicVersion:c459d547 2024-08-27)";
+  dyjsbapp[z].ua && dyjsbapp[z].ua != "" && (n = dyjsbapp[z].ua);
+  let O = getHostname(b);
+  let C = ts13();
+  const X = {
+    "Content-Type": "application/json",
     "Accept-Encoding": "gzip",
-    "User-Agent": J,
-    Host: R,
-    "passport-sdk-version": "203226",
+    "User-Agent": n,
+    Host: O,
+    "passport-sdk-version": "203266",
     "sdk-version": "2",
-    "X-SS-REQ-TICKET": f,
+    "X-SS-REQ-TICKET": C,
     "x-tt-store-region": "cn-ha",
     "x-tt-store-region-src": "uid",
-    "X-Tt-Token": dyhsbapp[c].token,
-    "x-vc-bdturing-sdk-version": "3.7.0.cn"
+    "X-Tt-Token": dyjsbapp[z].token,
+    "x-vc-bdturing-sdk-version": "3.7.3.cn"
   };
-  const T = {
-    url: n,
-    headers: Q
+  const k = {
+    url: b,
+    headers: X
   };
-  if (B) {
-    T.body = B;
-    T.headers["X-SS-STUB"] = MD5_Encrypt(B).toUpperCase();
+  let u = k;
+  if (r) {
+    u.body = r;
+    u.headers["X-SS-STUB"] = MD5_Encrypt(r).toUpperCase();
   }
-  await getSixGodHeader(c, n, T.headers);
-  let K = requestSigns[c];
-  if (K.length < 200) {
-    if (K.indexOf("unable to find process with name") != -1) {
-      $.log("[账号" + (c + 1 < 10 ? "0" + (c + 1) : c + 1) + "]: 签名获取失败原因=> 请检查签名APP是否已启动");
+  await getSixGodHeader(z, b, u.headers);
+  let j = requestSigns[z];
+  if (j.length < 200) {
+    if (j.indexOf("unable to find process with name") != -1) {
+      $.log("[账号" + (z + 1 < 10 ? "0" + (z + 1) : z + 1) + "]: 签名获取失败原因=> 请检查签名APP是否已启动");
     } else {
-      if (K.indexOf("unable to connect to remote frida-server") != -1) {
-        $.log("[账号" + (c + 1 < 10 ? "0" + (c + 1) : c + 1) + "]: 签名获取失败原因=> 请检查是否映射成功");
+      if (j.indexOf("unable to connect to remote frida-server") != -1) {
+        $.log("[账号" + (z + 1 < 10 ? "0" + (z + 1) : z + 1) + "]: 签名获取失败原因=> 请检查是否映射成功");
       } else {
-        $.log("[账号" + (c + 1 < 10 ? "0" + (c + 1) : c + 1) + "]: 签名获取失败原因=> " + K);
+        $.log("[账号" + (z + 1 < 10 ? "0" + (z + 1) : z + 1) + "]: 签名获取失败原因=> " + j);
       }
     }
   }
-  if (K && K != "Internal Server Error") {
-    const g = convertStringToJson(K);
-    T.headers["X-Argus"] = g["X-Argus"];
-    T.headers["X-Gorgon"] = g["X-Gorgon"];
-    if (g["X-Gorgon"] == undefined) {
-      signSwitchs[c] = 0;
+  if (j && j != "Internal Server Error") {
+    const Z = convertStringToJson(j);
+    u.headers["X-Argus"] = Z["X-Argus"];
+    u.headers["X-Gorgon"] = Z["X-Gorgon"];
+    if (Z["X-Gorgon"] == undefined) {
+      signSwitchs[z] = 0;
     }
-    T.headers["X-Helios"] = g["X-Helios"];
-    T.headers["X-Khronos"] = g["X-Khronos"];
-    T.headers["X-Ladon"] = g["X-Ladon"];
-    T.headers["X-Medusa"] = g["X-Medusa"];
-    let Y = dyhsbapp[c].token.substring(2, 34);
-    T.headers.Cookie = "sessionid=" + Y + "; sessionid_ss=" + Y;
+    u.headers["X-Helios"] = Z["X-Helios"];
+    u.headers["X-Khronos"] = Z["X-Khronos"];
+    u.headers["X-Ladon"] = Z["X-Ladon"];
+    u.headers["X-Medusa"] = Z["X-Medusa"];
+    let S = dyjsbapp[z].token.substring(2, 34);
+    u.headers.Cookie = "sessionid=" + S + "; sessionid_ss=" + S;
   } else {
-    signSwitchs[c] = 0;
+    signSwitchs[z] = 0;
   }
-  requestObjects[c] = T;
-  return T;
+  requestObjects[z] = u;
+  return u;
 }
-function getReqObject_(n, B, c) {
-  let J = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
-  dyhsbapp[c].ua && dyhsbapp[c].ua != "" && (J = dyhsbapp[c].ua);
-  let R = getHostname(n);
-  const f = {
+function getReqObject_(b, r, z) {
+  let n = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
+  if (dyjsbapp[z].ua && dyjsbapp[z].ua != "") {
+    n = dyjsbapp[z].ua;
+  }
+  let O = getHostname(b);
+  const C = {
     "Content-Type": "application/x-www-form-urlencoded",
-    "User-Agent": J,
-    Authorization: dyhsbapp[c].auth,
-    Host: R
+    "User-Agent": n,
+    Authorization: dyjsbapp[z].auth,
+    Host: O
   };
-  const Q = {
-    url: n,
-    headers: f
+  const X = {
+    url: b,
+    headers: C
   };
-  B && (Q.body = B);
-  requestObjects[c] = Q;
-  return Q;
+  r && (X.body = r);
+  requestObjects[z] = X;
+  return X;
 }
-async function httpRequest(l, W, n) {
+async function httpRequest(I, G, b) {
   httpResult = null;
-  return new Promise(c => {
-    $[l](W, async (J, R, f) => {
+  return new Promise(z => {
+    $[I](G, async (O, C, X) => {
       try {
-        if (J) {
-          $.log(n + ": " + l + "请求失败");
-          $.log(JSON.stringify(J));
-          $.logErr(J);
+        if (O) {
+          $.log(b + ": " + I + "请求失败");
+          $.log(JSON.stringify(O));
+          $.logErr(O);
         } else {
-          if (safeGet(f)) {
-            httpResult = JSON.parse(f);
+          if (safeGet(X)) {
+            httpResult = JSON.parse(X);
+            debug == 1 && $.log(httpResult);
           } else {
-            const t = new URL(W.url);
-            $.log(t.pathname + "发起" + l + "请求时，出现错误，请处理");
+            const R = new URL(G.url);
+            $.log(R.pathname + "发起" + I + "请求时，出现错误，请处理");
           }
         }
-      } catch (G) {
-        $.logErr(G, R);
+      } catch (i) {
+        $.logErr(i, C);
       } finally {
-        c(httpResult);
+        z(httpResult);
       }
     });
   });
 }
-async function selectChannel(l, W) {
-  if (channels_status[l] == 0) {
-    await getSign_(l, W);
+async function selectChannel(I, G) {
+  if (channels_status[I] == 0) {
+    await getSign_(I, G);
   } else {
-    await getSign(l, W);
+    await getSign(I, G);
   }
 }
-function getSign_(l, W) {
-  return new Promise((B, c) => {
-    function R(f) {
-      let Q = f.toString("utf8");
-      requestSigns[l] = Q;
-      wss[l].removeListener("message", R);
-      B(Q);
+function getSign_(I, G) {
+  return new Promise((r, z) => {
+    function O(C) {
+      let u = C.toString("utf8");
+      requestSigns[I] = u;
+      wss[I].removeListener("message", O);
+      r(u);
     }
-    wss[l].on("message", R);
-    if (wss[l].readyState === 1) {
-      const f = {
+    wss[I].on("message", O);
+    if (wss[I].readyState === 1) {
+      const C = {
         method: appName,
         params: {}
       };
-      f.params.content = W;
-      f.params.appName = appName;
-      f.params.uuid = userId;
-      wss[l].send(JSON.stringify(f), Q => {
-        if (Q) {
-          c(Q);
-        }
+      C.params.content = G;
+      C.params.appName = appName;
+      C.params.uuid = userId;
+      wss[I].send(JSON.stringify(C), X => {
+        X && z(X);
       });
     } else {
-      B(getSign(l, W));
-      wss[l].removeListener("message", R);
+      r(getSign(I, G));
+      wss[I].removeListener("message", O);
     }
   });
 }
-function getSign(l, W) {
-  return new Promise((B, c) => {
-    const J = apiHost + "/sign/dyhsb/six",
-      R = {
-        content: W,
+function getSign(I, G) {
+  return new Promise((r, z) => {
+    const A = apiHost + "/sign/dyjsb/six",
+      n = {
+        content: G,
         appName: appName,
         uuid: userId
       };
-    const Q = {
+    const C = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const T = {
-      url: J,
-      headers: Q,
-      body: JSON.stringify(R)
+    const X = {
+      url: A,
+      headers: C,
+      body: JSON.stringify(n)
     };
-    $.post(T, async (H, K, F) => {
-      const v = F.replace(/\"/g, "");
-      requestSigns[l] = v;
-      B();
+    $.post(X, async (k, u, j) => {
+      const P = j.replace(/\"/g, "");
+      requestSigns[I] = P;
+      r();
     });
   });
 }
-function sortUrlParams(l, W, n) {
-  const c = url2obj(l);
-  W.forEach(R => {
-    delete c[R];
+function sortUrlParams(I, G, b) {
+  const z = url2obj(I);
+  G.forEach(O => {
+    delete z[O];
   });
-  Object.assign(c, n);
-  const u = Object.keys(c).sort(),
-    J = u.map(R => R + "=" + c[R]).join("&");
-  return J;
+  Object.assign(z, b);
+  const A = Object.keys(z).sort(),
+    n = A.map(O => O + "=" + z[O]).join("&");
+  return n;
 }
-function url2obj(l) {
-  l = l.replace(/\"/g, "");
-  var n,
-    B = {},
-    c = l.slice(l.indexOf("?") + 1).split("&");
-  for (var u = 0; u < c.length; u++) {
-    n = c[u].split("=");
-    B[n[0]] = n[1];
+function url2obj(I) {
+  I = I.replace(/\"/g, "");
+  var b;
+  var r = {};
+  var z = I.slice(I.indexOf("?") + 1).split("&");
+  for (var A = 0; A < z.length; A++) {
+    b = z[A].split("=");
+    r[b[0]] = b[1];
   }
-  return B;
+  return r;
 }
-function convertStringToJson(W) {
-  const c = W.replace(/[{} ]/g, "");
-  const u = c.split(","),
-    J = {};
-  u.forEach(R => {
-    const f = R.split(/=(.*)/),
-      [Q, T] = f;
-    J[Q] = T;
+function updateURLParameter(I, G, b) {
+  var r = new URL(I);
+  r.searchParams.set(G, b);
+  return r.toString();
+}
+function convertStringToJson(I) {
+  const b = I.replace(/[{} ]/g, ""),
+    r = b.split(",");
+  const z = {};
+  r.forEach(A => {
+    const C = A.split(/=(.*)/),
+      [X, k] = C;
+    z[X] = k;
   });
-  return J;
+  return z;
 }
-function getHostname(l) {
-  let n = l.substr(l.indexOf("//") + 2);
-  let B = n.substr(0, n.indexOf("/")),
-    c = "";
-  let u = B.indexOf(":");
-  if (u > 0) {
-    c = B.substr(0, u);
+function getHostname(I) {
+  let b = I.substr(I.indexOf("//") + 2);
+  let r = b.substr(0, b.indexOf("/")),
+    z = "",
+    A = r.indexOf(":");
+  if (A > 0) {
+    z = r.substr(0, A);
   } else {
-    c = B;
+    z = r;
   }
-  return c;
+  return z;
 }
-function calculateTimeDifference(W, n) {
-  var T = new Date(W);
-  var R = new Date(n);
-  var f = R - T;
-  var Q = Math.floor(f / 1000);
-  return Q;
+function calculateTimeDifference(G, b) {
+  var X = new Date(G);
+  var C = new Date(b);
+  var O = C - X;
+  var k = Math.floor(O / 1000);
+  return k;
 }
-function cutString(l, W) {
-  if (l.length * 2 <= W) {
-    return l;
+function cutString(G, b) {
+  if (G.length * 2 <= b) {
+    return G;
   }
-  var B = 0,
-    c = "";
-  for (var u = 0; u < l.length; u++) {
-    c = c + l.charAt(u);
-    if (l.charCodeAt(u) > 128) {
-      B = B + 2;
-      if (B >= W) {
-        return c.substring(0, c.length - 1) + "...";
+  var A = 0,
+    n = "";
+  for (var O = 0; O < G.length; O++) {
+    n = n + G.charAt(O);
+    if (G.charCodeAt(O) > 128) {
+      A = A + 2;
+      if (A >= b) {
+        return n.substring(0, n.length - 1) + "...";
       }
     } else {
-      B = B + 1;
-      if (B >= W) {
-        return c.substring(0, c.length - 2) + "...";
+      A = A + 1;
+      if (A >= b) {
+        return n.substring(0, n.length - 2) + "...";
       }
     }
   }
-  return c;
+  return n;
 }
 function printCaller() {
   return new Error().stack.split("\n")[3].split("@")[0];
 }
-function safeGet(l) {
+function safeGet(G) {
   try {
-    if (typeof JSON.parse(l) == "object") {
+    if (typeof JSON.parse(G) == "object") {
       return true;
     }
-  } catch (c) {
-    console.log(c);
+  } catch (n) {
+    console.log(n);
     console.log("服务器访问数据为空，请检查自身设备网络情况");
     return false;
   }
 }
-function jsonToUrl(l) {
-  var n = Object.keys(l).map(function (B) {
-    return encodeURIComponent(B) + "=" + encodeURIComponent(l[B]);
+function jsonToUrl(I) {
+  var b = Object.keys(I).map(function (r) {
+    return encodeURIComponent(r) + "=" + encodeURIComponent(I[r]);
   }).join("&");
-  return n;
+  return b;
 }
-function compileStr(l) {
-  var n = String.fromCharCode(l.charCodeAt(0) + l.length);
-  for (var B = 1; B < l.length; B++) {
-    n += String.fromCharCode(l.charCodeAt(B) + l.charCodeAt(B - 1));
+function compileStr(I) {
+  var b = String.fromCharCode(I.charCodeAt(0) + I.length);
+  for (var r = 1; r < I.length; r++) {
+    b += String.fromCharCode(I.charCodeAt(r) + I.charCodeAt(r - 1));
   }
-  return escape(n);
+  return escape(b);
 }
-function uncompileStr(l) {
-  l = unescape(l);
-  var n = String.fromCharCode(l.charCodeAt(0) - l.length);
-  for (var B = 1; B < l.length; B++) {
-    n += String.fromCharCode(l.charCodeAt(B) - n.charCodeAt(B - 1));
+function uncompileStr(I) {
+  I = unescape(I);
+  var b = String.fromCharCode(I.charCodeAt(0) - I.length);
+  for (var r = 1; r < I.length; r++) {
+    b += String.fromCharCode(I.charCodeAt(r) - b.charCodeAt(r - 1));
   }
-  return n;
+  return b;
 }
-function randomNum(l, W) {
+function randomNum(I, G) {
   switch (arguments.length) {
     case 1:
-      return parseInt(Math.random() * l + 1);
+      return parseInt(Math.random() * I + 1);
       break;
     case 2:
-      return parseInt(Math.random() * (W - l + 1) + l);
+      return parseInt(Math.random() * (G - I + 1) + I);
       break;
     default:
       return 0;
@@ -1103,44 +1163,45 @@ function randomMac() {
   });
 }
 function guid() {
-  function W() {
+  function G() {
     return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
   }
-  return W() + W() + "-" + W() + "-" + W() + "-" + W() + "-" + W() + W() + W();
+  return G() + G() + "-" + G() + "-" + G() + "-" + G() + "-" + G() + G() + G();
 }
-function phone_num(W) {
-  if (W.length == 11) {
-    let u = W.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-    return u;
+function phone_num(I) {
+  if (I.length == 11) {
+    let b = I.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
+    return b;
   } else {
-    return W;
+    return I;
   }
 }
-function txt_api(l) {
-  return new Promise((n, B) => {
-    const J = "https://v1.hitokoto.cn/?c=e",
-      R = {};
-    R.accept = "application/json";
-    const f = {
-      url: J,
-      headers: R
+function txt_api(I) {
+  return new Promise((b, r) => {
+    const A = "https://v1.hitokoto.cn/?c=e",
+      n = {
+        accept: "application/json"
+      };
+    const O = {
+      url: A,
+      headers: n
     };
-    $.get(f, async (T, H, K) => {
-      let v = JSON.parse(K),
-        p = v.hitokoto;
-      contents[l] = p + " " + p;
-      n();
+    $.get(O, async (X, k, u) => {
+      let j = JSON.parse(u),
+        T = j.hitokoto;
+      contents[I] = T + " " + T;
+      b();
     });
   });
 }
 function getTime_8() {
-  return new Promise((W, n) => {
-    const c = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
-      u = {
-        url: c
+  return new Promise((G, b) => {
+    const z = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
+      A = {
+        url: z
       };
-    $.get(u, async (R, f, Q) => {
-      W(Q);
+    $.get(A, async (O, C, X) => {
+      G(X);
     });
   });
 }
@@ -1153,612 +1214,613 @@ function ts10() {
 function message() {
   tz == 1 && $.msg($.name, "", $.message);
 }
-async function sendMsg(l) {
+async function sendMsg(I) {
   if (hour == 9 || hour == 12 || hour == 18) {
     if (tz == 1) {
-      if ($.isNode()) {
-        await notify.sendNotify($.name, l);
-      } else {
-        $.msg($.name, "", l);
-      }
+      $.isNode() ? await notify.sendNotify($.name, I) : $.msg($.name, "", I);
     } else {
-      $.log(l);
+      $.log(I);
     }
   }
 }
-async function wxPush(l, W, n) {
-  return new Promise((c, u) => {
-    const f = "https://wxpusher.zjiecode.com/api/send/message",
-      Q = {
+async function wxPush(I, G, b) {
+  return new Promise((z, A) => {
+    const O = "https://wxpusher.zjiecode.com/api/send/message",
+      C = {
         appToken: "AT_6BZsE2IyJuVLPp3mcOkKvpoF245GR9xn",
-        content: W,
+        content: G,
         summary: "快手答题余额通知",
         contentType: 1,
-        uids: [n],
+        uids: [b],
         verifyPay: false
       };
-    const H = {
+    const k = {
       "Content-Type": "application/json"
     };
-    const K = {
-      url: f,
-      headers: H,
-      body: JSON.stringify(Q)
+    const u = {
+      url: O,
+      headers: k,
+      body: JSON.stringify(C)
     };
-    $.post(K, async (F, v, p) => {
-      c();
+    $.post(u, async (j, T, P) => {
+      z();
     });
   });
 }
-function randomString(l, W) {
-  W = W || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let B = "";
-  for (let c = 0; c < l; c++) {
-    let u = Math.floor(Math.random() * W.length);
-    B += W.substring(u, u + 1);
+function randomString(G, b) {
+  b = b || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let A = "";
+  for (let n = 0; n < G; n++) {
+    let O = Math.floor(Math.random() * b.length);
+    A += b.substring(O, O + 1);
   }
-  return B;
+  return A;
 }
-function MD5_Encrypt(W) {
-  function Q(lY, lA) {
-    return lY << lA | lY >>> 32 - lA;
+function MD5_Encrypt(X) {
+  function P(IZ, IS) {
+    return IZ << IS | IZ >>> 32 - IS;
   }
-  function T(lY, lA) {
-    var lC, lq, lm, lh, lZ;
-    lm = 2147483648 & lY;
-    lh = 2147483648 & lA;
-    lC = 1073741824 & lY;
-    lq = 1073741824 & lA;
-    lZ = (1073741823 & lY) + (1073741823 & lA);
-    return lC & lq ? 2147483648 ^ lZ ^ lm ^ lh : lC | lq ? 1073741824 & lZ ? 3221225472 ^ lZ ^ lm ^ lh : 1073741824 ^ lZ ^ lm ^ lh : lZ ^ lm ^ lh;
+  function R(IZ, IS) {
+    var Iy, IK, Ic, Ia, IH;
+    Ic = 2147483648 & IZ;
+    Ia = 2147483648 & IS;
+    Iy = 1073741824 & IZ;
+    IK = 1073741824 & IS;
+    IH = (1073741823 & IZ) + (1073741823 & IS);
+    return Iy & IK ? 2147483648 ^ IH ^ Ic ^ Ia : Iy | IK ? 1073741824 & IH ? 3221225472 ^ IH ^ Ic ^ Ia : 1073741824 ^ IH ^ Ic ^ Ia : IH ^ Ic ^ Ia;
   }
-  function Y(lY, lA, lC) {
-    return lY & lA | ~lY & lC;
+  function Z(IZ, IS, Iy) {
+    return IZ & IS | ~IZ & Iy;
   }
-  function Z(lY, lA, lC) {
-    return lY & lC | lA & ~lC;
+  function S(IZ, IS, Iy) {
+    return IZ & Iy | IS & ~Iy;
   }
-  function S(lY, lA, lC) {
-    return lY ^ lA ^ lC;
+  function V(IZ, IS, Iy) {
+    return IZ ^ IS ^ Iy;
   }
-  function U(lY, lA, lC) {
-    return lA ^ (lY | ~lC);
+  function Q(IZ, IS, Iy) {
+    return IS ^ (IZ | ~Iy);
   }
-  function P(lY, lA, lC, lq, lm, lh, lZ) {
-    lY = T(lY, T(T(Y(lA, lC, lq), lm), lZ));
-    return T(Q(lY, lh), lA);
+  function Y(IZ, IS, Iy, IK, Ic, Ia, IH) {
+    IZ = R(IZ, R(R(Z(IS, Iy, IK), Ic), IH));
+    return R(P(IZ, Ia), IS);
   }
-  function V(lY, lA, lC, lq, lm, lh, lZ) {
-    lY = T(lY, T(T(Z(lA, lC, lq), lm), lZ));
-    return T(Q(lY, lh), lA);
+  function W(IZ, IS, Iy, IK, Ic, Ia, IH) {
+    IZ = R(IZ, R(R(S(IS, Iy, IK), Ic), IH));
+    return R(P(IZ, Ia), IS);
   }
-  function X(lY, lA, lC, lq, lm, lh, lZ) {
-    lY = T(lY, T(T(S(lA, lC, lq), lm), lZ));
-    return T(Q(lY, lh), lA);
+  function U(IZ, IS, Iy, IK, Ic, Ia, IH) {
+    IZ = R(IZ, R(R(V(IS, Iy, IK), Ic), IH));
+    return R(P(IZ, Ia), IS);
   }
-  function l0(lY, lA, lC, lq, lm, lh, lZ) {
-    lY = T(lY, T(T(U(lA, lC, lq), lm), lZ));
-    return T(Q(lY, lh), lA);
+  function I0(IZ, IS, Iy, IK, Ic, Ia, IH) {
+    IZ = R(IZ, R(R(Q(IS, Iy, IK), Ic), IH));
+    return R(P(IZ, Ia), IS);
   }
-  function l1(lY) {
-    for (var lA, lC = lY.length, lq = lC + 8, lm = (lq - lq % 64) / 64, lh = 16 * (lm + 1), lZ = new Array(lh - 1), lw = 0, le = 0; lC > le;) {
-      lA = (le - le % 4) / 4;
-      lw = le % 4 * 8;
-      lZ[lA] = lZ[lA] | lY.charCodeAt(le) << lw;
-      le++;
+  function I1(IZ) {
+    for (var IS, Iy = IZ.length, IK = Iy + 8, Ic = (IK - IK % 64) / 64, Ia = 16 * (Ic + 1), IH = new Array(Ia - 1), IL = 0, Io = 0; Iy > Io;) {
+      IS = (Io - Io % 4) / 4;
+      IL = Io % 4 * 8;
+      IH[IS] = IH[IS] | IZ.charCodeAt(Io) << IL;
+      Io++;
     }
-    lA = (le - le % 4) / 4;
-    lw = le % 4 * 8;
-    lZ[lA] = lZ[lA] | 128 << lw;
-    lZ[lh - 2] = lC << 3;
-    lZ[lh - 1] = lC >>> 29;
-    return lZ;
+    IS = (Io - Io % 4) / 4;
+    IL = Io % 4 * 8;
+    IH[IS] = IH[IS] | 128 << IL;
+    IH[Ia - 2] = Iy << 3;
+    IH[Ia - 1] = Iy >>> 29;
+    return IH;
   }
-  function l2(lY) {
-    var lA,
-      lC,
-      lq = "",
-      lm = "";
-    for (lC = 0; 3 >= lC; lC++) {
-      lA = lY >>> 8 * lC & 255;
-      lm = "0" + lA.toString(16);
-      lq += lm.substr(lm.length - 2, 2);
+  function I2(IZ) {
+    var IS,
+      Iy,
+      IK = "",
+      Ic = "";
+    for (Iy = 0; 3 >= Iy; Iy++) {
+      IS = IZ >>> 8 * Iy & 255;
+      Ic = "0" + IS.toString(16);
+      IK += Ic.substr(Ic.length - 2, 2);
     }
-    return lq;
+    return IK;
   }
-  function l3(lY) {
-    lY = lY.replace(/\r\n/g, "\n");
-    for (var lC = "", lq = 0; lq < lY.length; lq++) {
-      var lm = lY.charCodeAt(lq);
-      128 > lm ? lC += String.fromCharCode(lm) : lm > 127 && 2048 > lm ? (lC += String.fromCharCode(lm >> 6 | 192), lC += String.fromCharCode(63 & lm | 128)) : (lC += String.fromCharCode(lm >> 12 | 224), lC += String.fromCharCode(lm >> 6 & 63 | 128), lC += String.fromCharCode(63 & lm | 128));
+  function I3(IZ) {
+    IZ = IZ.replace(/\r\n/g, "\n");
+    for (var Iy = "", IK = 0; IK < IZ.length; IK++) {
+      var Ic = IZ.charCodeAt(IK);
+      128 > Ic ? Iy += String.fromCharCode(Ic) : Ic > 127 && 2048 > Ic ? (Iy += String.fromCharCode(Ic >> 6 | 192), Iy += String.fromCharCode(63 & Ic | 128)) : (Iy += String.fromCharCode(Ic >> 12 | 224), Iy += String.fromCharCode(Ic >> 6 & 63 | 128), Iy += String.fromCharCode(63 & Ic | 128));
     }
-    return lC;
+    return Iy;
   }
-  var l4,
-    l5,
-    l6,
-    l7,
-    l8,
-    l9,
-    ll,
-    lW,
-    ln,
-    lB = [],
-    lc = 7,
-    lu = 12,
-    lJ = 17,
-    lR = 22,
-    lf = 5,
-    lQ = 9,
-    lT = 14,
-    lH = 20,
-    lK = 4,
-    lF = 11,
-    lv = 16,
-    lp = 23,
-    lt = 6,
-    lG = 10,
-    ld = 15,
-    ls = 21;
-  for (W = l3(W), lB = l1(W), l9 = 1732584193, ll = 4023233417, lW = 2562383102, ln = 271733878, l4 = 0; l4 < lB.length; l4 += 16) {
-    l5 = l9;
-    l6 = ll;
-    l7 = lW;
-    l8 = ln;
-    l9 = P(l9, ll, lW, ln, lB[l4 + 0], lc, 3614090360);
-    ln = P(ln, l9, ll, lW, lB[l4 + 1], lu, 3905402710);
-    lW = P(lW, ln, l9, ll, lB[l4 + 2], lJ, 606105819);
-    ll = P(ll, lW, ln, l9, lB[l4 + 3], lR, 3250441966);
-    l9 = P(l9, ll, lW, ln, lB[l4 + 4], lc, 4118548399);
-    ln = P(ln, l9, ll, lW, lB[l4 + 5], lu, 1200080426);
-    lW = P(lW, ln, l9, ll, lB[l4 + 6], lJ, 2821735955);
-    ll = P(ll, lW, ln, l9, lB[l4 + 7], lR, 4249261313);
-    l9 = P(l9, ll, lW, ln, lB[l4 + 8], lc, 1770035416);
-    ln = P(ln, l9, ll, lW, lB[l4 + 9], lu, 2336552879);
-    lW = P(lW, ln, l9, ll, lB[l4 + 10], lJ, 4294925233);
-    ll = P(ll, lW, ln, l9, lB[l4 + 11], lR, 2304563134);
-    l9 = P(l9, ll, lW, ln, lB[l4 + 12], lc, 1804603682);
-    ln = P(ln, l9, ll, lW, lB[l4 + 13], lu, 4254626195);
-    lW = P(lW, ln, l9, ll, lB[l4 + 14], lJ, 2792965006);
-    ll = P(ll, lW, ln, l9, lB[l4 + 15], lR, 1236535329);
-    l9 = V(l9, ll, lW, ln, lB[l4 + 1], lf, 4129170786);
-    ln = V(ln, l9, ll, lW, lB[l4 + 6], lQ, 3225465664);
-    lW = V(lW, ln, l9, ll, lB[l4 + 11], lT, 643717713);
-    ll = V(ll, lW, ln, l9, lB[l4 + 0], lH, 3921069994);
-    l9 = V(l9, ll, lW, ln, lB[l4 + 5], lf, 3593408605);
-    ln = V(ln, l9, ll, lW, lB[l4 + 10], lQ, 38016083);
-    lW = V(lW, ln, l9, ll, lB[l4 + 15], lT, 3634488961);
-    ll = V(ll, lW, ln, l9, lB[l4 + 4], lH, 3889429448);
-    l9 = V(l9, ll, lW, ln, lB[l4 + 9], lf, 568446438);
-    ln = V(ln, l9, ll, lW, lB[l4 + 14], lQ, 3275163606);
-    lW = V(lW, ln, l9, ll, lB[l4 + 3], lT, 4107603335);
-    ll = V(ll, lW, ln, l9, lB[l4 + 8], lH, 1163531501);
-    l9 = V(l9, ll, lW, ln, lB[l4 + 13], lf, 2850285829);
-    ln = V(ln, l9, ll, lW, lB[l4 + 2], lQ, 4243563512);
-    lW = V(lW, ln, l9, ll, lB[l4 + 7], lT, 1735328473);
-    ll = V(ll, lW, ln, l9, lB[l4 + 12], lH, 2368359562);
-    l9 = X(l9, ll, lW, ln, lB[l4 + 5], lK, 4294588738);
-    ln = X(ln, l9, ll, lW, lB[l4 + 8], lF, 2272392833);
-    lW = X(lW, ln, l9, ll, lB[l4 + 11], lv, 1839030562);
-    ll = X(ll, lW, ln, l9, lB[l4 + 14], lp, 4259657740);
-    l9 = X(l9, ll, lW, ln, lB[l4 + 1], lK, 2763975236);
-    ln = X(ln, l9, ll, lW, lB[l4 + 4], lF, 1272893353);
-    lW = X(lW, ln, l9, ll, lB[l4 + 7], lv, 4139469664);
-    ll = X(ll, lW, ln, l9, lB[l4 + 10], lp, 3200236656);
-    l9 = X(l9, ll, lW, ln, lB[l4 + 13], lK, 681279174);
-    ln = X(ln, l9, ll, lW, lB[l4 + 0], lF, 3936430074);
-    lW = X(lW, ln, l9, ll, lB[l4 + 3], lv, 3572445317);
-    ll = X(ll, lW, ln, l9, lB[l4 + 6], lp, 76029189);
-    l9 = X(l9, ll, lW, ln, lB[l4 + 9], lK, 3654602809);
-    ln = X(ln, l9, ll, lW, lB[l4 + 12], lF, 3873151461);
-    lW = X(lW, ln, l9, ll, lB[l4 + 15], lv, 530742520);
-    ll = X(ll, lW, ln, l9, lB[l4 + 2], lp, 3299628645);
-    l9 = l0(l9, ll, lW, ln, lB[l4 + 0], lt, 4096336452);
-    ln = l0(ln, l9, ll, lW, lB[l4 + 7], lG, 1126891415);
-    lW = l0(lW, ln, l9, ll, lB[l4 + 14], ld, 2878612391);
-    ll = l0(ll, lW, ln, l9, lB[l4 + 5], ls, 4237533241);
-    l9 = l0(l9, ll, lW, ln, lB[l4 + 12], lt, 1700485571);
-    ln = l0(ln, l9, ll, lW, lB[l4 + 3], lG, 2399980690);
-    lW = l0(lW, ln, l9, ll, lB[l4 + 10], ld, 4293915773);
-    ll = l0(ll, lW, ln, l9, lB[l4 + 1], ls, 2240044497);
-    l9 = l0(l9, ll, lW, ln, lB[l4 + 8], lt, 1873313359);
-    ln = l0(ln, l9, ll, lW, lB[l4 + 15], lG, 4264355552);
-    lW = l0(lW, ln, l9, ll, lB[l4 + 6], ld, 2734768916);
-    ll = l0(ll, lW, ln, l9, lB[l4 + 13], ls, 1309151649);
-    l9 = l0(l9, ll, lW, ln, lB[l4 + 4], lt, 4149444226);
-    ln = l0(ln, l9, ll, lW, lB[l4 + 11], lG, 3174756917);
-    lW = l0(lW, ln, l9, ll, lB[l4 + 2], ld, 718787259);
-    ll = l0(ll, lW, ln, l9, lB[l4 + 9], ls, 3951481745);
-    l9 = T(l9, l5);
-    ll = T(ll, l6);
-    lW = T(lW, l7);
-    ln = T(ln, l8);
+  var I4,
+    I5,
+    I6,
+    I7,
+    I8,
+    I9,
+    II,
+    IG,
+    Ib,
+    Ir = [],
+    Iz = 7,
+    IA = 12,
+    In = 17,
+    IO = 22,
+    IC = 5,
+    IX = 9,
+    Ik = 14,
+    Iu = 20,
+    Ij = 4,
+    IT = 11,
+    IP = 16,
+    IM = 23,
+    IR = 6,
+    It = 10,
+    Il = 15,
+    Ii = 21;
+  for (X = I3(X), Ir = I1(X), I9 = 1732584193, II = 4023233417, IG = 2562383102, Ib = 271733878, I4 = 0; I4 < Ir.length; I4 += 16) {
+    I5 = I9;
+    I6 = II;
+    I7 = IG;
+    I8 = Ib;
+    I9 = Y(I9, II, IG, Ib, Ir[I4 + 0], Iz, 3614090360);
+    Ib = Y(Ib, I9, II, IG, Ir[I4 + 1], IA, 3905402710);
+    IG = Y(IG, Ib, I9, II, Ir[I4 + 2], In, 606105819);
+    II = Y(II, IG, Ib, I9, Ir[I4 + 3], IO, 3250441966);
+    I9 = Y(I9, II, IG, Ib, Ir[I4 + 4], Iz, 4118548399);
+    Ib = Y(Ib, I9, II, IG, Ir[I4 + 5], IA, 1200080426);
+    IG = Y(IG, Ib, I9, II, Ir[I4 + 6], In, 2821735955);
+    II = Y(II, IG, Ib, I9, Ir[I4 + 7], IO, 4249261313);
+    I9 = Y(I9, II, IG, Ib, Ir[I4 + 8], Iz, 1770035416);
+    Ib = Y(Ib, I9, II, IG, Ir[I4 + 9], IA, 2336552879);
+    IG = Y(IG, Ib, I9, II, Ir[I4 + 10], In, 4294925233);
+    II = Y(II, IG, Ib, I9, Ir[I4 + 11], IO, 2304563134);
+    I9 = Y(I9, II, IG, Ib, Ir[I4 + 12], Iz, 1804603682);
+    Ib = Y(Ib, I9, II, IG, Ir[I4 + 13], IA, 4254626195);
+    IG = Y(IG, Ib, I9, II, Ir[I4 + 14], In, 2792965006);
+    II = Y(II, IG, Ib, I9, Ir[I4 + 15], IO, 1236535329);
+    I9 = W(I9, II, IG, Ib, Ir[I4 + 1], IC, 4129170786);
+    Ib = W(Ib, I9, II, IG, Ir[I4 + 6], IX, 3225465664);
+    IG = W(IG, Ib, I9, II, Ir[I4 + 11], Ik, 643717713);
+    II = W(II, IG, Ib, I9, Ir[I4 + 0], Iu, 3921069994);
+    I9 = W(I9, II, IG, Ib, Ir[I4 + 5], IC, 3593408605);
+    Ib = W(Ib, I9, II, IG, Ir[I4 + 10], IX, 38016083);
+    IG = W(IG, Ib, I9, II, Ir[I4 + 15], Ik, 3634488961);
+    II = W(II, IG, Ib, I9, Ir[I4 + 4], Iu, 3889429448);
+    I9 = W(I9, II, IG, Ib, Ir[I4 + 9], IC, 568446438);
+    Ib = W(Ib, I9, II, IG, Ir[I4 + 14], IX, 3275163606);
+    IG = W(IG, Ib, I9, II, Ir[I4 + 3], Ik, 4107603335);
+    II = W(II, IG, Ib, I9, Ir[I4 + 8], Iu, 1163531501);
+    I9 = W(I9, II, IG, Ib, Ir[I4 + 13], IC, 2850285829);
+    Ib = W(Ib, I9, II, IG, Ir[I4 + 2], IX, 4243563512);
+    IG = W(IG, Ib, I9, II, Ir[I4 + 7], Ik, 1735328473);
+    II = W(II, IG, Ib, I9, Ir[I4 + 12], Iu, 2368359562);
+    I9 = U(I9, II, IG, Ib, Ir[I4 + 5], Ij, 4294588738);
+    Ib = U(Ib, I9, II, IG, Ir[I4 + 8], IT, 2272392833);
+    IG = U(IG, Ib, I9, II, Ir[I4 + 11], IP, 1839030562);
+    II = U(II, IG, Ib, I9, Ir[I4 + 14], IM, 4259657740);
+    I9 = U(I9, II, IG, Ib, Ir[I4 + 1], Ij, 2763975236);
+    Ib = U(Ib, I9, II, IG, Ir[I4 + 4], IT, 1272893353);
+    IG = U(IG, Ib, I9, II, Ir[I4 + 7], IP, 4139469664);
+    II = U(II, IG, Ib, I9, Ir[I4 + 10], IM, 3200236656);
+    I9 = U(I9, II, IG, Ib, Ir[I4 + 13], Ij, 681279174);
+    Ib = U(Ib, I9, II, IG, Ir[I4 + 0], IT, 3936430074);
+    IG = U(IG, Ib, I9, II, Ir[I4 + 3], IP, 3572445317);
+    II = U(II, IG, Ib, I9, Ir[I4 + 6], IM, 76029189);
+    I9 = U(I9, II, IG, Ib, Ir[I4 + 9], Ij, 3654602809);
+    Ib = U(Ib, I9, II, IG, Ir[I4 + 12], IT, 3873151461);
+    IG = U(IG, Ib, I9, II, Ir[I4 + 15], IP, 530742520);
+    II = U(II, IG, Ib, I9, Ir[I4 + 2], IM, 3299628645);
+    I9 = I0(I9, II, IG, Ib, Ir[I4 + 0], IR, 4096336452);
+    Ib = I0(Ib, I9, II, IG, Ir[I4 + 7], It, 1126891415);
+    IG = I0(IG, Ib, I9, II, Ir[I4 + 14], Il, 2878612391);
+    II = I0(II, IG, Ib, I9, Ir[I4 + 5], Ii, 4237533241);
+    I9 = I0(I9, II, IG, Ib, Ir[I4 + 12], IR, 1700485571);
+    Ib = I0(Ib, I9, II, IG, Ir[I4 + 3], It, 2399980690);
+    IG = I0(IG, Ib, I9, II, Ir[I4 + 10], Il, 4293915773);
+    II = I0(II, IG, Ib, I9, Ir[I4 + 1], Ii, 2240044497);
+    I9 = I0(I9, II, IG, Ib, Ir[I4 + 8], IR, 1873313359);
+    Ib = I0(Ib, I9, II, IG, Ir[I4 + 15], It, 4264355552);
+    IG = I0(IG, Ib, I9, II, Ir[I4 + 6], Il, 2734768916);
+    II = I0(II, IG, Ib, I9, Ir[I4 + 13], Ii, 1309151649);
+    I9 = I0(I9, II, IG, Ib, Ir[I4 + 4], IR, 4149444226);
+    Ib = I0(Ib, I9, II, IG, Ir[I4 + 11], It, 3174756917);
+    IG = I0(IG, Ib, I9, II, Ir[I4 + 2], Il, 718787259);
+    II = I0(II, IG, Ib, I9, Ir[I4 + 9], Ii, 3951481745);
+    I9 = R(I9, I5);
+    II = R(II, I6);
+    IG = R(IG, I7);
+    Ib = R(Ib, I8);
   }
-  var lg = l2(l9) + l2(ll) + l2(lW) + l2(ln);
-  return lg.toLowerCase();
+  var Id = I2(I9) + I2(II) + I2(IG) + I2(Ib);
+  return Id.toLowerCase();
 }
-function SHA256(l) {
-  var n = 8,
-    B = 0;
-  function c(d, g) {
-    var Y = (d & 65535) + (g & 65535),
-      A = (d >> 16) + (g >> 16) + (Y >> 16);
-    return A << 16 | Y & 65535;
+function SHA256(I) {
+  var b = 8;
+  var r = 0;
+  function z(l, i) {
+    var d = (l & 65535) + (i & 65535),
+      Z = (l >> 16) + (i >> 16) + (d >> 16);
+    return Z << 16 | d & 65535;
   }
-  function u(d, g) {
-    return d >>> g | d << 32 - g;
+  function A(l, i) {
+    return l >>> i | l << 32 - i;
   }
-  function J(d, g) {
-    return d >>> g;
+  function n(l, i) {
+    return l >>> i;
   }
-  function f(d, g, Y) {
-    return d & g ^ ~d & Y;
+  function O(l, i, d) {
+    return l & i ^ ~l & d;
   }
-  function Q(d, g, Y) {
-    return d & g ^ d & Y ^ g & Y;
+  function C(l, i, d) {
+    return l & i ^ l & d ^ i & d;
   }
-  function T(d) {
-    return u(d, 2) ^ u(d, 13) ^ u(d, 22);
+  function X(l) {
+    return A(l, 2) ^ A(l, 13) ^ A(l, 22);
   }
-  function H(d) {
-    return u(d, 6) ^ u(d, 11) ^ u(d, 25);
+  function k(l) {
+    return A(l, 6) ^ A(l, 11) ^ A(l, 25);
   }
-  function K(d) {
-    return u(d, 7) ^ u(d, 18) ^ J(d, 3);
+  function u(l) {
+    return A(l, 7) ^ A(l, 18) ^ n(l, 3);
   }
-  function F(d) {
-    return u(d, 17) ^ u(d, 19) ^ J(d, 10);
+  function j(l) {
+    return A(l, 17) ^ A(l, 19) ^ n(l, 10);
   }
-  function v(Y, A) {
-    var C = new Array(1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298),
-      q = new Array(1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225),
-      Z = new Array(64),
-      w,
-      L,
-      o,
-      z,
-      M,
-      k,
-      U,
-      E,
-      P,
-      x,
+  function T(Z, y) {
+    var L = new Array(1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298),
+      o = new Array(1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225),
+      B = new Array(64),
+      v,
       V,
-      D;
-    Y[A >> 5] |= 128 << 24 - A % 32;
-    Y[(A + 64 >> 9 << 4) + 15] = A;
-    for (var P = 0; P < Y.length; P += 16) {
-      w = q[0];
-      L = q[1];
-      o = q[2];
-      z = q[3];
-      M = q[4];
-      k = q[5];
-      U = q[6];
-      E = q[7];
-      for (var x = 0; x < 64; x++) {
-        if (x < 16) {
-          Z[x] = Y[x + P];
+      x,
+      p,
+      D,
+      w,
+      F,
+      Q,
+      q,
+      Y,
+      J,
+      N;
+    Z[y >> 5] |= 128 << 24 - y % 32;
+    Z[(y + 64 >> 9 << 4) + 15] = y;
+    for (var q = 0; q < Z.length; q += 16) {
+      v = o[0];
+      V = o[1];
+      x = o[2];
+      p = o[3];
+      D = o[4];
+      w = o[5];
+      F = o[6];
+      Q = o[7];
+      for (var Y = 0; Y < 64; Y++) {
+        if (Y < 16) {
+          B[Y] = Z[Y + q];
         } else {
-          Z[x] = c(c(c(F(Z[x - 2]), Z[x - 7]), K(Z[x - 15])), Z[x - 16]);
+          B[Y] = z(z(z(j(B[Y - 2]), B[Y - 7]), u(B[Y - 15])), B[Y - 16]);
         }
-        V = c(c(c(c(E, H(M)), f(M, k, U)), C[x]), Z[x]);
-        D = c(T(w), Q(w, L, o));
-        E = U;
-        U = k;
-        k = M;
-        M = c(z, V);
-        z = o;
-        o = L;
-        L = w;
-        w = c(V, D);
+        J = z(z(z(z(Q, k(D)), O(D, w, F)), L[Y]), B[Y]);
+        N = z(X(v), C(v, V, x));
+        Q = F;
+        F = w;
+        w = D;
+        D = z(p, J);
+        p = x;
+        x = V;
+        V = v;
+        v = z(J, N);
       }
-      q[0] = c(w, q[0]);
-      q[1] = c(L, q[1]);
-      q[2] = c(o, q[2]);
-      q[3] = c(z, q[3]);
-      q[4] = c(M, q[4]);
-      q[5] = c(k, q[5]);
-      q[6] = c(U, q[6]);
-      q[7] = c(E, q[7]);
+      o[0] = z(v, o[0]);
+      o[1] = z(V, o[1]);
+      o[2] = z(x, o[2]);
+      o[3] = z(p, o[3]);
+      o[4] = z(D, o[4]);
+      o[5] = z(w, o[5]);
+      o[6] = z(F, o[6]);
+      o[7] = z(Q, o[7]);
     }
-    return q;
-  }
-  function p(d) {
-    var g = Array(),
-      Y = (1 << n) - 1;
-    for (var A = 0; A < d.length * n; A += n) {
-      g[A >> 5] |= (d.charCodeAt(A / n) & Y) << 24 - A % 32;
-    }
-    return g;
-  }
-  function t(d) {
-    d = d.replace(/\r\n/g, "\n");
-    var Y = "";
-    for (var A = 0; A < d.length; A++) {
-      var C = d.charCodeAt(A);
-      if (C < 128) {
-        Y += String.fromCharCode(C);
-      } else {
-        C > 127 && C < 2048 ? (Y += String.fromCharCode(C >> 6 | 192), Y += String.fromCharCode(C & 63 | 128)) : (Y += String.fromCharCode(C >> 12 | 224), Y += String.fromCharCode(C >> 6 & 63 | 128), Y += String.fromCharCode(C & 63 | 128));
-      }
-    }
-    return Y;
-  }
-  function G(d) {
-    var Y = B ? "0123456789ABCDEF" : "0123456789abcdef",
-      A = "";
-    for (var C = 0; C < d.length * 4; C++) {
-      A += Y.charAt(d[C >> 2] >> (3 - C % 4) * 8 + 4 & 15) + Y.charAt(d[C >> 2] >> (3 - C % 4) * 8 & 15);
-    }
-    return A;
-  }
-  l = t(l);
-  return G(v(p(l), l.length * n));
-}
-function SHA1(l) {
-  function c(Z, w) {
-    var o = Z << w | Z >>> 32 - w;
     return o;
   }
-  function u(Z) {
-    var e = "",
-      L,
-      o,
-      z;
-    for (L = 0; L <= 6; L += 2) {
-      o = Z >>> L * 4 + 4 & 15;
-      z = Z >>> L * 4 & 15;
-      e += o.toString(16) + z.toString(16);
+  function P(l) {
+    var d = Array(),
+      Z = (1 << b) - 1;
+    for (var y = 0; y < l.length * b; y += b) {
+      d[y >> 5] |= (l.charCodeAt(y / b) & Z) << 24 - y % 32;
     }
-    return e;
+    return d;
   }
-  function J(Z) {
-    var w = "",
-      e,
-      L;
-    for (e = 7; e >= 0; e--) {
-      L = Z >>> e * 4 & 15;
-      w += L.toString(16);
-    }
-    return w;
-  }
-  function R(Z) {
-    Z = Z.replace(/\r\n/g, "\n");
-    var e = "";
-    for (var L = 0; L < Z.length; L++) {
-      var o = Z.charCodeAt(L);
-      if (o < 128) {
-        e += String.fromCharCode(o);
+  function M(l) {
+    l = l.replace(/\r\n/g, "\n");
+    var d = "";
+    for (var Z = 0; Z < l.length; Z++) {
+      var y = l.charCodeAt(Z);
+      if (y < 128) {
+        d += String.fromCharCode(y);
       } else {
-        if (o > 127 && o < 2048) {
-          e += String.fromCharCode(o >> 6 | 192);
-          e += String.fromCharCode(o & 63 | 128);
+        if (y > 127 && y < 2048) {
+          d += String.fromCharCode(y >> 6 | 192);
+          d += String.fromCharCode(y & 63 | 128);
         } else {
-          e += String.fromCharCode(o >> 12 | 224);
-          e += String.fromCharCode(o >> 6 & 63 | 128);
-          e += String.fromCharCode(o & 63 | 128);
+          d += String.fromCharCode(y >> 12 | 224);
+          d += String.fromCharCode(y >> 6 & 63 | 128);
+          d += String.fromCharCode(y & 63 | 128);
         }
       }
     }
-    return e;
+    return d;
   }
-  var f,
-    Q,
-    T,
-    H = new Array(80),
-    K = 1732584193,
-    F = 4023233417,
-    v = 2562383102,
-    p = 271733878,
-    t = 3285377520;
-  var G, d, s, g, Y, q;
-  l = R(l);
-  var m = l.length;
-  var h = new Array();
-  for (Q = 0; Q < m - 3; Q += 4) {
-    T = l.charCodeAt(Q) << 24 | l.charCodeAt(Q + 1 < 10 ? "0" + (Q + 1) : Q + 1) << 16 | l.charCodeAt(Q + 2) << 8 | l.charCodeAt(Q + 3);
-    h.push(T);
+  function t(l) {
+    var d = r ? "0123456789ABCDEF" : "0123456789abcdef",
+      Z = "";
+    for (var y = 0; y < l.length * 4; y++) {
+      Z += d.charAt(l[y >> 2] >> (3 - y % 4) * 8 + 4 & 15) + d.charAt(l[y >> 2] >> (3 - y % 4) * 8 & 15);
+    }
+    return Z;
   }
-  switch (m % 4) {
+  I = M(I);
+  return t(T(P(I), I.length * b));
+}
+function SHA1(I) {
+  function b(H, L) {
+    var o = H << L | H >>> 32 - L;
+    return o;
+  }
+  function r(H) {
+    var L = "",
+      o,
+      v,
+      V;
+    for (o = 0; o <= 6; o += 2) {
+      v = H >>> o * 4 + 4 & 15;
+      V = H >>> o * 4 & 15;
+      L += v.toString(16) + V.toString(16);
+    }
+    return L;
+  }
+  function z(H) {
+    var L = "",
+      o,
+      V;
+    for (o = 7; o >= 0; o--) {
+      V = H >>> o * 4 & 15;
+      L += V.toString(16);
+    }
+    return L;
+  }
+  function n(H) {
+    H = H.replace(/\r\n/g, "\n");
+    var o = "";
+    for (var v = 0; v < H.length; v++) {
+      var V = H.charCodeAt(v);
+      if (V < 128) {
+        o += String.fromCharCode(V);
+      } else {
+        V > 127 && V < 2048 ? (o += String.fromCharCode(V >> 6 | 192), o += String.fromCharCode(V & 63 | 128)) : (o += String.fromCharCode(V >> 12 | 224), o += String.fromCharCode(V >> 6 & 63 | 128), o += String.fromCharCode(V & 63 | 128));
+      }
+    }
+    return o;
+  }
+  var O,
+    X,
+    k,
+    u = new Array(80),
+    T = 1732584193;
+  var P = 4023233417;
+  var M = 2562383102,
+    R = 271733878;
+  var t = 3285377520,
+    l,
+    d,
+    Z,
+    S,
+    y,
+    K;
+  I = n(I);
+  var c = I.length,
+    a = new Array();
+  for (X = 0; X < c - 3; X += 4) {
+    k = I.charCodeAt(X) << 24 | I.charCodeAt(X + 1 < 10 ? "0" + (X + 1) : X + 1) << 16 | I.charCodeAt(X + 2) << 8 | I.charCodeAt(X + 3);
+    a.push(k);
+  }
+  switch (c % 4) {
     case 0:
-      Q = 2147483648;
+      X = 2147483648;
       break;
     case 1:
-      Q = l.charCodeAt(m - 1) << 24 | 8388608;
+      X = I.charCodeAt(c - 1) << 24 | 8388608;
       break;
     case 2:
-      Q = l.charCodeAt(m - 2) << 24 | l.charCodeAt(m - 1) << 16 | 32768;
+      X = I.charCodeAt(c - 2) << 24 | I.charCodeAt(c - 1) << 16 | 32768;
       break;
     case 3:
-      Q = l.charCodeAt(m - 3) << 24 | l.charCodeAt(m - 2) << 16 | l.charCodeAt(m - 1) << 8 | 128;
+      X = I.charCodeAt(c - 3) << 24 | I.charCodeAt(c - 2) << 16 | I.charCodeAt(c - 1) << 8 | 128;
       break;
   }
-  h.push(Q);
-  while (h.length % 16 != 14) {
-    h.push(0);
+  a.push(X);
+  while (a.length % 16 != 14) {
+    a.push(0);
   }
-  h.push(m >>> 29);
-  h.push(m << 3 & 4294967295);
-  for (f = 0; f < h.length; f += 16) {
-    for (Q = 0; Q < 16; Q++) {
-      H[Q] = h[f + Q];
+  a.push(c >>> 29);
+  a.push(c << 3 & 4294967295);
+  for (O = 0; O < a.length; O += 16) {
+    for (X = 0; X < 16; X++) {
+      u[X] = a[O + X];
     }
-    for (Q = 16; Q <= 79; Q++) {
-      H[Q] = c(H[Q - 3] ^ H[Q - 8] ^ H[Q - 14] ^ H[Q - 16], 1);
+    for (X = 16; X <= 79; X++) {
+      u[X] = b(u[X - 3] ^ u[X - 8] ^ u[X - 14] ^ u[X - 16], 1);
     }
-    G = K;
-    d = F;
-    s = v;
-    g = p;
-    Y = t;
-    for (Q = 0; Q <= 19; Q++) {
-      q = c(G, 5) + (d & s | ~d & g) + Y + H[Q] + 1518500249 & 4294967295;
-      Y = g;
-      g = s;
-      s = c(d, 30);
-      d = G;
-      G = q;
+    l = T;
+    d = P;
+    Z = M;
+    S = R;
+    y = t;
+    for (X = 0; X <= 19; X++) {
+      K = b(l, 5) + (d & Z | ~d & S) + y + u[X] + 1518500249 & 4294967295;
+      y = S;
+      S = Z;
+      Z = b(d, 30);
+      d = l;
+      l = K;
     }
-    for (Q = 20; Q <= 39; Q++) {
-      q = c(G, 5) + (d ^ s ^ g) + Y + H[Q] + 1859775393 & 4294967295;
-      Y = g;
-      g = s;
-      s = c(d, 30);
-      d = G;
-      G = q;
+    for (X = 20; X <= 39; X++) {
+      K = b(l, 5) + (d ^ Z ^ S) + y + u[X] + 1859775393 & 4294967295;
+      y = S;
+      S = Z;
+      Z = b(d, 30);
+      d = l;
+      l = K;
     }
-    for (Q = 40; Q <= 59; Q++) {
-      q = c(G, 5) + (d & s | d & g | s & g) + Y + H[Q] + 2400959708 & 4294967295;
-      Y = g;
-      g = s;
-      s = c(d, 30);
-      d = G;
-      G = q;
+    for (X = 40; X <= 59; X++) {
+      K = b(l, 5) + (d & Z | d & S | Z & S) + y + u[X] + 2400959708 & 4294967295;
+      y = S;
+      S = Z;
+      Z = b(d, 30);
+      d = l;
+      l = K;
     }
-    for (Q = 60; Q <= 79; Q++) {
-      q = c(G, 5) + (d ^ s ^ g) + Y + H[Q] + 3395469782 & 4294967295;
-      Y = g;
-      g = s;
-      s = c(d, 30);
-      d = G;
-      G = q;
+    for (X = 60; X <= 79; X++) {
+      K = b(l, 5) + (d ^ Z ^ S) + y + u[X] + 3395469782 & 4294967295;
+      y = S;
+      S = Z;
+      Z = b(d, 30);
+      d = l;
+      l = K;
     }
-    K = K + G & 4294967295;
-    F = F + d & 4294967295;
-    v = v + s & 4294967295;
-    p = p + g & 4294967295;
-    t = t + Y & 4294967295;
+    T = T + l & 4294967295;
+    P = P + d & 4294967295;
+    M = M + Z & 4294967295;
+    R = R + S & 4294967295;
+    t = t + y & 4294967295;
   }
-  var q = J(K) + J(F) + J(v) + J(p) + J(t);
-  return q.toLowerCase();
+  var K = z(T) + z(P) + z(M) + z(R) + z(t);
+  return K.toLowerCase();
 }
 function Base64() {
-  var W = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-  this.encode = function (n) {
-    var B = "";
-    var c, u, J, R, f, Q, T;
-    var H = 0;
-    n = utf8Encode(n);
-    while (H < n.length) {
-      c = n.charCodeAt(H++);
-      u = n.charCodeAt(H++);
-      J = n.charCodeAt(H++);
-      R = c >> 2;
-      f = (c & 3) << 4 | u >> 4;
-      Q = (u & 15) << 2 | J >> 6;
-      T = J & 63;
-      if (isNaN(u)) {
-        Q = T = 64;
+  var G = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  this.encode = function (b) {
+    var u = "";
+    var z, A, n, O, C, X, k;
+    var j = 0;
+    b = utf8Encode(b);
+    while (j < b.length) {
+      z = b.charCodeAt(j++);
+      A = b.charCodeAt(j++);
+      n = b.charCodeAt(j++);
+      O = z >> 2;
+      C = (z & 3) << 4 | A >> 4;
+      X = (A & 15) << 2 | n >> 6;
+      k = n & 63;
+      if (isNaN(A)) {
+        X = k = 64;
       } else {
-        if (isNaN(J)) {
-          T = 64;
-        }
+        isNaN(n) && (k = 64);
       }
-      B = B + W.charAt(R) + W.charAt(f) + W.charAt(Q) + W.charAt(T);
+      u = u + G.charAt(O) + G.charAt(C) + G.charAt(X) + G.charAt(k);
     }
-    return B;
+    return u;
   };
-  this.decode = function (n) {
-    var B = "";
-    var u, J, R;
-    var f, Q, T, H;
-    var c = 0;
-    n = n.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-    while (c < n.length) {
-      f = W.indexOf(n.charAt(c++));
-      Q = W.indexOf(n.charAt(c++));
-      T = W.indexOf(n.charAt(c++));
-      H = W.indexOf(n.charAt(c++));
-      u = f << 2 | Q >> 4;
-      J = (Q & 15) << 4 | T >> 2;
-      R = (T & 3) << 6 | H;
-      B = B + String.fromCharCode(u);
-      T !== 64 && (B = B + String.fromCharCode(J));
-      H !== 64 && (B = B + String.fromCharCode(R));
+  this.decode = function (b) {
+    var j = "";
+    var z, A, n;
+    var C, X, k, u;
+    var O = 0;
+    b = b.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+    while (O < b.length) {
+      C = G.indexOf(b.charAt(O++));
+      X = G.indexOf(b.charAt(O++));
+      k = G.indexOf(b.charAt(O++));
+      u = G.indexOf(b.charAt(O++));
+      z = C << 2 | X >> 4;
+      A = (X & 15) << 4 | k >> 2;
+      n = (k & 3) << 6 | u;
+      j = j + String.fromCharCode(z);
+      k !== 64 && (j = j + String.fromCharCode(A));
+      u !== 64 && (j = j + String.fromCharCode(n));
     }
-    B = utf8Decode(B);
-    return B;
+    j = utf8Decode(j);
+    return j;
   };
-  utf8Encode = function (B) {
-    B = B.replace(/\r\n/g, "\n");
-    var J = "";
-    for (var R = 0; R < B.length; R++) {
-      var f = B.charCodeAt(R);
-      if (f < 128) {
-        J += String.fromCharCode(f);
+  utf8Encode = function (b) {
+    b = b.replace(/\r\n/g, "\n");
+    var z = "";
+    for (var A = 0; A < b.length; A++) {
+      var O = b.charCodeAt(A);
+      if (O < 128) {
+        z += String.fromCharCode(O);
       } else {
-        if (f > 127 && f < 2048) {
-          J += String.fromCharCode(f >> 6 | 192);
-          J += String.fromCharCode(f & 63 | 128);
+        if (O > 127 && O < 2048) {
+          z += String.fromCharCode(O >> 6 | 192);
+          z += String.fromCharCode(O & 63 | 128);
         } else {
-          J += String.fromCharCode(f >> 12 | 224);
-          J += String.fromCharCode(f >> 6 & 63 | 128);
-          J += String.fromCharCode(f & 63 | 128);
+          z += String.fromCharCode(O >> 12 | 224);
+          z += String.fromCharCode(O >> 6 & 63 | 128);
+          z += String.fromCharCode(O & 63 | 128);
         }
       }
     }
-    return J;
+    return z;
   };
-  utf8Decode = function (n) {
-    var J = "";
-    var u = 0;
-    var R = 0;
-    var f = 0;
-    var B = 0;
-    while (u < n.length) {
-      R = n.charCodeAt(u);
-      if (R < 128) {
-        J += String.fromCharCode(R);
-        u++;
+  utf8Decode = function (b) {
+    var n = "";
+    var A = 0;
+    var z = 0;
+    var O = 0;
+    var C = 0;
+    while (A < b.length) {
+      z = b.charCodeAt(A);
+      if (z < 128) {
+        n += String.fromCharCode(z);
+        A++;
       } else {
-        if (R > 191 && R < 224) {
-          f = n.charCodeAt(u + 1 < 10 ? "0" + (u + 1) : u + 1);
-          J += String.fromCharCode((R & 31) << 6 | f & 63);
-          u += 2;
+        if (z > 191 && z < 224) {
+          O = b.charCodeAt(A + 1 < 10 ? "0" + (A + 1) : A + 1);
+          n += String.fromCharCode((z & 31) << 6 | O & 63);
+          A += 2;
         } else {
-          f = n.charCodeAt(u + 1 < 10 ? "0" + (u + 1) : u + 1);
-          B = n.charCodeAt(u + 2);
-          J += String.fromCharCode((R & 15) << 12 | (f & 63) << 6 | B & 63);
-          u += 3;
+          O = b.charCodeAt(A + 1 < 10 ? "0" + (A + 1) : A + 1);
+          C = b.charCodeAt(A + 2);
+          n += String.fromCharCode((z & 15) << 12 | (O & 63) << 6 | C & 63);
+          A += 3;
         }
       }
     }
-    return J;
+    return n;
   };
 }
-function Env(l, W) {
-  class B {
-    constructor(c) {
-      this.env = c;
+function Env(I, G) {
+  class r {
+    constructor(z) {
+      this.env = z;
     }
-    send(c, u = "GET") {
-      c = typeof c === "string" ? {
-        url: c
-      } : c;
-      let f = this.get;
-      u === "POST" && (f = this.post);
-      return new Promise((T, H) => {
-        f.call(this, c, (v, p, t) => {
-          if (v) {
-            H(v);
+    send(z, A = "GET") {
+      z = typeof z === "string" ? {
+        url: z
+      } : z;
+      let C = this.get;
+      if (A === "POST") {
+        C = this.post;
+      }
+      return new Promise((k, u) => {
+        C.call(this, z, (P, M, R) => {
+          if (P) {
+            u(P);
           } else {
-            T(p);
+            k(M);
           }
         });
       });
     }
-    get(c) {
-      return this.send.call(this.env, c);
+    get(z) {
+      return this.send.call(this.env, z);
     }
-    post(c) {
-      return this.send.call(this.env, c, "POST");
+    post(z) {
+      return this.send.call(this.env, z, "POST");
     }
   }
   return new class {
-    constructor(c, u) {
-      this.name = c;
-      this.http = new B(this);
+    constructor(z, A) {
+      this.name = z;
+      this.http = new r(this);
       this.data = null;
       this.dataFile = "box.dat";
       this.logs = [];
@@ -1766,11 +1828,9 @@ function Env(l, W) {
       this.isNeedRewrite = false;
       this.logSeparator = "\n";
       this.startTime = new Date().getTime();
-      Object.assign(this, u);
-      const J = "\n       ***********          *****      ***       **** ******  ***********  \n       *************       ******      ***      ****  ****    ************ \n      ****      ****     ***  ***      ***     ***    ***    ***      **** \n      ***       ****    ***  ****      ***    ***    ****   ****       *** \n     ****       ***    ***    ***      ***   ***     ***    ***       **** \n     ***       ***    ****   ****      ***  ***     ****   ****       ***  \n    ***      ****    ************      *** ***      ***    ***      ****   \n   ****   ******   ****      ****      ******      ****   ****   ******    \n   **********     ****       ****      *****     ******  ***********";
-      if (this.isNode()) {
-        this.log(J);
-      }
+      Object.assign(this, A);
+      const C = "\n       ***********          *****      ***       **** ******  ***********  \n       *************       ******      ***      ****  ****    ************ \n      ****      ****     ***  ***      ***     ***    ***    ***      **** \n      ***       ****    ***  ****      ***    ***    ****   ****       *** \n     ****       ***    ***    ***      ***   ***     ***    ***       **** \n     ***       ***    ****   ****      ***  ***     ****   ****       ***  \n    ***      ****    ************      *** ***      ***    ***      ****   \n   ****   ******   ****      ****      ******      ****   ****   ******    \n   **********     ****       ****      *****     ******  ***********";
+      this.isNode() && this.log(C);
       this.log("", "🔔 " + this.name + ", 开始!");
     }
     isNode() {
@@ -1788,83 +1848,83 @@ function Env(l, W) {
     isShadowrocket() {
       return "undefined" !== typeof $rocket;
     }
-    toObj(c, u = null) {
+    toObj(z, A = null) {
       try {
-        return JSON.parse(c);
+        return JSON.parse(z);
       } catch {
-        return u;
+        return A;
       }
     }
-    toStr(c, u = null) {
+    toStr(z, A = null) {
       try {
-        return JSON.stringify(c);
+        return JSON.stringify(z);
       } catch {
-        return u;
+        return A;
       }
     }
-    getjson(c, u) {
-      let f = u;
-      const Q = this.getdata(c);
-      if (Q) {
+    getjson(z, A) {
+      let n = A;
+      const O = this.getdata(z);
+      if (O) {
         try {
-          f = JSON.parse(this.getdata(c));
+          n = JSON.parse(this.getdata(z));
         } catch {}
       }
-      return f;
+      return n;
     }
-    setjson(c, u) {
+    setjson(z, A) {
       try {
-        return this.setdata(JSON.stringify(c), u);
+        return this.setdata(JSON.stringify(z), A);
       } catch {
         return false;
       }
     }
-    getScript(c) {
-      return new Promise(f => {
-        const H = {
-          url: c
+    getScript(z) {
+      return new Promise(n => {
+        const C = {
+          url: z
         };
-        this.get(H, (K, F, v) => f(v));
+        this.get(C, (X, k, u) => n(u));
       });
     }
-    runScript(c, u) {
-      return new Promise(R => {
-        let T = this.getdata("@chavy_boxjs_userCfgs.httpapi");
-        T = T ? T.replace(/\n/g, "").trim() : T;
-        let H = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
-        H = H ? H * 1 : 20;
-        H = u && u.timeout ? u.timeout : H;
-        const [K, F] = T.split("@"),
-          v = {
-            script_text: c,
+    runScript(z, A) {
+      return new Promise(n => {
+        let C = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+        C = C ? C.replace(/\n/g, "").trim() : C;
+        let X = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
+        X = X ? X * 1 : 20;
+        X = A && A.timeout ? A.timeout : X;
+        const [k, u] = C.split("@"),
+          j = {
+            script_text: z,
             mock_type: "cron",
-            timeout: H
+            timeout: X
           };
-        const p = {
-          "X-Key": K,
+        const T = {
+          "X-Key": k,
           Accept: "*/*"
         };
-        const t = {
-          url: "http: //" + F + "/v1/scripting/evaluate",
-          body: v,
-          headers: p
+        const P = {
+          url: "http: //" + u + "/v1/scripting/evaluate",
+          body: j,
+          headers: T
         };
-        this.post(t, (d, s, g) => R(g));
-      }).catch(R => this.logErr(R));
+        this.post(P, (R, t, l) => n(l));
+      }).catch(n => this.logErr(n));
     }
     loaddata() {
       if (this.isNode()) {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const J = this.path.resolve(this.dataFile),
-          R = this.path.resolve(process.cwd(), this.dataFile),
-          f = this.fs.existsSync(J),
-          Q = !f && this.fs.existsSync(R);
-        if (f || Q) {
-          const T = f ? J : R;
+        const A = this.path.resolve(this.dataFile),
+          n = this.path.resolve(process.cwd(), this.dataFile),
+          O = this.fs.existsSync(A),
+          C = !O && this.fs.existsSync(n);
+        if (O || C) {
+          const X = O ? A : n;
           try {
-            return JSON.parse(this.fs.readFileSync(T));
-          } catch (K) {
+            return JSON.parse(this.fs.readFileSync(X));
+          } catch (u) {
             return {};
           }
         } else {
@@ -1878,398 +1938,393 @@ function Env(l, W) {
       if (this.isNode()) {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const J = this.path.resolve(this.dataFile),
-          R = this.path.resolve(process.cwd(), this.dataFile),
-          f = this.fs.existsSync(J),
-          Q = !f && this.fs.existsSync(R),
-          T = JSON.stringify(this.data);
-        if (f) {
-          this.fs.writeFileSync(J, T);
+        const n = this.path.resolve(this.dataFile),
+          O = this.path.resolve(process.cwd(), this.dataFile),
+          C = this.fs.existsSync(n),
+          X = !C && this.fs.existsSync(O),
+          k = JSON.stringify(this.data);
+        if (C) {
+          this.fs.writeFileSync(n, k);
         } else {
-          if (Q) {
-            this.fs.writeFileSync(R, T);
+          if (X) {
+            this.fs.writeFileSync(O, k);
           } else {
-            this.fs.writeFileSync(J, T);
+            this.fs.writeFileSync(n, k);
           }
         }
       }
     }
-    lodash_get(c, u, J = undefined) {
-      const f = u.replace(/[(d+)]/g, ".$1").split(".");
-      let Q = c;
-      for (const T of f) {
-        Q = Object(Q)[T];
-        if (Q === undefined) {
-          return J;
+    lodash_get(z, A, n = undefined) {
+      const C = A.replace(/[(d+)]/g, ".$1").split(".");
+      let X = z;
+      for (const k of C) {
+        X = Object(X)[k];
+        if (X === undefined) {
+          return n;
         }
       }
-      return Q;
+      return X;
     }
-    lodash_set(c, u, J) {
-      if (Object(c) !== c) {
-        return c;
+    lodash_set(z, A, n) {
+      if (Object(z) !== z) {
+        return z;
       }
-      if (!Array.isArray(u)) {
-        u = u.toString().match(/[^.[]]+/g) || [];
+      if (!Array.isArray(A)) {
+        A = A.toString().match(/[^.[]]+/g) || [];
       }
-      u.slice(0, -1).reduce((R, f, Q) => Object(R[f]) === R[f] ? R[f] : R[f] = Math.abs(u[Q + 1 < 10 ? "0" + (Q + 1) : Q + 1]) >> 0 === +u[Q + 1 < 10 ? "0" + (Q + 1) : Q + 1] ? [] : {}, c)[u[u.length - 1]] = J;
-      return c;
+      A.slice(0, -1).reduce((C, X, k) => Object(C[X]) === C[X] ? C[X] : C[X] = Math.abs(A[k + 1 < 10 ? "0" + (k + 1) : k + 1]) >> 0 === +A[k + 1 < 10 ? "0" + (k + 1) : k + 1] ? [] : {}, z)[A[A.length - 1]] = n;
+      return z;
     }
-    getdata(c) {
-      let J = this.getval(c);
-      if (/^@/.test(c)) {
-        const [, f, Q] = /^@(.*?).(.*?)$/.exec(c),
-          T = f ? this.getval(f) : "";
-        if (T) {
+    getdata(z) {
+      let n = this.getval(z);
+      if (/^@/.test(z)) {
+        const [, O, C] = /^@(.*?).(.*?)$/.exec(z),
+          X = O ? this.getval(O) : "";
+        if (X) {
           try {
-            const K = JSON.parse(T);
-            J = K ? this.lodash_get(K, Q, "") : J;
-          } catch (v) {
-            J = "";
+            const k = JSON.parse(X);
+            n = k ? this.lodash_get(k, C, "") : n;
+          } catch (j) {
+            n = "";
           }
         }
       }
-      return J;
+      return n;
     }
-    setdata(c, u) {
-      let f = false;
-      if (/^@/.test(u)) {
-        const [, Q, T] = /^@(.*?).(.*?)$/.exec(u),
-          H = this.getval(Q),
-          K = Q ? H === "null" ? null : H || "{}" : "{}";
+    setdata(z, A) {
+      let O = false;
+      if (/^@/.test(A)) {
+        const [, C, X] = /^@(.*?).(.*?)$/.exec(A),
+          k = this.getval(C),
+          u = C ? k === "null" ? null : k || "{}" : "{}";
         try {
-          const F = JSON.parse(K);
-          this.lodash_set(F, T, c);
-          f = this.setval(JSON.stringify(F), Q);
-        } catch (p) {
-          const G = {};
-          this.lodash_set(G, T, c);
-          f = this.setval(JSON.stringify(G), Q);
+          const T = JSON.parse(u);
+          this.lodash_set(T, X, z);
+          O = this.setval(JSON.stringify(T), C);
+        } catch (P) {
+          const R = {};
+          this.lodash_set(R, X, z);
+          O = this.setval(JSON.stringify(R), C);
         }
       } else {
-        f = this.setval(c, u);
+        O = this.setval(z, A);
       }
-      return f;
+      return O;
     }
-    getval(c) {
+    getval(z) {
       if (this.isSurge() || this.isLoon()) {
-        return $persistentStore.read(c);
+        return $persistentStore.read(z);
       } else {
         if (this.isQuanX()) {
-          return $prefs.valueForKey(c);
+          return $prefs.valueForKey(z);
         } else {
           if (this.isNode()) {
             this.data = this.loaddata();
-            return this.data[c];
+            return this.data[z];
           } else {
-            return this.data && this.data[c] || null;
+            return this.data && this.data[z] || null;
           }
         }
       }
     }
-    setval(c, u) {
+    setval(z, A) {
       if (this.isSurge() || this.isLoon()) {
-        return $persistentStore.write(c, u);
+        return $persistentStore.write(z, A);
       } else {
         if (this.isQuanX()) {
-          return $prefs.setValueForKey(c, u);
+          return $prefs.setValueForKey(z, A);
         } else {
           if (this.isNode()) {
             this.data = this.loaddata();
-            this.data[u] = c;
+            this.data[A] = z;
             this.writedata();
             return true;
           } else {
-            return this.data && this.data[u] || null;
+            return this.data && this.data[A] || null;
           }
         }
       }
     }
-    initGotEnv(c) {
+    initGotEnv(z) {
       this.got = this.got ? this.got : require("got");
       this.cktough = this.cktough ? this.cktough : require("tough-cookie");
       this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
-      if (c) {
-        c.headers = c.headers ? c.headers : {};
-        if (undefined === c.headers.Cookie && undefined === c.cookieJar) {
-          c.cookieJar = this.ckjar;
-        }
-      }
+      z && (z.headers = z.headers ? z.headers : {}, undefined === z.headers.Cookie && undefined === z.cookieJar && (z.cookieJar = this.ckjar));
     }
-    get(c, u = () => {}) {
-      if (c.headers) {
-        delete c.headers["Content-Type"];
-        delete c.headers["Content-Length"];
-      }
+    get(z, A = () => {}) {
+      z.headers && (delete z.headers["Content-Type"], delete z.headers["Content-Length"]);
       if (this.isSurge() || this.isLoon()) {
         if (this.isSurge() && this.isNeedRewrite) {
-          c.headers = c.headers || {};
-          const f = {
+          z.headers = z.headers || {};
+          const k = {
             "X-Surge-Skip-Scripting": false
           };
-          Object.assign(c.headers, f);
+          Object.assign(z.headers, k);
         }
-        $httpClient.get(c, (T, H, K) => {
-          if (!T && H) {
-            H.body = K;
-            H.statusCode = H.status;
+        $httpClient.get(z, (u, j, T) => {
+          if (!u && j) {
+            j.body = T;
+            j.statusCode = j.status;
           }
-          u(T, H, K);
+          A(u, j, T);
         });
       } else {
         if (this.isQuanX()) {
           if (this.isNeedRewrite) {
-            c.opts = c.opts || {};
-            const K = {
+            z.opts = z.opts || {};
+            const P = {
               hints: false
             };
-            Object.assign(c.opts, K);
+            Object.assign(z.opts, P);
           }
-          $task.fetch(c).then(v => {
+          $task.fetch(z).then(M => {
             const {
+                statusCode: R,
                 statusCode: t,
-                statusCode: G,
-                headers: d,
-                body: s
-              } = v,
-              g = {
-                status: t,
-                statusCode: G,
-                headers: d,
-                body: s
-              };
-            u(null, g, s);
-          }, v => u(v));
-        } else {
-          this.isNode() && (this.initGotEnv(c), this.got(c).on("redirect", (p, t) => {
-            try {
-              if (p.headers["set-cookie"]) {
-                const g = p.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
-                if (g) {
-                  this.ckjar.setCookieSync(g, null);
-                }
-                t.cookieJar = this.ckjar;
-              }
-            } catch (A) {
-              this.logErr(A);
-            }
-          }).then(p => {
-            const t = {};
-            t.jETVk = "apiHosts";
-            const {
-                statusCode: s,
-                statusCode: g,
-                headers: Y,
-                body: A
-              } = p,
-              C = {
-                status: s,
-                statusCode: g,
-                headers: Y,
-                body: A
-              };
-            u(null, C, A);
-          }, p => {
-            const {
-              message: G,
-              response: d
-            } = p;
-            u(G, d, d && d.body);
-          }));
-        }
-      }
-    }
-    post(c, u = () => {}) {
-      const R = c.method ? c.method.toLocaleLowerCase() : "post";
-      c.body && c.headers && !c.headers["Content-Type"] && (c.headers["Content-Type"] = "application/x-www-form-urlencoded");
-      if (c.headers) {
-        delete c.headers["Content-Length"];
-      }
-      if (this.isSurge() || this.isLoon()) {
-        if (this.isSurge() && this.isNeedRewrite) {
-          c.headers = c.headers || {};
-          const H = {
-            "X-Surge-Skip-Scripting": false
-          };
-          Object.assign(c.headers, H);
-        }
-        $httpClient[R](c, (K, F, v) => {
-          if (!K && F) {
-            F.body = v;
-            F.statusCode = F.status;
-          }
-          u(K, F, v);
-        });
-      } else {
-        if (this.isQuanX()) {
-          c.method = R;
-          if (this.isNeedRewrite) {
-            c.opts = c.opts || {};
-            const F = {
-              hints: false
-            };
-            Object.assign(c.opts, F);
-          }
-          $task.fetch(c).then(v => {
-            const {
+                headers: l,
+                body: i
+              } = M,
+              d = {
+                status: R,
                 statusCode: t,
-                statusCode: G,
-                headers: d,
-                body: s
-              } = v,
-              g = {
-                status: t,
-                statusCode: G,
-                headers: d,
-                body: s
+                headers: l,
+                body: i
               };
-            u(null, g, s);
-          }, v => u(v));
+            A(null, d, i);
+          }, M => A(M));
         } else {
           if (this.isNode()) {
-            this.initGotEnv(c);
-            const {
-              url: t,
-              ...G
-            } = c;
-            this.got[R](t, G).then(d => {
+            this.initGotEnv(z);
+            this.got(z).on("redirect", (M, R) => {
+              try {
+                if (M.headers["set-cookie"]) {
+                  const d = M.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
+                  if (d) {
+                    this.ckjar.setCookieSync(d, null);
+                  }
+                  R.cookieJar = this.ckjar;
+                }
+              } catch (y) {
+                this.logErr(y);
+              }
+            }).then(M => {
               const {
-                  statusCode: g,
-                  statusCode: Y,
-                  headers: A,
-                  body: C
-                } = d,
-                q = {
-                  status: g,
-                  statusCode: Y,
-                  headers: A,
-                  body: C
+                  statusCode: R,
+                  statusCode: t,
+                  headers: l,
+                  body: i
+                } = M,
+                d = {
+                  status: R,
+                  statusCode: t,
+                  headers: l,
+                  body: i
                 };
-              u(null, q, C);
-            }, d => {
+              A(null, d, i);
+            }, M => {
               const {
-                message: g,
-                response: Y
-              } = d;
-              u(g, Y, Y && Y.body);
+                message: R,
+                response: t
+              } = M;
+              A(R, t, t && t.body);
             });
           }
         }
       }
     }
-    put(c, u = () => {}) {
-      const R = c.method ? c.method.toLocaleLowerCase() : "put";
-      if (c.body && c.headers && !c.headers["Content-Type"]) {
-        c.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    post(z, A = () => {}) {
+      const O = z.method ? z.method.toLocaleLowerCase() : "post";
+      if (z.body && z.headers && !z.headers["Content-Type"]) {
+        z.headers["Content-Type"] = "application/x-www-form-urlencoded";
       }
-      if (c.headers) {
-        delete c.headers["Content-Length"];
+      if (z.headers) {
+        delete z.headers["Content-Length"];
       }
       if (this.isSurge() || this.isLoon()) {
         if (this.isSurge() && this.isNeedRewrite) {
-          c.headers = c.headers || {};
-          const Q = {
+          z.headers = z.headers || {};
+          const X = {
             "X-Surge-Skip-Scripting": false
           };
-          Object.assign(c.headers, Q);
+          Object.assign(z.headers, X);
         }
-        $httpClient[R](c, (H, K, F) => {
-          !H && K && (K.body = F, K.statusCode = K.status);
-          u(H, K, F);
+        $httpClient[O](z, (u, j, T) => {
+          !u && j && (j.body = T, j.statusCode = j.status);
+          A(u, j, T);
         });
       } else {
         if (this.isQuanX()) {
-          c.method = R;
+          z.method = O;
           if (this.isNeedRewrite) {
-            c.opts = c.opts || {};
-            const F = {
+            z.opts = z.opts || {};
+            const j = {
               hints: false
             };
-            Object.assign(c.opts, F);
+            Object.assign(z.opts, j);
           }
-          $task.fetch(c).then(p => {
+          $task.fetch(z).then(P => {
             const {
-                statusCode: G,
-                statusCode: d,
-                headers: s,
-                body: g
-              } = p,
-              Y = {
-                status: G,
-                statusCode: d,
-                headers: s,
-                body: g
+                statusCode: R,
+                statusCode: t,
+                headers: l,
+                body: i
+              } = P,
+              d = {
+                status: R,
+                statusCode: t,
+                headers: l,
+                body: i
               };
-            u(null, Y, g);
-          }, p => u(p));
+            A(null, d, i);
+          }, P => A(P));
         } else {
           if (this.isNode()) {
-            this.initGotEnv(c);
+            this.initGotEnv(z);
             const {
-              url: p,
+              url: R,
               ...t
-            } = c;
-            this.got[R](p, t).then(G => {
+            } = z;
+            this.got[O](R, t).then(l => {
               const {
-                  statusCode: g,
-                  statusCode: Y,
-                  headers: A,
-                  body: C
-                } = G,
-                q = {
-                  status: g,
-                  statusCode: Y,
-                  headers: A,
-                  body: C
+                  statusCode: d,
+                  statusCode: Z,
+                  headers: S,
+                  body: y
+                } = l,
+                K = {
+                  status: d,
+                  statusCode: Z,
+                  headers: S,
+                  body: y
                 };
-              u(null, q, C);
-            }, G => {
+              A(null, K, y);
+            }, l => {
               const {
                 message: d,
-                response: s
-              } = G;
-              u(d, s, s && s.body);
+                response: Z
+              } = l;
+              A(d, Z, Z && Z.body);
             });
           }
         }
       }
     }
-    time(c, u = null) {
-      const J = u ? new Date(u) : new Date();
-      let R = {
-        "M+": J.getMonth() + 1,
-        "d+": J.getDate(),
-        "H+": J.getHours(),
-        "m+": J.getMinutes(),
-        "s+": J.getSeconds(),
-        "q+": Math.floor((J.getMonth() + 3) / 3),
-        S: J.getMilliseconds()
-      };
-      if (/(y+)/.test(c)) {
-        c = c.replace(RegExp.$1, (J.getFullYear() + "").substr(4 - RegExp.$1.length));
+    put(z, A = () => {}) {
+      const O = z.method ? z.method.toLocaleLowerCase() : "put";
+      if (z.body && z.headers && !z.headers["Content-Type"]) {
+        z.headers["Content-Type"] = "application/x-www-form-urlencoded";
       }
-      for (let f in R) if (new RegExp("(" + f + ")").test(c)) {
-        c = c.replace(RegExp.$1, RegExp.$1.length == 1 ? R[f] : ("00" + R[f]).substr(("" + R[f]).length));
+      if (z.headers) {
+        delete z.headers["Content-Length"];
       }
-      return c;
-    }
-    msg(c = l, u = "", J = "", R) {
-      const Q = T => {
-        if (!T) {
-          return T;
+      if (this.isSurge() || this.isLoon()) {
+        if (this.isSurge() && this.isNeedRewrite) {
+          z.headers = z.headers || {};
+          const X = {
+            "X-Surge-Skip-Scripting": false
+          };
+          Object.assign(z.headers, X);
         }
-        if (typeof T === "string") {
+        $httpClient[O](z, (u, j, T) => {
+          if (!u && j) {
+            j.body = T;
+            j.statusCode = j.status;
+          }
+          A(u, j, T);
+        });
+      } else {
+        if (this.isQuanX()) {
+          z.method = O;
+          if (this.isNeedRewrite) {
+            z.opts = z.opts || {};
+            const T = {
+              hints: false
+            };
+            Object.assign(z.opts, T);
+          }
+          $task.fetch(z).then(M => {
+            const {
+                statusCode: t,
+                statusCode: l,
+                headers: i,
+                body: d
+              } = M,
+              Z = {
+                status: t,
+                statusCode: l,
+                headers: i,
+                body: d
+              };
+            A(null, Z, d);
+          }, M => A(M));
+        } else {
+          if (this.isNode()) {
+            this.initGotEnv(z);
+            const {
+              url: M,
+              ...R
+            } = z;
+            this.got[O](M, R).then(t => {
+              const {
+                  statusCode: i,
+                  statusCode: d,
+                  headers: Z,
+                  body: S
+                } = t,
+                y = {
+                  status: i,
+                  statusCode: d,
+                  headers: Z,
+                  body: S
+                };
+              A(null, y, S);
+            }, t => {
+              const {
+                message: l,
+                response: i
+              } = t;
+              A(l, i, i && i.body);
+            });
+          }
+        }
+      }
+    }
+    time(z, A = null) {
+      const n = A ? new Date(A) : new Date();
+      let O = {
+        "M+": n.getMonth() + 1,
+        "d+": n.getDate(),
+        "H+": n.getHours(),
+        "m+": n.getMinutes(),
+        "s+": n.getSeconds(),
+        "q+": Math.floor((n.getMonth() + 3) / 3),
+        S: n.getMilliseconds()
+      };
+      if (/(y+)/.test(z)) {
+        z = z.replace(RegExp.$1, (n.getFullYear() + "").substr(4 - RegExp.$1.length));
+      }
+      for (let C in O) if (new RegExp("(" + C + ")").test(z)) {
+        z = z.replace(RegExp.$1, RegExp.$1.length == 1 ? O[C] : ("00" + O[C]).substr(("" + O[C]).length));
+      }
+      return z;
+    }
+    msg(z = I, A = "", n = "", O) {
+      const C = X => {
+        if (!X) {
+          return X;
+        }
+        if (typeof X === "string") {
           if (this.isLoon()) {
-            return T;
+            return X;
           } else {
             if (this.isQuanX()) {
               return {
-                "open-url": T
+                "open-url": X
               };
             } else {
               if (this.isSurge()) {
                 return {
-                  url: T
+                  url: X
                 };
               } else {
                 return undefined;
@@ -2277,31 +2332,31 @@ function Env(l, W) {
             }
           }
         } else {
-          if (typeof T === "object") {
+          if (typeof X === "object") {
             if (this.isLoon()) {
-              let H = T.openUrl || T.url || T["open-url"],
-                K = T.mediaUrl || T["media-url"];
-              const F = {
-                openUrl: H,
-                mediaUrl: K
+              let k = X.openUrl || X.url || X["open-url"],
+                u = X.mediaUrl || X["media-url"];
+              const j = {
+                openUrl: k,
+                mediaUrl: u
               };
-              return F;
+              return j;
             } else {
               if (this.isQuanX()) {
-                let v = T["open-url"] || T.url || T.openUrl,
-                  p = T["media-url"] || T.mediaUrl;
-                const t = {
-                  "open-url": v,
-                  "media-url": p
+                let T = X["open-url"] || X.url || X.openUrl,
+                  P = X["media-url"] || X.mediaUrl;
+                const M = {
+                  "open-url": T,
+                  "media-url": P
                 };
-                return t;
+                return M;
               } else {
                 if (this.isSurge()) {
-                  let G = T.url || T.openUrl || T["open-url"];
-                  const d = {
-                    url: G
+                  let R = X.url || X.openUrl || X["open-url"];
+                  const t = {
+                    url: R
                   };
-                  return d;
+                  return t;
                 }
               }
             }
@@ -2312,37 +2367,37 @@ function Env(l, W) {
       };
       if (!this.isMute) {
         if (this.isSurge() || this.isLoon()) {
-          $notification.post(c, u, J, Q(R));
+          $notification.post(z, A, n, C(O));
         } else {
-          this.isQuanX() && $notify(c, u, J, Q(R));
+          this.isQuanX() && $notify(z, A, n, C(O));
         }
       }
       if (!this.isMuteLog) {
-        let T = ["", "==============📣系统通知📣=============="];
-        T.push(c);
-        u ? T.push(u) : "";
-        J ? T.push(J) : "";
-        console.log(T.join("\n"));
-        this.logs = this.logs.concat(T);
+        let X = ["", "==============📣系统通知📣=============="];
+        X.push(z);
+        A ? X.push(A) : "";
+        n ? X.push(n) : "";
+        console.log(X.join("\n"));
+        this.logs = this.logs.concat(X);
       }
     }
-    log(...c) {
-      c.length > 0 && (this.logs = [...this.logs, ...c]);
-      console.log(c.join(this.logSeparator));
+    log(...z) {
+      z.length > 0 && (this.logs = [...this.logs, ...z]);
+      console.log(z.join(this.logSeparator));
     }
-    logErr(c, u) {
-      const J = !this.isSurge() && !this.isQuanX() && !this.isLoon();
-      !J ? this.log("", "❗️" + this.name + ", 错误!", c) : this.log("", "❗️" + this.name + ", 错误!", c.stack);
+    logErr(z, A) {
+      const n = !this.isSurge() && !this.isQuanX() && !this.isLoon();
+      !n ? this.log("", "❗️" + this.name + ", 错误!", z) : this.log("", "❗️" + this.name + ", 错误!", z.stack);
     }
-    wait(c) {
-      return new Promise(u => setTimeout(u, c));
+    wait(z) {
+      return new Promise(A => setTimeout(A, z));
     }
-    done(c = {}) {
-      const u = new Date().getTime();
-      const J = (u - this.startTime) / 1000;
-      this.log("", "🔔" + this.name + ", 结束!🕛" + J + "秒");
+    done(z = {}) {
+      const A = new Date().getTime();
+      const n = (A - this.startTime) / 1000;
+      this.log("", "🔔" + this.name + ", 结束!🕛" + n + "秒");
       this.log();
-      (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(c);
+      (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(z);
     }
-  }(l, W);
+  }(I, G);
 }
