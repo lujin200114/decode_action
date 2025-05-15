@@ -1,20 +1,20 @@
-//Thu May 01 2025 03:05:06 GMT+0000 (Coordinated Universal Time)
+//Thu May 15 2025 10:26:23 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
-const $ = new Env("汽水音乐"),
-  version = "V1.0.1",
-  appName = "qsyyapp";
-let qsyyapp = $.getjson(appName, []);
+const $ = new Env("抖音极速版"),
+  version = "V3.1.0",
+  appName = "dyjsbapp";
+let dyjsbapp = $.getjson(appName, []);
 const fs = $.isNode() ? require("fs") : "",
   WebSocket = $.isNode() ? require("ws") : "",
   file = "david_cookies.js";
-$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet qsyyAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    qsyy: qsyyAPP\n}\n\nmodule.exports = APPS", X => {}));
+$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", I => {}));
 const http = $.isNode() ? require("http") : "",
   notify = $.isNode() ? require("./sendNotify") : "",
   COOKIES = $.isNode() ? require("./david_cookies") : "";
 let userId = $.getdata("tguserid") || 1,
-  activeCode = $.getdata("qsyyactivecode") || 0,
-  qsyyuserck = $.getval("qsyyuserck") || 1,
+  activeCode = $.getdata("dyjsbactivecode") || 0,
+  dyjsbuserck = $.getval("dyjsbuserck") || 1,
   apiHost = $.getval("apiHost") || "http://106.15.104.124:8080";
 $.getval("apiHosts") && (apiHost = $.getval("apiHosts"));
 const debug = 0;
@@ -22,12 +22,12 @@ let tz = $.getval("tz") || "1";
 var hour = "",
   minute = "";
 let sendlogs = "",
-  qsyylogs = [];
-let accounts = [],
+  dyjsblogs = [],
+  accounts = [],
   wss = [],
   channels_status = [],
-  reconectCounts = [],
-  requestObjects = [],
+  reconectCounts = [];
+let requestObjects = [],
   requestSigns = [],
   httpResult = "",
   signSwitchs = [],
@@ -35,21 +35,21 @@ let accounts = [],
   scriptAuth = "",
   newest_version = "",
   runAuth = "",
-  systemNotify = "";
-let vipAuth = "",
+  systemNotify = "",
+  vipAuth = "",
   isCharge = "",
   multiAccount = 1,
   buyCount = 1,
   runTotalCounts = 1,
-  runedCounts = 1,
-  userRank = "",
-  invicode = "",
+  runedCounts = 1;
+let userRank = "";
+let invicode = "",
   numbers = 3,
   vipDate = "";
 if ($.isNode()) {
-  process.env.QSYYAPP ? qsyyapp = JSON.parse(process.env.QSYYAPP) : qsyyapp = COOKIES.QSYY;
+  process.env.DYJSBAPP ? dyjsbapp = JSON.parse(process.env.DYJSBAPP) : dyjsbapp = COOKIES.DYJSB;
   userId = process.env.TGUSERID;
-  activeCode = process.env.QSYYACTIVECODE;
+  activeCode = process.env.DYJSBACTIVECODE;
   process.env.APIHOST && (apiHost = process.env.APIHOST);
   process.env.APIHOSTS && (apiHost = process.env.APIHOSTS);
   hour = new Date(new Date().getTime()).getHours();
@@ -64,30 +64,30 @@ if ($.isNode()) {
   if (typeof $request !== "undefined") {
     await getCk();
   } else {
-    if (!qsyyapp) {
+    if (!dyjsbapp) {
       $.log("📢 很抱歉，😭 没有找到账号信息！你确定配置账号信息了吗？");
       return;
     }
     $.log("📢 开始检测服务器接口状态>>>");
-    let l = false;
-    const J = apiHost.split("&"),
-      u = J.length;
-    for (let A = 0; A < u; A++) {
+    let b = false;
+    const r = apiHost.split("&"),
+      z = r.length;
+    for (let O = 0; O < z; O++) {
       if ($.isNode()) {
-        l = await checkAddress("" + J[A], 2500);
+        b = await checkAddress("" + r[O], 2500);
       } else {
         if ($.isSurge() || $.isLoon()) {
-          l = await httpClientRequest("" + J[A], 2500);
+          b = await httpClientRequest("" + r[O], 2500);
         } else {
-          l = await fetchRequest("" + J[A], 2500);
+          b = await fetchRequest("" + r[O], 2500);
         }
       }
-      if (l == true) {
-        apiHost = J[A];
-        $.log("📢 接口" + (A + 1) + "[" + J[A] + "]服务器接口正常! 🎉");
+      if (b == true) {
+        apiHost = r[O];
+        $.log("📢 接口" + (O + 1) + "[" + r[O] + "]服务器接口正常! 🎉");
         break;
       }
-      if (A == u - 1 && l == false) {
+      if (O == z - 1 && b == false) {
         $.log("📢 抱歉，所有接口都不可用, 请前往交流群置顶获取最新的接口地址! 😭");
         $.msg($.name, "所有接口都不可用, 请尽快前往交流群置顶获取最新的接口地址!");
         return;
@@ -101,9 +101,9 @@ if ($.isNode()) {
     $.log("📢 " + systemNotify);
     $.log("🔔 当前脚本版本号: " + version + "，最新版本号: " + newest_version);
     if (vipDate != "") {
-      let Y = new Date(vipDate).getTime(),
-        m = new Date().getTime();
-      if (m > Y) {
+      let t = new Date(vipDate).getTime(),
+        l = new Date().getTime();
+      if (l > t) {
         $.log("❗️ 抱歉，VIP到期了，请及时付费。");
         return;
       }
@@ -133,9 +133,9 @@ if ($.isNode()) {
     if (vipDate != "") {
       if (isCharge == true) {
         $.log("🔔 尊敬的会员：您好，你是付费用户！🔐");
-        let H = new Date(vipDate).getTime(),
-          s = new Date().getTime();
-        if (s > H) {
+        let o = new Date(vipDate).getTime(),
+          B = new Date().getTime();
+        if (B > o) {
           $.log("❗️ 抱歉，VIP到期了，请及时付费。");
           return;
         }
@@ -151,515 +151,560 @@ if ($.isNode()) {
     if (multiAccount > 1) {
       $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一次可以运行" + numbers * multiAccount + "个账号。");
     }
-    if (buyCount > 1) {
-      $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一共可以运行" + runTotalCounts + "次, 已经运行了" + runedCounts + "次。");
-    }
+    buyCount > 1 && $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一共可以运行" + runTotalCounts + "次, 已经运行了" + runedCounts + "次。");
     if (runAuth != true) {
       $.log("❗️ 抱歉,  该用户今天可能已经达到最大运行次数，明天再试吧！");
       return;
     }
-    if (qsyyapp.length > numbers * multiAccount) {
+    if (dyjsbapp.length > numbers * multiAccount) {
       $.log("❗️ 当前用户一次最多运行" + numbers * multiAccount + "个账号，需要增加账号请查看置顶说明。");
       return;
     }
-    if (qsyyapp.length == 0) {
+    if (dyjsbapp.length == 0) {
       $.log("先抓取账号ck，再运行脚本吧！");
       return;
     }
-    if (runedCounts + qsyyapp.length > runTotalCounts) {
-      $.log("📢 一共发现了" + qsyyapp.length + "个账号");
-      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (qsyyapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
+    if (runedCounts + dyjsbapp.length > runTotalCounts) {
+      $.log("📢 一共发现了" + dyjsbapp.length + "个账号");
+      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (dyjsbapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
       return;
     }
     vipDate != "" && $.log("📢 你的会员有效期到： " + vipDate);
-    $.log("📢 一共发现了" + qsyyapp.length + "个账号");
-    let O = [];
-    for (let R = 0; R < qsyyapp.length; R++) {
-      O.push(runMultiTasks(R));
-      qsyylogs[R] = "";
-      signSwitchs[R] = 1;
+    $.log("📢 一共发现了" + dyjsbapp.length + "个账号");
+    let A = [];
+    for (let Y = 0; Y < dyjsbapp.length; Y++) {
+      A.push(runMultiTasks(Y));
+      dyjsblogs[Y] = "";
+      signSwitchs[Y] = 1;
       if ($.isNode()) {
-        channels_status[R] = 0;
-        await init_ws(R);
+        channels_status[Y] = 0;
+        await init_ws(Y);
       } else {
-        channels_status[R] = 1;
+        channels_status[Y] = 1;
       }
     }
-    await Promise.allSettled(O).then(N => {
+    await Promise.allSettled(A).then(e => {
       $.log("日志整理功能如下：");
       $.log("---------------日志整理开始--------------");
-      for (let t = 0; t < qsyyapp.length; t++) {
-        $.log(qsyylogs[t]);
-        sendlogs += qsyylogs[t];
+      for (let U = 0; U < dyjsbapp.length; U++) {
+        $.log(dyjsblogs[U]);
+        sendlogs += dyjsblogs[U];
       }
       $.log("---------------日志整理结束--------------");
       sendMsg(sendlogs);
     });
   }
-})().catch(X => $.logErr(X)).finally(() => $.done());
-async function runMultiTasks(X) {
-  return new Promise((g, l) => {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 开始执行 working......");
-    runSubTask(g, X);
+})().catch(I => $.logErr(I)).finally(() => $.done());
+async function runMultiTasks(I) {
+  return new Promise((b, r) => {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 开始执行 working......");
+    runSubTask(b, I);
   });
 }
-async function init_ws(X) {
-  $.isNode() && (reconectCounts[X] > 0 && $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 尝试重新连接服务器>>>>>>"), wss[X] = new WebSocket(apiHost.replace("http", "ws") + "/ws"), wss[X].on("open", function J() {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签名通道已连接");
-  }), wss[X].on("close", function u() {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
-  }), wss[X].on("error", function O() {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签名通道已关闭，原因是出现错误");
-    channels_status[X] = 1;
-    reconectCounts[X]++;
-    reconectCounts[X] <= 3 && init_ws(X);
-  }));
-}
-async function runSubTask(X, D) {
-  await $.wait(3000, 5000);
-  if (qsyyapp[D].capture) {
-    if (qsyyapp[D].interface && qsyyapp[D].interface.split("$").length > 0) {
-      let J = qsyyapp[D].interface.split("$").length > 1 ? qsyyapp[D].interface.split("$")[0] : qsyyapp[D].interface;
-      await getCapture(D, J);
-      $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: 抓包结果=> 如何你发现需要抓取的APP自动重启了，恭喜你🎉🎉🎉，可以开始抓包了，期间APP不要重启。");
-      qsyylogs[D] += "[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: 抓包结果=> 如何你发现需要抓取的APP自动重启了，恭喜你🎉🎉🎉，可以开始抓包了，期间APP不要重启。\n";
-    } else {
-      $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: 请设置接口地址再运行脚本！");
+async function init_ws(I) {
+  if ($.isNode()) {
+    if (reconectCounts[I] > 0) {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 尝试重新连接服务器>>>>>>");
     }
-    if ($.isNode()) {
-      await wss[D].close();
-    }
-  } else {
-    qsyyapp[D].url = qsyyapp[D].url.replace(/\+/g, "");
-    await userInfo(D);
-    await taskPage(D);
-    if (hour == 8 && minute < 20 && auto_withdraw == "true") {
-      await withdrawaPage(D);
-    }
-    if ($.isNode()) {
-      await wss[D].close();
-    }
-    await runComplete(appName, userId);
-    X();
+    wss[I] = new WebSocket(apiHost.replace("http", "ws") + "/ws");
+    wss[I].on("open", function z() {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签名通道已连接");
+    });
+    wss[I].on("close", function A() {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
+    });
+    wss[I].on("error", function n() {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签名通道已关闭，原因是出现错误");
+      channels_status[I] = 1;
+      reconectCounts[I]++;
+      reconectCounts[I] <= 3 && init_ws(I);
+    });
   }
+}
+async function runSubTask(I, G) {
+  await $.wait(3000, 5000);
+  dyjsbapp[G].url = dyjsbapp[G].url.replace(/\+/g, "");
+  await userInfo(G);
+  await appointmentInfo(G);
+  await taskPage(G);
+  $.isNode() && (await wss[G].close());
+  await runComplete(appName, userId);
+  I();
 }
 async function getCk() {
   if ($request.url.match(/\/passport\/UnionLogin/)) {
-    const u = $request.body;
-    let O = qsyyuserck - 1;
-    if (qsyyapp[O]) {
-      qsyyapp[O].token_body = u;
+    const b = $request.body;
+    let r = dyjsbuserck - 1;
+    if (dyjsbapp[r]) {
+      dyjsbapp[r].token_body = b;
     } else {
       const A = {
-        token_body: u
+        token_body: b
       };
-      qsyyapp[O] = A;
+      dyjsbapp[r] = A;
     }
-    $.setdata(JSON.stringify(qsyyapp, null, 2), "qsyyapp");
-    $.msg($.name, "快音账号" + (O + 1) + "Token获取成功！🎉");
+    $.setdata(JSON.stringify(dyjsbapp, null, 2), "dyjsbapp");
+    $.msg($.name, "快音账号" + (r + 1) + "Token获取成功！🎉");
   }
 }
-function getReqUrl(X) {
-  let g = ts13(),
-    l = url2obj(qsyyapp[X].url);
-  l._rticket = g;
-  qsyyapp[X].iid = l.iid;
-  qsyyapp[X].did = l.device_id;
-  l.version_code = "100123030";
-  l.version_name = "12.3.0";
-  l.manifest_version_code = "100123030";
-  l.update_version_code = "100123030";
-  l.device_platform = "android";
-  delete l.luckydog_base;
-  delete l.luckydog_data;
-  delete l.luckydog_token;
-  delete l.luckydog_sdk_version;
-  delete l.luckydog_api_version;
-  return jsonToUrl(l);
+function getReqUrl(I) {
+  let b = ts13();
+  let r = ts10(),
+    z = url2obj(dyjsbapp[I].url);
+  z.ts = r;
+  z._rticket = b;
+  dyjsbapp[I].iid = z.iid;
+  dyjsbapp[I].did = z.device_id;
+  z.version_code = "310700";
+  z.version_name = "31.7.0";
+  z.manifest_version_code = "310701";
+  z.update_version_code = "31709900";
+  z.device_platform = "android";
+  z.luckycat_version_name = "8.13.0-rc.3";
+  z.luckycat_version_code = "890100";
+  delete z.luckydog_base;
+  delete z.luckydog_data;
+  delete z.luckydog_token;
+  delete z.luckydog_sdk_version;
+  delete z.luckydog_api_version;
+  return jsonToUrl(z);
 }
-async function getSixGodHeader(X, D, g) {
-  let J = "common";
-  qsyyapp[X].interface && (J = qsyyapp[X].interface);
-  let u = qsyyapp[X].iid,
-    O = qsyyapp[X].did,
-    Z = "",
-    A = [];
-  for (let b in g) {
-    if (b == "Content-Type" || b == "Host") {
+async function getSixGodHeader(I, G, b) {
+  let z = "common";
+  if (dyjsbapp[I].interface) {
+    z = dyjsbapp[I].interface;
+  }
+  let A = dyjsbapp[I].iid;
+  let n = dyjsbapp[I].did,
+    O = "",
+    C = [];
+  for (let u in b) {
+    if (u == "Content-Type" || u == "Host") {
       continue;
     }
-    A.push(b.toLowerCase() + "=[" + g[b] + "]");
+    C.push(u.toLowerCase() + "=[" + b[u] + "]");
   }
-  Z += A.join(",");
-  Z += "";
-  let p = O + "@" + u + "@" + encodeURIComponent(D) + "@" + encodeURIComponent(Z) + "@" + J;
-  await selectChannel(X, p);
+  O += C.join(",");
+  O += "";
+  let X = n + "@" + A + "@" + encodeURIComponent(G) + "@" + encodeURIComponent(O) + "@" + z;
+  await selectChannel(I, X);
 }
-async function userInfo(X) {
-  let g = getReqUrl(X);
-  const l = "https://api5-normal-lq.amemv.com/aweme/v1/user/profile/self/?" + g;
-  let J = "";
-  await getReqObject(l, J, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 用户信息=> 签名服务异常，停止执行>>>");
+async function userInfo(I) {
+  let b = getReqUrl(I);
+  const r = "https://api5-normal-lq.amemv.com/aweme/v1/user/profile/self/?" + b;
+  let z = "";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户信息=> 签名服务异常，停止执行>>>");
     return;
   }
-  await httpRequest("get", requestObjects[X], printCaller());
-  let u = httpResult;
-  if (u != null && u.status_code == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 用户名=> " + u.user.bind_phone);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 用户名=> " + u.user.bind_phone + "\n";
-    accounts[X] = u.user.bind_phone;
-  } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 用户信息=> " + u.err_tips);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 用户信息=> " + u.err_tips + "\n";
-  }
-}
-async function taskPage(X) {
-  let g = getReqUrl(X);
-  const l = "https://api5-lf.qishui.com/luna/treasure/task/page?" + g;
-  let J = "";
-  await getReqObject(l, J, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("get", requestObjects[X], printCaller());
-  let u = httpResult;
-  if (u != null && u.status_code == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 金币=> " + u.data.assets_card.amount_data[0].amount);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 音符=> " + u.data.assets_card.amount_data[0].amount + "\n";
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 余额=> " + u.data.assets_card.amount_data[1].amount / 100 + "元");
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 余额=> " + u.data.assets_card.amount_data[1].amount / 100 + "元\n";
-    let Z = u.data.task_group.task_data.task_list.scene_view_map.luna_music.task_list,
-      A = u.data.activity_play_info.activity_play_info.luna_music.task_list,
-      p = Z.find(n => n.task_key == "soda_music_sign_in");
-    if (p) {
-      if (p.task_status == 1) {
-        if (signSwitchs[X] == 1) {
-          await signInDetail(X);
-        }
-      }
-      if (p.task_status == 3) {
-        signSwitchs[X] == 1 && (await signInDetail(X));
-      }
-    }
-    let L = Z.find(m => m.task_key == "luna_treasure_red_packet_rain");
-    if (L && L.task_status == 1) {
-      $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 红包雨任务进度(" + L.completed_times + "/" + L.total_times + ")");
-      qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 红包雨任务进度(" + L.completed_times + "/" + L.total_times + ")\n";
-      let m = L.page_view.token;
-      signSwitchs[X] == 1 && (await redRain(X, m));
-    }
-    let b = A[0];
-    if (b && b.page_view.cooldown_end_time <= parseInt(ts10())) {
-      $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 宝箱任务进度(" + b.completed_times + "/" + b.completed_times + ")");
-      qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 宝箱任务进度(" + b.completed_times + "/" + b.completed_times + ")\n";
-      if (signSwitchs[X] == 1) {
-        await open_treasure_box(X);
-      }
-    }
-    let U = Z.find(a => a.task_key == "music_incentive_ad");
-    if (U) {
-      if (U.task_status == 1) {
-        $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 激励广告任务进度(" + U.completed_times + "/" + U.total_times + ")");
-        qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 红包雨任务进度(" + U.completed_times + "/" + U.total_times + ")\n";
-        let K = U.page_view.token;
-        signSwitchs[X] == 1 && (await _ad_rewards(X, K, "激励视频"));
-      }
-    }
-  } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 任务中心=> " + u.err_tips);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 任务中心=> " + u.err_tips + "\n";
-  }
-}
-async function signIn(X) {
-  let g = getReqUrl(X);
-  let l = "https://aweme.snssdk.com/aweme/ug/common/luckyapi/v1/common/sign_in/sign_in_done/?" + g + "&taskId=600585&page_name=coin_task_list";
-  let J = "{\"page_name\":\"coin_task_list\",\"task_id\":\"600585\"}";
-  await getReqObject(l, J, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  requestObjects[X].headers["x-tt-polaris-task-id"] = "600585";
-  await httpRequest("post", requestObjects[X], printCaller());
-  let u = httpResult;
-  if (u != null && u.err_no == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签到=> 成功，不错哦！获得" + u.data.reward_info[0].reward_amount + "金币 🎉");
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签到=> 成功，不错哦！获得" + u.data.reward_info[0].reward_amount + "金币 🎉\n";
-  } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签到=> " + u.err_tips);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签到=> " + u.err_tips + "\n";
-  }
-}
-async function signInDetail(X) {
-  let g = getReqUrl(X);
-  let l = "https://aweme.snssdk.com/aweme/ug/common/luckyapi/v1/common/sign_in/sign_in_detail/?" + g + "&taskId=600585&page_name=coin_task_list";
-  let J = "";
-  await getReqObject(l, J, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  requestObjects[X].headers["x-tt-polaris-task-id"] = "600585";
-  await httpRequest("get", requestObjects[X], printCaller());
-  let u = httpResult;
-  if (u != null && u.err_no == 0) {
-    let A = u.data.button_data.button_type;
-    if (A == 3) {
-      let p = u.data.button_data.excitation_ad_info.page_view.token;
-      await $.wait(randomNum(10000, 15000));
-      await _ad_rewards(X, p, "签到");
-    } else {
-      if (A == 1) {
-        await signIn(X);
-      }
-    }
-  } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签到=> " + u.err_tips);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 签到=> " + u.err_tips + "\n";
-  }
-}
-async function redRain(X, D) {
-  let l = getReqUrl(X);
-  let J = guid(),
-    u = "https://api5-hl.qishui.com/luna/treasure/task/red_packet_rain/do_action?" + l,
-    O = "{\"click_num\":21,\"common_args\":{\"unique_id\":\"" + J + "\",\"token\":\"" + D + "\"}}";
-  await getReqObject(u, O, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 红包雨=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[X], printCaller());
-  let Z = httpResult;
-  if (Z != null && Z.status_code == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 红包雨游戏=> 完成，获得" + Z.data.rewards[0].reward_amount + "金币 🎉");
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 红包雨游戏=> 完成，获得" + Z.data.rewards[0].reward_amount + "金币 🎉\n";
-    let L = JSON.parse(Z.data.extra);
-    if (L) {
-      let U = L.base_ad_diversion.page_view.token;
-      await $.wait(randomNum(10000, 15000));
-      await _ad_rewards(X, U, "红包雨");
-    }
-  } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 红包雨游戏=> 失败，" + Z.status_info.error_detail);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 红包雨游戏=> 失败，" + Z.status_info.error_detail + "\n";
-  }
-}
-async function _ad_rewards(D, g, l) {
-  let u = getReqUrl(D),
-    O = "https://polaris.zijieapi.com/polaris/task/do_action?" + u,
-    Z = ts13();
-  const A = {
-    token: g,
-    unique_id: Z,
-    extra: "{\"enable_feedback\":true}"
-  };
-  await getReqObject(O, JSON.stringify(A), D);
-  if (signSwitchs[D] == 0) {
-    $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[D], printCaller());
-  let L = httpResult;
-  if (L != null && L.data.instance_list && L.status_code == 0) {
-    $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: " + l + "广告=> 获得" + L.data.instance_list[0].Rewards[0].RewardAmount + "金币 🎉");
-    qsyylogs[D] += "[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: " + l + "广告=> 获得" + L.data.instance_list[0].Rewards[0].RewardAmount + "金币 🎉\n";
-    for (let U = 0; U < 3; U++) {
-      await video_one_more(D, g, U + 1, l);
-    }
-  } else {
-    $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: " + l + "广告=> 设备异常");
-    qsyylogs[D] += "[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: " + l + "广告=> 设备异常\n";
-  }
-}
-async function open_treasure_box(X) {
-  let g = getReqUrl(X),
-    l = "https://aweme.snssdk.com/aweme/ug/common/luckyapi/v1/common/treasure/done?" + g + "&taskId=600607&urlKey=treasure_task";
-  let J = "{\"enter_from\":\"task_page\",\"fe_version\":\"1.0.0.169\"}";
-  await getReqObject(l, J, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  requestObjects[X].headers["x-tt-polaris-task-id"] = "600607";
-  await httpRequest("post", requestObjects[X], printCaller());
-  let u = httpResult;
-  if (u != null && u.err_no == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 打开宝箱=> 成功，不错哦！获得" + u.data.rewards[0].amount + "金币 🎉");
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 打开宝箱=> 成功，不错哦！获得" + u.data.rewards[0].amount + "金币 🎉\n";
-    let A = JSON.parse(u.data.extra);
-    if (A) {
-      let L = A.base_ad_diversion.page_view.token;
-      await $.wait(randomNum(10000, 15000));
-      await _ad_rewards(X, L, "开宝箱");
-    }
-  } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 打开宝箱=> " + u.err_tips);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 打开宝箱=> " + u.err_tips + "\n";
-  }
-}
-async function video_one_more(D, g, l, J) {
-  let O = getReqUrl(D);
-  const Z = "https://polaris.zijieapi.com/polaris/task/incentive_ad_again_info?" + O,
-    A = {
-      first_ad_task_token: g,
-      again_idx: l
-    };
-  await getReqObject(Z, JSON.stringify(A), D);
-  if (signSwitchs[D] == 0) {
-    $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[D], printCaller());
-  let L = httpResult;
-  if (L != null && L.status_code == 0) {
-    if (L.data.can_show == true) {
-      await $.wait(randomNum(10000, 15000));
-      let n = L.data.token;
-      await video_one_reward(D, g, n, l, J);
-    }
-  } else {
-    $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: 宝箱广告=> " + L.err_tips);
-    qsyylogs[D] += "[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: 宝箱广告=> " + L.err_tips + "\n";
-  }
-}
-async function video_one_reward(D, g, l, J, u) {
-  let Z = getReqUrl(D);
-  const A = "https://polaris.zijieapi.com/polaris/task/do_action?" + Z;
-  let p = ts13();
-  let L = "{\"token\":\"" + l + "\",\"unique_id\":\"" + p + "\",\"extra\":\"{\"enable_feedback\":true,\"first_ad_task_token\":\"" + g + "\",\"again_idx\":" + J + "}\"}";
-  const b = {
-    token: l,
-    unique_id: p,
-    extra: "{\"enable_feedback\":true,\"first_ad_task_token\":\"" + g + "\",\"again_idx\":" + J + "}"
-  };
-  L = b;
-  await getReqObject(A, JSON.stringify(L), D);
-  if (signSwitchs[D] == 0) {
-    $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[D], printCaller());
-  let U = httpResult;
-  if (U != null && U.status_code == 0) {
-    $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: " + u + "_追加广告_" + J + "=> 获得" + U.data.instance_list[0].Rewards[0].RewardAmount + "金币 🎉");
-    qsyylogs[D] += "[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: " + u + "_追加广告_" + J + "=> 获得" + U.data.instance_list[0].Rewards[0].RewardAmount + "金币 🎉\n";
-  } else {
-    $.log("[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: " + u + "_附加广告_" + J + "=> " + U.err_tips);
-    qsyylogs[D] += "[账号" + (D + 1 < 10 ? "0" + (D + 1) : D + 1) + "]: " + u + "_附加广告_" + J + "=> " + U.err_tips + "\n";
-  }
-}
-async function withdrawaPage(X) {
-  let g = getReqUrl(X);
-  const l = "https://polaris.zijieapi.com/luckycat/polaris/centralized_wallet/user/vundefined/withdraw/page?" + g + "&BaseReq=%7B%22WalletID%22%3A%22luna_wallet%22%2C%22SubWalletID%22%3A%22luna_wallet%22%2C%22AccountType%22%3A%22CNY%22%7D",
-    J = "";
-  await getReqObject(l, J, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现页面=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  requestObjects[X].headers["Content-Type"] = "application/json";
-  await httpRequest("get", requestObjects[X], printCaller());
-  let u = httpResult;
-  if (u != null && u.err_no == 0) {
-    let A = u.ExtensionMap,
-      p = u.BaseRes.WithdrawWays.Data.luna_wallet.ThresholdWithdraws.find(L => L.PaymentMethodInfo.Name == "支付宝提现");
-    if (p.PaymentMethodInfo.BindingInfos.length > 0) {
-      let b = p.PaymentMethodInfo.BindingInfos[0].Account,
-        U = p.PaymentMethodInfo.BindingInfos[0].AccountMask,
-        n = u.BaseRes.ProfitWalletData.BatchWalletData.luna_wallet.Data.CNY.Balance;
-      if (n >= 3000 && n < 1500) {
-        let G = p.ChoiceList.find(e => e.Amount == 3000);
-        G && (await preWithdraw(X, b, U, G, A));
-      } else {
-        if (n >= 1500 && n < 3000) {
-          let m = p.ChoiceList.find(Q => Q.Amount == 1500);
-          m && (await preWithdraw(X, b, U, m, A));
-        } else {
-          if (n >= 30 && n < 1500) {
-            let z = p.ChoiceList.find(V => V.Amount == 30);
-            z && (await preWithdraw(X, b, U, z, A));
-          } else {
-            $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现=> 金额不足，继续赚钱吧。");
-            qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现=> 金额不足，继续赚钱吧。\n";
-          }
-        }
-      }
-    } else {
-      $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现=> 没绑定支付宝，无法自动提现。");
-      qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现=> 没绑定支付宝，无法自动提现。\n";
-    }
-  } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现页面=> " + u.err_tips);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现页面=> " + u.err_tips + "\n";
-  }
-}
-async function preWithdraw(X, D, g, l, J) {
-  let O = getReqUrl(X);
-  let Z = ts13();
-  const A = "https://polaris.zijieapi.com/luckycat/polaris/centralized_wallet/user/v:version/withdraw/prewithdraw?" + O;
-  let p = "{\"BaseReq\":{\"UniqueID\":\"luna_wallet-luna_wallet-WithdrawPre-4449040503146132-" + Z + "\",\"PromotionSource\":\"\",\"Category\":\"" + l.Category + "\",\"Amount\":" + l.Amount + ",\"PaymentMethod\":3,\"WalletID\":\"luna_wallet\",\"ChoiceKey\":\"" + l.ChoiceKey + "\",\"ExtensionMap\":" + JSON.stringify(J) + ",\"SubWalletID\":\"luna_wallet\",\"AccountType\":\"CNY\"}}";
-  await getReqObject(A, p, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 预提现=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[X], printCaller());
-  let L = httpResult;
-  if (L != null && L.err_no == 0) {
-    let n = L.BaseRes.Data.WithdrawPreID;
-    await withdraw(X, D, g, n);
-  } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 预提现=> " + L.err_tips);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 预提现=> " + L.err_tips + "\n";
-  }
-}
-async function withdraw(X, D, g, l) {
-  let u = getReqUrl(X);
-  const O = "https://polaris.zijieapi.com/luckycat/polaris/withdraw/v1/withdraw_confirm/?" + u + "&request_tag_from=h5";
-  let Z = "{\"withdraw_id\":\"" + l + "\",\"payment_account\":{\"payment_method\":3,\"account_id\":\"" + D + "\",\"nick_name\":\"" + g + "\"}}";
-  await getReqObject(O, Z, X);
-  if (signSwitchs[X] == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现结果=> 签名服务异常，停止执行>>>");
-    return;
-  }
-  await httpRequest("post", requestObjects[X], printCaller());
+  await httpRequest("get", requestObjects[I], printCaller());
   let A = httpResult;
   if (A != null && A.status_code == 0) {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现结果=> 成功！编号为" + A.data.id);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现结果=> 成功！编号为" + A.data.id + "\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户名=> " + A.user.bind_phone);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户名=> " + A.user.bind_phone + "\n";
+    accounts[I] = A.user.bind_phone;
   } else {
-    $.log("[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现结果=> " + A.status_message);
-    qsyylogs[X] += "[账号" + (X + 1 < 10 ? "0" + (X + 1) : X + 1) + "]: 提现结果=> " + A.status_message + "\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户信息=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 用户信息=> " + A.err_tips + "\n";
   }
 }
-function getScriptAuth(X, D, g) {
-  return new Promise((J, u) => {
-    const Z = apiHost + "/script/permissions/lastest",
-      A = {
-        appName: X,
-        userId: D,
-        activityCode: g,
+async function sign(I) {
+  let b = getReqUrl(I);
+  const r = "https://api5-normal-lq.amemv.com/luckycat/aweme/v1/task/done/sign_in?" + b;
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签到=> " + A.data.success_desc + "，获得" + A.data.amount + "音符");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签到=> " + A.data.success_desc + "，获得" + A.data.amount + "音符\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签到=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 签到=> " + A.err_tips + "\n";
+  }
+}
+async function taskPage(I) {
+  let b = getReqUrl(I);
+  const r = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/page?" + b;
+  let z = "";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("get", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 音符=> " + A.data.income_data.amount1);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 音符=> " + A.data.income_data.amount1 + "\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 余额=> " + A.data.income_data.amount2 / 100 + "元");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 余额=> " + A.data.income_data.amount2 / 100 + "元\n";
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 音符兑换方式=> " + A.data.income_data.exchange_type_name);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 音符兑换方式=> " + A.data.income_data.exchange_type_name + "\n";
+    if (A.data.income_data.amount2 / 100 >= 30) {
+      await withdraw(I, 3000, accounts[I]);
+    } else {
+      A.data.income_data.amount2 / 100 >= 15 && A.data.income_data.amount2 / 100 < 30 && (await withdraw(I, 1500, accounts[I]));
+    }
+    let C = A.data.task_list,
+      X = C.find(M => M.key == "sign_in");
+    if (X && X.completed == false) {
+      await sign(I);
+    }
+    let k = C.find(R => R.key == "shopping_gold");
+    k && k.desc.indexOf("浏览低价商品") != -1 && (await shopping(I));
+    if (signSwitchs[I] == 1) {
+      await open_treasure_box(I);
+    }
+    let j = C.find(l => l.key == "excitation_ad");
+    if (j) {
+      let l = JSON.parse(j.status_extra),
+        d = l.completed;
+      if (d == false) {
+        signSwitchs[I] == 1 && (await excitation_ad_detail(I, j));
+      }
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> " + A.err_tips + "\n";
+  }
+}
+async function swipeTask(I) {
+  let b = getReqUrl(I),
+    r = "https://api3-normal-c.amemv.com/aweme/ug/lite/read/done/swipe_task?" + b,
+    z = "{\"task_id\":100153,\"task_key\":\"low_vv_swipe_up_task\",\"req_from\":\"normal\",\"pendant_show_scene\":\"\"}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.data.success_desc + "，不错哦！获得" + A.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.data.success_desc + "，不错哦！获得" + A.data.amount + "音符 🎉\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.err_tips + "\n";
+  }
+}
+async function open_treasure_box(I) {
+  let b = getReqUrl(I),
+    r = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/done/treasure_task?" + b;
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    let O = A.data.excitation_ad_info ? A.data.excitation_ad_info : A.data.button_data.excitation_ad_info;
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.data.success_desc + "，不错哦！获得" + A.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.data.success_desc + "，不错哦！获得" + A.data.amount + "音符 🎉\n";
+    if (O) {
+      let X = O.ad_id,
+        k = O.req_id,
+        u = A.data.excitation_ad_info ? A.data.excitation_ad_info.score_amount : A.data.button_data.excitation_ad_info.score_amount;
+      await $.wait(randomNum(10000, 15000));
+      await treasure_box_ad(I, X, k, u);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 打开宝箱=> " + A.err_tips + "\n";
+  }
+}
+async function treasure_box_ad(I, G, b, r, z) {
+  let n = getReqUrl(I);
+  const O = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/done/excitation_ad_treasure_box?" + n + "&md=0";
+  let C = "{\"amount\":\"" + r + "\",\"inspire_modal_add_modal_manage\":false,\"ad_rit\":\"" + G + "\",\"ad_inspire\":\"{\"score_amount\":\"" + r + "\",\"amount\":\"" + r + "\",\"req_id\":\"" + b + "\"}\",\"task_key\":\"excitation_ad_treasure_box\",\"stage_score_amount\":[],\"ad_alias_position\":\"box\",\"need_reward\":true,\"finish_action\":0,\"params_for_special\":\"luckydog_sdk\",\"static_settings_version\":58,\"dynamic_settings_version\":58,\"poll_settings_version\":0}";
+  await getReqObject(O, C, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let X = httpResult;
+  if (X != null && X.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> 获得" + X.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> 获得" + X.data.amount + "音符 🎉\n";
+    let j = X.data.aggr_info.aggr_income_id;
+    for (let T = 0; T < 3; T++) {
+      await video_one_more(I, "excitation_ad_treasure_box", G, T, j);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> " + X.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> " + X.err_tips + "\n";
+    await $.wait(randomNum(5000, 9000));
+    if (X.err_tips.indexOf("很遗憾") != -1 && !z) {
+      await treasure_box_ad(I, G, b, r, "try");
+    }
+  }
+}
+async function video_one_more(I, G, b, r, z) {
+  let n = getReqUrl(I);
+  const O = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/excitation_ad/one_more/detail?task_key=" + G + "&rit=" + b + "&creator_id=12315000&one_more_round=" + r + "&" + n;
+  await getReqObject(O, "", I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("get", requestObjects[I], printCaller());
+  let C = httpResult;
+  if (C != null && C.err_no == 0) {
+    if (C.data.has_one_more == true) {
+      await $.wait(randomNum(10000, 15000));
+      await video_one_reward(I, G, b, r, z);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> " + C.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 宝箱广告=> " + C.err_tips + "\n";
+  }
+}
+async function video_one_reward(I, G, b, r, z) {
+  let n = getReqUrl(I);
+  const O = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/done/excitation_ad/one_more?" + n,
+    C = "{\"task_key\":\"" + G + "\",\"rit\":\"" + b + "\",\"creator_id\":\"12315000\",\"one_more_round\":" + r + ",\"aggr_income_id\":\"" + z + "\"}";
+  await getReqObject(O, C, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let X = httpResult;
+  if (X != null && X.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + X.data.content + "附加广告=> 获得" + X.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + X.data.content + "附加广告=> 获得" + X.data.amount + "音符 🎉\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 附加广告=> " + X.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 附加广告=> " + X.err_tips + "\n";
+  }
+}
+async function excitation_ad(I, G, b, r, z) {
+  let n = getReqUrl(I);
+  const O = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/done/" + G + "?" + n;
+  let C = "{\"amount\":\"18\",\"inspire_modal_add_modal_manage\":false,\"ad_rit\":\"" + b + "\",\"ad_inspire\":\"{\"score_amount\":\"18\",\"req_id\":\"" + r + "\"}\",\"task_key\":\"" + G + "\",\"stage_score_amount\":[],\"ad_alias_position\":\"task\",\"need_reward\":true,\"params_for_special\":\"luckydog_sdk\",\"static_settings_version\":58,\"dynamic_settings_version\":58,\"poll_settings_version\":0}";
+  await getReqObject(O, C, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let X = httpResult;
+  if (X != null && X.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + z + "广告=> 获得" + X.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + z + "广告=> 获得" + X.data.amount + "音符 🎉\n";
+    let T = X.data.aggr_info.aggr_income_id;
+    for (let P = 0; P < 3; P++) {
+      await video_one_more(I, "excitation_ad", b, P, T);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + z + "广告=> " + X.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + z + "广告=> " + X.err_tips + "\n";
+  }
+}
+async function excitation_ad_detail(I, G) {
+  let r = getReqUrl(I);
+  const z = "https://api3-normal-c.amemv.com/luckycat/aweme/v1/task/" + G.key + "/detail?" + r;
+  let A = "";
+  await getReqObject(z, A, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("get", requestObjects[I], printCaller());
+  let n = httpResult;
+  if (n != null && n.err_no == 0) {
+    let C = JSON.parse(G.status_extra);
+    await excitation_ad(I, G.key, C.ad_id, C.req_id, G.name);
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + G.name + "广告=> " + n.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: " + G.name + "广告=> " + n.err_tips + "\n";
+  }
+}
+async function withdraw(I, G, b) {
+  let z = getReqUrl(I);
+  const A = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/wallet/take_cash?" + z + "&task_key=take_cash&md=0",
+    n = "{\"is_auto\":false,\"take_cash_type\":3,\"cash_amount\":-" + G + ",\"tab_type\":\"alipay\",\"name\":\"\",\"account\":\"" + b + "\"}";
+  await getReqObject(A, n, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let O = httpResult;
+  if (O != null && O.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现" + G / 100 + "元=> " + O.err_tips + "，提现编号(" + O.data.take_cash_record_id + ")，请注意查收！ 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现" + G / 100 + "元=> " + O.err_tips + "，提现编号(" + O.data.take_cash_record_id + ")，请注意查收！ 🎉\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现支付宝=> " + O.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现支付宝=> " + O.err_tips + "\n";
+  }
+}
+async function shopping(I) {
+  let b = getReqUrl(I);
+  const r = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/task/done/shopping_gold?mode=done&" + b;
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 任务中心=> 逛街服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 逛街任务=> 获得" + A.data.amount + "音符 🎉");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 逛街任务=> 获得" + A.data.amount + "音符 🎉\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 逛街任务=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 逛街任务=> " + A.err_tips + "\n";
+  }
+}
+async function appointmentInfo(I) {
+  let b = getReqUrl(I);
+  let r = "https://api3-normal-c.amemv.com/aweme/ug/lite/luckyapi/v1/awemelite/appointment/main_page?" + b;
+  if (dyjsbapp[I].appointment) {
+    r = updateURLParameter(r, "iid", dyjsbapp[I].appointment.split("&")[0]);
+    r = updateURLParameter(r, "device_id", dyjsbapp[I].appointment.split("&")[1]);
+  }
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    (A.data.status == 1 || A.data.status == 3) && (await doAppointment(I));
+    if (A.data.status == 2 && A.data.count_down <= 0) {
+      await receiveAppointment(I);
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币中心=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币中心=> " + A.err_tips + "\n";
+  }
+}
+async function doAppointment(I) {
+  let b = getReqUrl(I, "iid", "did"),
+    r = "https://api3-normal-c.amemv.com/aweme/ug/lite/luckyapi/v1/awemelite/appointment/action?" + b;
+  if (dyjsbapp[I].appointment) {
+    r = updateURLParameter(r, "iid", dyjsbapp[I].appointment.split("&")[0]);
+    r = updateURLParameter(r, "device_id", dyjsbapp[I].appointment.split("&")[1]);
+  }
+  let z = "{\"coin_widget_installed\":false}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币=> " + A.data.amount + "金币，预约成功，" + A.data.text + ", " + A.data.popup_text);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币=> " + A.data.amount + "金币，预约成功，" + A.data.text + ", " + A.data.popup_text + "\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币中心=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约金币中心=> " + A.err_tips + "\n";
+  }
+}
+async function receiveAppointment(I) {
+  let b = getReqUrl(I, "iid", "did"),
+    r = "https://api5-normal-hl.amemv.com/aweme/ug/lite/luckyapi/v:version/awemelite/appointment/reward?" + b;
+  dyjsbapp[I].appointment && (r = updateURLParameter(r, "iid", dyjsbapp[I].appointment.split("&")[0]), r = updateURLParameter(r, "device_id", dyjsbapp[I].appointment.split("&")[1]));
+  let z = "{}";
+  await getReqObject(r, z, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let A = httpResult;
+  if (A != null && A.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约领取金币=> 成功领取" + A.data.popup.amount + "金币");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约领取金币=> 成功领取" + A.data.popup.amount + "金币\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约领取金币=> " + A.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 预约领取金币=> " + A.err_tips + "\n";
+  }
+}
+async function exchangeCoins(I, G) {
+  let r = getReqUrl(I, "iid", "did"),
+    z = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/wallet/exchange_coin?" + r;
+  let A = "{\"exchange_coin\":" + G + "}";
+  await getReqObject(z, A, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let n = httpResult;
+  if (n != null && n.err_no == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换现金=> 成功兑换" + G / 10000 + "元");
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换现金=> 成功兑换" + G / 10000 + "元\n";
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换现金=> " + n.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换现金=> " + n.err_tips + "\n";
+  }
+}
+async function exchangeSwitch(I, G) {
+  let r = getReqUrl(I, "iid", "did"),
+    z = "https://api5-normal-hl.amemv.com/luckycat/aweme/v1/wallet/exchange_type_switch?" + r,
+    A = "{\"exchange_type\":" + G + "}";
+  await getReqObject(z, A, I);
+  if (signSwitchs[I] == 0) {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 提现中心=> 签名服务异常，停止执行>>>");
+    return;
+  }
+  await httpRequest("post", requestObjects[I], printCaller());
+  let n = httpResult;
+  if (n != null && n.err_no == 0) {
+    if (G == 1) {
+      $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 自动兑换");
+      dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 自动兑换\n";
+    } else {
+      if (G == 2) {
+        $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 随时兑换");
+        dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 随时兑换\n";
+      } else {
+        $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 兑换方式错误");
+        dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式切换为=> 兑换方式错误\n";
+      }
+    }
+  } else {
+    $.log("[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式兑换=> " + n.err_tips);
+    dyjsblogs[I] += "[账号" + (I + 1 < 10 ? "0" + (I + 1) : I + 1) + "]: 兑换方式兑换=> " + n.err_tips + "\n";
+  }
+}
+function getScriptAuth(I, G, b) {
+  return new Promise((z, A) => {
+    const O = apiHost + "/script/permissions/lastest",
+      C = {
+        appName: I,
+        userId: G,
+        activityCode: b,
         version: version
       };
-    const L = {
+    const k = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const b = {
-      url: Z,
-      headers: L,
-      body: JSON.stringify(A)
+    const u = {
+      url: O,
+      headers: k,
+      body: JSON.stringify(C)
     };
-    $.post(b, async (U, n, C) => {
-      const G = {};
-      G.zVmsG = "application/json";
-      if (C && C != null && C.replace(/\"/g, "").length > 50) {
-        const Q = C.replace(/\"/g, "").slice(34),
-          z = new Base64();
-        result = JSON.parse(z.decode(Q));
+    $.post(u, async (j, T, P) => {
+      if (P && P != null && P.replace(/\"/g, "").length > 50) {
+        const t = P.replace(/\"/g, "").slice(34),
+          l = new Base64();
+        result = JSON.parse(l.decode(t));
         try {
           newest_version = result.version;
           userAuth = result.userAuth;
@@ -676,453 +721,436 @@ function getScriptAuth(X, D, g) {
           invicode = result.invicate;
           numbers = result.accountNumbers;
           vipDate = result.vipDate;
-        } catch (K) {
-          $.log(K);
+        } catch (S) {
+          $.log(S);
         }
       } else {
         $.log("请求服务器接口出现错误，请检查网络连接情况");
       }
-      J();
+      z();
     });
   });
 }
-function runComplete(X, D) {
-  return new Promise((l, J) => {
+function runComplete(I, G) {
+  return new Promise((r, z) => {
     const O = apiHost + "/script/run/add",
-      Z = {
-        appName: X,
-        userId: D,
+      C = {
+        appName: I,
+        userId: G,
         activityCode: activeCode,
         version: version
       };
-    const p = {
+    const k = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const L = {
+    const u = {
       url: O,
-      headers: p,
-      body: JSON.stringify(Z)
+      headers: k,
+      body: JSON.stringify(C)
     };
-    $.post(L, async (b, U, n) => {
-      l();
+    $.post(u, async (j, T, P) => {
+      r();
     });
   });
 }
-function checkAddress(X, D) {
-  return new Promise((l, J) => {
-    const Z = setTimeout(() => {
-        l(false);
-      }, D),
-      A = http.get(X, p => {
-        clearTimeout(Z);
-        if (p.statusCode === 404) {
-          l(true);
+function checkAddress(I, G) {
+  return new Promise((r, z) => {
+    const n = setTimeout(() => {
+        r(false);
+      }, G),
+      O = http.get(I, C => {
+        clearTimeout(n);
+        if (C.statusCode === 404) {
+          r(true);
         } else {
-          l(false);
+          r(false);
         }
       });
-    A.on("error", p => {
-      clearTimeout(Z);
-      l(false);
+    O.on("error", C => {
+      clearTimeout(n);
+      r(false);
     });
-    A.on("timeout", () => {
-      A.abort();
-      J(new Error("请求超时"));
+    O.on("timeout", () => {
+      O.abort();
+      z(new Error("请求超时"));
     });
   });
 }
-async function fetchRequest(X, D = 3000) {
-  return new Promise((l, J) => {
-    const O = {
-      url: X + "/docs"
+async function fetchRequest(I, G = 3000) {
+  return new Promise((r, z) => {
+    const n = {
+      url: I + "/docs"
     };
     setTimeout(() => {
-      l(false);
-    }, D);
-    $.get(O, async (Z, A, p) => {
-      if (A.status == 401) {
-        l(true);
+      r(false);
+    }, G);
+    $.get(n, async (O, C, X) => {
+      if (C.status == 401) {
+        r(true);
       } else {
-        l(false);
+        r(false);
       }
     });
   });
 }
-async function httpClientRequest(X, D = 3000) {
-  return new Promise((l, J) => {
-    const Z = {
-      url: X + "/"
+async function httpClientRequest(I, G = 3000) {
+  return new Promise((r, z) => {
+    const O = {
+      url: I + "/"
     };
     setTimeout(() => {
-      l(false);
-    }, D);
-    $httpClient.get(Z, async (A, p, L) => {
-      L == "{\"detail\":\"Not Found\"}" ? l(true) : l(false);
+      r(false);
+    }, G);
+    $httpClient.get(O, async (C, X, k) => {
+      if (k == "{\"detail\":\"Not Found\"}") {
+        r(true);
+      } else {
+        r(false);
+      }
     });
   });
 }
-async function redisGet(X, D, g) {
-  return new Promise((J, u) => {
-    const O = apiHost + "/redis/hash/get/" + D + "/" + g,
-      Z = {
+async function redisGet(I, G, b) {
+  return new Promise((z, A) => {
+    const n = apiHost + "/redis/hash/get/" + G + "/" + b,
+      O = {
         "Content-Type": "application/json",
         accept: "application/json"
       };
-    const A = {
-      url: O,
-      headers: Z
+    const C = {
+      url: n,
+      headers: O
     };
-    $.get(A, async (L, b, U) => {
-      const C = U.replace(/\"/g, "");
-      answerTexts[X] = C;
-      J();
+    $.get(C, async (k, u, j) => {
+      const M = j.replace(/\"/g, "");
+      answerTexts[I] = M;
+      z();
     });
   });
 }
-function redisSet(X, D, g) {
-  return new Promise((J, u) => {
-    const p = apiHost + "/redis/hash/set",
-      L = {
-        key: X,
-        hashKey: D,
-        hashValue: g
+function redisSet(I, G, b) {
+  return new Promise((z, A) => {
+    const C = apiHost + "/redis/hash/set",
+      X = {
+        key: I,
+        hashKey: G,
+        hashValue: b
       };
-    const U = {
+    const u = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const n = {
-      url: p,
-      headers: U,
-      body: JSON.stringify(L)
+    const j = {
+      url: C,
+      headers: u,
+      body: JSON.stringify(X)
     };
-    $.post(n, async (C, G, e) => {
-      J();
+    $.post(j, async (T, P, M) => {
+      z();
     });
   });
 }
-function redisPop(X) {
-  return new Promise((g, l) => {
-    const O = apiHost + "/redis/set/pop/" + X,
-      Z = {
+function redisPop(I) {
+  return new Promise((b, r) => {
+    const A = apiHost + "/redis/set/pop/" + I,
+      n = {
         "Content-Type": "application/json",
         accept: "application/json"
       };
-    const A = {
-      url: O,
-      headers: Z
+    const O = {
+      url: A,
+      headers: n
     };
-    $.get(A, async (L, b, U) => {
-      const C = U.replace(/\"/g, "");
-      popCookie = C;
-      g();
+    $.get(O, async (X, k, u) => {
+      const T = u.replace(/\"/g, "");
+      popCookie = T;
+      b();
     });
   });
 }
-async function getReqObject(g, l, J) {
-  let O = "com.luna.music/100123030 (Linux; U; Android 12; zh_CN; 22081212C; Build/SKQ1.220303.001; Cronet/TTNetVersion:dd1b0931 2024-06-28 QuicVersion:d299248d 2024-04-09)";
-  if (qsyyapp[J].ua && qsyyapp[J].ua != "") {
-    O = qsyyapp[J].ua;
-  }
-  let Z = getHostname(g);
-  const p = {
-    "Content-Type": "application/json; charset=UTF-8",
-    "User-Agent": O,
-    Host: Z,
-    "passport-sdk-version": "50592",
+async function getReqObject(b, r, z) {
+  let n = "com.ss.android.ugc.aweme.lite/310701 (Linux; U; Android 12; zh_CN; 22081212C; Build/SKQ1.220303.001; Cronet/TTNetVersion:b714bfef 2024-09-13 QuicVersion:c459d547 2024-08-27)";
+  dyjsbapp[z].ua && dyjsbapp[z].ua != "" && (n = dyjsbapp[z].ua);
+  let O = getHostname(b);
+  let C = ts13();
+  const X = {
+    "Content-Type": "application/json",
+    "Accept-Encoding": "gzip",
+    "User-Agent": n,
+    Host: O,
+    "passport-sdk-version": "203266",
     "sdk-version": "2",
-    "X-Tt-Token": qsyyapp[J].token,
-    "x-vc-bdturing-sdk-version": "3.6.1.cn"
+    "X-SS-REQ-TICKET": C,
+    "x-tt-store-region": "cn-ha",
+    "x-tt-store-region-src": "uid",
+    "X-Tt-Token": dyjsbapp[z].token,
+    "x-vc-bdturing-sdk-version": "3.7.3.cn"
   };
-  const L = {};
-  L.url = g;
-  L.headers = p;
-  let b = L;
-  if (l) {
-    b.body = l;
-    b.headers["X-SS-STUB"] = MD5_Encrypt(l).toUpperCase();
+  const k = {
+    url: b,
+    headers: X
+  };
+  let u = k;
+  if (r) {
+    u.body = r;
+    u.headers["X-SS-STUB"] = MD5_Encrypt(r).toUpperCase();
   }
-  await getSixGodHeader(J, g, b.headers);
-  let U = requestSigns[J];
-  if (U.length < 200) {
-    if (U.indexOf("unable to find process with name") != -1) {
-      $.log("[账号" + (J + 1 < 10 ? "0" + (J + 1) : J + 1) + "]: 签名获取失败原因=> 请检查签名APP是否已启动");
+  await getSixGodHeader(z, b, u.headers);
+  let j = requestSigns[z];
+  if (j.length < 200) {
+    if (j.indexOf("unable to find process with name") != -1) {
+      $.log("[账号" + (z + 1 < 10 ? "0" + (z + 1) : z + 1) + "]: 签名获取失败原因=> 请检查签名APP是否已启动");
     } else {
-      if (U.indexOf("unable to connect to remote frida-server") != -1) {
-        $.log("[账号" + (J + 1 < 10 ? "0" + (J + 1) : J + 1) + "]: 签名获取失败原因=> 请检查是否映射成功");
+      if (j.indexOf("unable to connect to remote frida-server") != -1) {
+        $.log("[账号" + (z + 1 < 10 ? "0" + (z + 1) : z + 1) + "]: 签名获取失败原因=> 请检查是否映射成功");
       } else {
-        $.log("[账号" + (J + 1 < 10 ? "0" + (J + 1) : J + 1) + "]: 签名获取失败原因=> " + U);
+        $.log("[账号" + (z + 1 < 10 ? "0" + (z + 1) : z + 1) + "]: 签名获取失败原因=> " + j);
       }
     }
   }
-  if (U && U != "Internal Server Error") {
-    const Q = convertStringToJson(U);
-    b.headers["X-Argus"] = Q["X-Argus"];
-    b.headers["X-Gorgon"] = Q["X-Gorgon"];
-    Q["X-Gorgon"] == undefined && (signSwitchs[J] = 0);
-    b.headers["X-Helios"] = Q["X-Helios"];
-    b.headers["X-Khronos"] = Q["X-Khronos"];
-    b.headers["X-Ladon"] = Q["X-Ladon"];
-    b.headers["X-Medusa"] = Q["X-Medusa"];
-    let z = qsyyapp[J].token.substring(2, 34);
-    b.headers.Cookie = "sessionid=" + z + "; sessionid_ss=" + z;
+  if (j && j != "Internal Server Error") {
+    const Z = convertStringToJson(j);
+    u.headers["X-Argus"] = Z["X-Argus"];
+    u.headers["X-Gorgon"] = Z["X-Gorgon"];
+    if (Z["X-Gorgon"] == undefined) {
+      signSwitchs[z] = 0;
+    }
+    u.headers["X-Helios"] = Z["X-Helios"];
+    u.headers["X-Khronos"] = Z["X-Khronos"];
+    u.headers["X-Ladon"] = Z["X-Ladon"];
+    u.headers["X-Medusa"] = Z["X-Medusa"];
+    let S = dyjsbapp[z].token.substring(2, 34);
+    u.headers.Cookie = "sessionid=" + S + "; sessionid_ss=" + S;
   } else {
-    signSwitchs[J] = 0;
+    signSwitchs[z] = 0;
   }
-  requestObjects[J] = b;
-  return b;
+  requestObjects[z] = u;
+  return u;
 }
-function getReqObject_(g, l, J) {
-  let O = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
-  if (qsyyapp[J].ua && qsyyapp[J].ua != "") {
-    O = qsyyapp[J].ua;
+function getReqObject_(b, r, z) {
+  let n = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
+  if (dyjsbapp[z].ua && dyjsbapp[z].ua != "") {
+    n = dyjsbapp[z].ua;
   }
-  let Z = getHostname(g);
-  const A = {
+  let O = getHostname(b);
+  const C = {
     "Content-Type": "application/x-www-form-urlencoded",
-    "User-Agent": O,
-    Authorization: qsyyapp[J].auth,
-    Host: Z
+    "User-Agent": n,
+    Authorization: dyjsbapp[z].auth,
+    Host: O
   };
-  const p = {
-    url: g,
-    headers: A
+  const X = {
+    url: b,
+    headers: C
   };
-  if (l) {
-    p.body = l;
-  }
-  requestObjects[J] = p;
-  return p;
+  r && (X.body = r);
+  requestObjects[z] = X;
+  return X;
 }
-async function httpRequest(X, D, g) {
+async function httpRequest(I, G, b) {
   httpResult = null;
-  return new Promise(J => {
-    $[X](D, async (Z, A, p) => {
+  return new Promise(z => {
+    $[I](G, async (O, C, X) => {
       try {
-        if (Z) {
-          $.log(g + ": " + X + "请求失败");
-          $.log(JSON.stringify(Z));
-          $.logErr(Z);
+        if (O) {
+          $.log(b + ": " + I + "请求失败");
+          $.log(JSON.stringify(O));
+          $.logErr(O);
         } else {
-          if (safeGet(p)) {
-            httpResult = JSON.parse(p);
+          if (safeGet(X)) {
+            httpResult = JSON.parse(X);
+            debug == 1 && $.log(httpResult);
           } else {
-            const i = new URL(D.url);
-            $.log(i.pathname + "发起" + X + "请求时，出现错误，请处理");
+            const R = new URL(G.url);
+            $.log(R.pathname + "发起" + I + "请求时，出现错误，请处理");
           }
         }
-      } catch (Q) {
-        $.logErr(Q, A);
+      } catch (i) {
+        $.logErr(i, C);
       } finally {
-        J(httpResult);
+        z(httpResult);
       }
     });
   });
 }
-async function selectChannel(X, D) {
-  if (channels_status[X] == 0) {
-    await getSign_(X, D);
+async function selectChannel(I, G) {
+  if (channels_status[I] == 0) {
+    await getSign_(I, G);
   } else {
-    await getSign(X, D);
+    await getSign(I, G);
   }
 }
-function getSign_(X, D) {
-  return new Promise((l, J) => {
-    function O(Z) {
-      let L = Z.toString("utf8");
-      requestSigns[X] = L;
-      wss[X].removeListener("message", O);
-      l(L);
+function getSign_(I, G) {
+  return new Promise((r, z) => {
+    function O(C) {
+      let u = C.toString("utf8");
+      requestSigns[I] = u;
+      wss[I].removeListener("message", O);
+      r(u);
     }
-    wss[X].on("message", O);
-    if (wss[X].readyState === 1) {
-      const Z = {
+    wss[I].on("message", O);
+    if (wss[I].readyState === 1) {
+      const C = {
         method: appName,
         params: {}
       };
-      Z.params.content = D;
-      Z.params.appName = appName;
-      Z.params.uuid = userId;
-      wss[X].send(JSON.stringify(Z), A => {
-        if (A) {
-          J(A);
-        }
+      C.params.content = G;
+      C.params.appName = appName;
+      C.params.uuid = userId;
+      wss[I].send(JSON.stringify(C), X => {
+        X && z(X);
       });
     } else {
-      l(getSign(X, D));
-      wss[X].removeListener("message", O);
+      r(getSign(I, G));
+      wss[I].removeListener("message", O);
     }
   });
 }
-function getSign(X, D) {
-  return new Promise((l, J) => {
-    const O = apiHost + "/sign/qsyy/six",
-      Z = {
-        content: D,
+function getSign(I, G) {
+  return new Promise((r, z) => {
+    const A = apiHost + "/sign/dyjsb/six",
+      n = {
+        content: G,
         appName: appName,
         uuid: userId
       };
-    const p = {
+    const C = {
       "Content-Type": "application/json",
       accept: "application/json"
     };
-    const L = {
-      url: O,
-      headers: p,
-      body: JSON.stringify(Z)
+    const X = {
+      url: A,
+      headers: C,
+      body: JSON.stringify(n)
     };
-    $.post(L, async (b, U, n) => {
-      const G = n.replace(/\"/g, "");
-      requestSigns[X] = G;
-      l();
+    $.post(X, async (k, u, j) => {
+      const P = j.replace(/\"/g, "");
+      requestSigns[I] = P;
+      r();
     });
   });
 }
-function getCapture(X, D) {
-  return new Promise((l, J) => {
-    const u = apiHost + "/bytes/capture",
-      O = {
-        content: D,
-        appName: appName,
-        uuid: userId
-      };
-    const A = {
-      "Content-Type": "application/json",
-      accept: "application/json"
-    };
-    const p = {
-      url: u,
-      headers: A,
-      body: JSON.stringify(O)
-    };
-    $.post(p, async (L, b, U) => {
-      const C = U.replace(/\"/g, "");
-      requestSigns[X] = C;
-      l();
-    });
+function sortUrlParams(I, G, b) {
+  const z = url2obj(I);
+  G.forEach(O => {
+    delete z[O];
   });
+  Object.assign(z, b);
+  const A = Object.keys(z).sort(),
+    n = A.map(O => O + "=" + z[O]).join("&");
+  return n;
 }
-function sortUrlParams(X, D, g) {
-  const J = url2obj(X);
-  D.forEach(Z => {
-    delete J[Z];
-  });
-  Object.assign(J, g);
-  const u = Object.keys(J).sort(),
-    O = u.map(Z => Z + "=" + J[Z]).join("&");
-  return O;
-}
-function url2obj(D) {
-  D = D.replace(/\"/g, "");
-  var J;
-  var u = {};
-  var O = D.slice(D.indexOf("?") + 1).split("&");
-  for (var Z = 0; Z < O.length; Z++) {
-    J = O[Z].split("=");
-    u[J[0]] = J[1];
+function url2obj(I) {
+  I = I.replace(/\"/g, "");
+  var b;
+  var r = {};
+  var z = I.slice(I.indexOf("?") + 1).split("&");
+  for (var A = 0; A < z.length; A++) {
+    b = z[A].split("=");
+    r[b[0]] = b[1];
   }
-  return u;
+  return r;
 }
-function updateURLParameter(X, D, g) {
-  var l = new URL(X);
-  l.searchParams.set(D, g);
-  return l.toString();
+function updateURLParameter(I, G, b) {
+  var r = new URL(I);
+  r.searchParams.set(G, b);
+  return r.toString();
 }
-function convertStringToJson(D) {
-  const J = D.replace(/[{} ]/g, ""),
-    u = J.split(",");
-  const O = {};
-  u.forEach(Z => {
-    const A = Z.split(/=(.*)/),
-      [p, L] = A;
-    O[p] = L;
+function convertStringToJson(I) {
+  const b = I.replace(/[{} ]/g, ""),
+    r = b.split(",");
+  const z = {};
+  r.forEach(A => {
+    const C = A.split(/=(.*)/),
+      [X, k] = C;
+    z[X] = k;
   });
-  return O;
+  return z;
 }
-function getHostname(D) {
-  let J = D.substr(D.indexOf("//") + 2),
-    u = J.substr(0, J.indexOf("/"));
-  let O = "",
-    Z = u.indexOf(":");
-  if (Z > 0) {
-    O = u.substr(0, Z);
+function getHostname(I) {
+  let b = I.substr(I.indexOf("//") + 2);
+  let r = b.substr(0, b.indexOf("/")),
+    z = "",
+    A = r.indexOf(":");
+  if (A > 0) {
+    z = r.substr(0, A);
   } else {
-    O = u;
+    z = r;
   }
-  return O;
+  return z;
 }
-function calculateTimeDifference(D, g) {
-  var L = new Date(D);
-  var p = new Date(g);
-  var Z = p - L;
-  var A = Math.floor(Z / 1000);
-  return A;
+function calculateTimeDifference(G, b) {
+  var X = new Date(G);
+  var C = new Date(b);
+  var O = C - X;
+  var k = Math.floor(O / 1000);
+  return k;
 }
-function cutString(X, D) {
-  if (X.length * 2 <= D) {
-    return X;
+function cutString(G, b) {
+  if (G.length * 2 <= b) {
+    return G;
   }
-  var l = 0,
-    J = "";
-  for (var u = 0; u < X.length; u++) {
-    J = J + X.charAt(u);
-    if (X.charCodeAt(u) > 128) {
-      l = l + 2;
-      if (l >= D) {
-        return J.substring(0, J.length - 1) + "...";
+  var A = 0,
+    n = "";
+  for (var O = 0; O < G.length; O++) {
+    n = n + G.charAt(O);
+    if (G.charCodeAt(O) > 128) {
+      A = A + 2;
+      if (A >= b) {
+        return n.substring(0, n.length - 1) + "...";
       }
     } else {
-      l = l + 1;
-      if (l >= D) {
-        return J.substring(0, J.length - 2) + "...";
+      A = A + 1;
+      if (A >= b) {
+        return n.substring(0, n.length - 2) + "...";
       }
     }
   }
-  return J;
+  return n;
 }
 function printCaller() {
   return new Error().stack.split("\n")[3].split("@")[0];
 }
-function safeGet(D) {
+function safeGet(G) {
   try {
-    if (typeof JSON.parse(D) == "object") {
+    if (typeof JSON.parse(G) == "object") {
       return true;
     }
-  } catch (O) {
-    console.log(O);
+  } catch (n) {
+    console.log(n);
     console.log("服务器访问数据为空，请检查自身设备网络情况");
     return false;
   }
 }
-function jsonToUrl(X) {
-  var g = Object.keys(X).map(function (l) {
-    return encodeURIComponent(l) + "=" + encodeURIComponent(X[l]);
+function jsonToUrl(I) {
+  var b = Object.keys(I).map(function (r) {
+    return encodeURIComponent(r) + "=" + encodeURIComponent(I[r]);
   }).join("&");
-  return g;
+  return b;
 }
-function compileStr(X) {
-  var g = String.fromCharCode(X.charCodeAt(0) + X.length);
-  for (var l = 1; l < X.length; l++) {
-    g += String.fromCharCode(X.charCodeAt(l) + X.charCodeAt(l - 1));
+function compileStr(I) {
+  var b = String.fromCharCode(I.charCodeAt(0) + I.length);
+  for (var r = 1; r < I.length; r++) {
+    b += String.fromCharCode(I.charCodeAt(r) + I.charCodeAt(r - 1));
   }
-  return escape(g);
+  return escape(b);
 }
-function uncompileStr(X) {
-  X = unescape(X);
-  var g = String.fromCharCode(X.charCodeAt(0) - X.length);
-  for (var l = 1; l < X.length; l++) {
-    g += String.fromCharCode(X.charCodeAt(l) - g.charCodeAt(l - 1));
+function uncompileStr(I) {
+  I = unescape(I);
+  var b = String.fromCharCode(I.charCodeAt(0) - I.length);
+  for (var r = 1; r < I.length; r++) {
+    b += String.fromCharCode(I.charCodeAt(r) - b.charCodeAt(r - 1));
   }
-  return g;
+  return b;
 }
-function randomNum(X, D) {
+function randomNum(I, G) {
   switch (arguments.length) {
     case 1:
-      return parseInt(Math.random() * X + 1);
+      return parseInt(Math.random() * I + 1);
       break;
     case 2:
-      return parseInt(Math.random() * (D - X + 1) + X);
+      return parseInt(Math.random() * (G - I + 1) + I);
       break;
     default:
       return 0;
@@ -1135,45 +1163,45 @@ function randomMac() {
   });
 }
 function guid() {
-  function D() {
+  function G() {
     return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
   }
-  return D() + D() + "-" + D() + "-" + D() + "-" + D() + "-" + D() + D() + D();
+  return G() + G() + "-" + G() + "-" + G() + "-" + G() + "-" + G() + G() + G();
 }
-function phone_num(D) {
-  if (D.length == 11) {
-    let J = D.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-    return J;
+function phone_num(I) {
+  if (I.length == 11) {
+    let b = I.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
+    return b;
   } else {
-    return D;
+    return I;
   }
 }
-function txt_api(X) {
-  return new Promise((g, l) => {
-    const u = "https://v1.hitokoto.cn/?c=e",
-      O = {
+function txt_api(I) {
+  return new Promise((b, r) => {
+    const A = "https://v1.hitokoto.cn/?c=e",
+      n = {
         accept: "application/json"
       };
-    const Z = {
-      url: u,
-      headers: O
+    const O = {
+      url: A,
+      headers: n
     };
-    $.get(Z, async (p, L, b) => {
-      let n = JSON.parse(b),
-        C = n.hitokoto;
-      contents[X] = C + " " + C;
-      g();
+    $.get(O, async (X, k, u) => {
+      let j = JSON.parse(u),
+        T = j.hitokoto;
+      contents[I] = T + " " + T;
+      b();
     });
   });
 }
 function getTime_8() {
-  return new Promise((D, g) => {
-    const u = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
-      O = {
-        url: u
+  return new Promise((G, b) => {
+    const z = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
+      A = {
+        url: z
       };
-    $.get(O, async (A, p, L) => {
-      D(L);
+    $.get(A, async (O, C, X) => {
+      G(X);
     });
   });
 }
@@ -1186,621 +1214,613 @@ function ts10() {
 function message() {
   tz == 1 && $.msg($.name, "", $.message);
 }
-async function sendMsg(D) {
+async function sendMsg(I) {
   if (hour == 9 || hour == 12 || hour == 18) {
     if (tz == 1) {
-      if ($.isNode()) {
-        await notify.sendNotify($.name, D);
-      } else {
-        $.msg($.name, "", D);
-      }
+      $.isNode() ? await notify.sendNotify($.name, I) : $.msg($.name, "", I);
     } else {
-      $.log(D);
+      $.log(I);
     }
   }
 }
-async function wxPush(X, D, g) {
-  return new Promise((J, u) => {
-    const A = "https://wxpusher.zjiecode.com/api/send/message",
-      p = {
+async function wxPush(I, G, b) {
+  return new Promise((z, A) => {
+    const O = "https://wxpusher.zjiecode.com/api/send/message",
+      C = {
         appToken: "AT_6BZsE2IyJuVLPp3mcOkKvpoF245GR9xn",
-        content: D,
+        content: G,
         summary: "快手答题余额通知",
         contentType: 1,
-        uids: [g],
+        uids: [b],
         verifyPay: false
       };
-    const b = {
+    const k = {
       "Content-Type": "application/json"
     };
-    const U = {
-      url: A,
-      headers: b,
-      body: JSON.stringify(p)
+    const u = {
+      url: O,
+      headers: k,
+      body: JSON.stringify(C)
     };
-    $.post(U, async (n, C, G) => {
-      J();
+    $.post(u, async (j, T, P) => {
+      z();
     });
   });
 }
-function randomString(X, D) {
-  D = D || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let l = "";
-  for (let J = 0; J < X; J++) {
-    let O = Math.floor(Math.random() * D.length);
-    l += D.substring(O, O + 1);
+function randomString(G, b) {
+  b = b || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let A = "";
+  for (let n = 0; n < G; n++) {
+    let O = Math.floor(Math.random() * b.length);
+    A += b.substring(O, O + 1);
   }
-  return l;
+  return A;
 }
 function MD5_Encrypt(X) {
-  function U(Xz, XV) {
-    return Xz << XV | Xz >>> 32 - XV;
+  function P(IZ, IS) {
+    return IZ << IS | IZ >>> 32 - IS;
   }
-  function Y(Xz, XV) {
-    var Xa, XK, Xx, Xf, XB;
-    Xx = 2147483648 & Xz;
-    Xf = 2147483648 & XV;
-    Xa = 1073741824 & Xz;
-    XK = 1073741824 & XV;
-    XB = (1073741823 & Xz) + (1073741823 & XV);
-    return Xa & XK ? 2147483648 ^ XB ^ Xx ^ Xf : Xa | XK ? 1073741824 & XB ? 3221225472 ^ XB ^ Xx ^ Xf : 1073741824 ^ XB ^ Xx ^ Xf : XB ^ Xx ^ Xf;
+  function R(IZ, IS) {
+    var Iy, IK, Ic, Ia, IH;
+    Ic = 2147483648 & IZ;
+    Ia = 2147483648 & IS;
+    Iy = 1073741824 & IZ;
+    IK = 1073741824 & IS;
+    IH = (1073741823 & IZ) + (1073741823 & IS);
+    return Iy & IK ? 2147483648 ^ IH ^ Ic ^ Ia : Iy | IK ? 1073741824 & IH ? 3221225472 ^ IH ^ Ic ^ Ia : 1073741824 ^ IH ^ Ic ^ Ia : IH ^ Ic ^ Ia;
   }
-  function Q(Xz, XV, XS) {
-    return Xz & XV | ~Xz & XS;
+  function Z(IZ, IS, Iy) {
+    return IZ & IS | ~IZ & Iy;
   }
-  function V(Xz, XV, XS) {
-    return Xz & XS | XV & ~XS;
+  function S(IZ, IS, Iy) {
+    return IZ & Iy | IS & ~Iy;
   }
-  function S(Xz, XV, XS) {
-    return Xz ^ XV ^ XS;
+  function V(IZ, IS, Iy) {
+    return IZ ^ IS ^ Iy;
   }
-  function W(Xz, XV, XS) {
-    return XV ^ (Xz | ~XS);
+  function Q(IZ, IS, Iy) {
+    return IS ^ (IZ | ~Iy);
   }
-  function R(Xz, XV, XS, Xa, XK, Xx, Xf) {
-    Xz = Y(Xz, Y(Y(Q(XV, XS, Xa), XK), Xf));
-    return Y(U(Xz, Xx), XV);
+  function Y(IZ, IS, Iy, IK, Ic, Ia, IH) {
+    IZ = R(IZ, R(R(Z(IS, Iy, IK), Ic), IH));
+    return R(P(IZ, Ia), IS);
   }
-  function P(Xz, XV, XS, Xa, XK, Xx, Xf) {
-    Xz = Y(Xz, Y(Y(V(XV, XS, Xa), XK), Xf));
-    return Y(U(Xz, Xx), XV);
+  function W(IZ, IS, Iy, IK, Ic, Ia, IH) {
+    IZ = R(IZ, R(R(S(IS, Iy, IK), Ic), IH));
+    return R(P(IZ, Ia), IS);
   }
-  function T(Xz, XV, XS, Xa, XK, Xx, Xf) {
-    Xz = Y(Xz, Y(Y(S(XV, XS, Xa), XK), Xf));
-    return Y(U(Xz, Xx), XV);
+  function U(IZ, IS, Iy, IK, Ic, Ia, IH) {
+    IZ = R(IZ, R(R(V(IS, Iy, IK), Ic), IH));
+    return R(P(IZ, Ia), IS);
   }
-  function X0(Xz, XV, XS, Xa, XK, Xx, Xf) {
-    Xz = Y(Xz, Y(Y(W(XV, XS, Xa), XK), Xf));
-    return Y(U(Xz, Xx), XV);
+  function I0(IZ, IS, Iy, IK, Ic, Ia, IH) {
+    IZ = R(IZ, R(R(Q(IS, Iy, IK), Ic), IH));
+    return R(P(IZ, Ia), IS);
   }
-  function X1(Xz) {
-    for (var XS, Xa = Xz.length, XK = Xa + 8, Xx = (XK - XK % 64) / 64, Xf = 16 * (Xx + 1), XB = new Array(Xf - 1), XH = 0, Xs = 0; Xa > Xs;) {
-      XS = (Xs - Xs % 4) / 4;
-      XH = Xs % 4 * 8;
-      XB[XS] = XB[XS] | Xz.charCodeAt(Xs) << XH;
-      Xs++;
+  function I1(IZ) {
+    for (var IS, Iy = IZ.length, IK = Iy + 8, Ic = (IK - IK % 64) / 64, Ia = 16 * (Ic + 1), IH = new Array(Ia - 1), IL = 0, Io = 0; Iy > Io;) {
+      IS = (Io - Io % 4) / 4;
+      IL = Io % 4 * 8;
+      IH[IS] = IH[IS] | IZ.charCodeAt(Io) << IL;
+      Io++;
     }
-    XS = (Xs - Xs % 4) / 4;
-    XH = Xs % 4 * 8;
-    XB[XS] = XB[XS] | 128 << XH;
-    XB[Xf - 2] = Xa << 3;
-    XB[Xf - 1] = Xa >>> 29;
-    return XB;
+    IS = (Io - Io % 4) / 4;
+    IL = Io % 4 * 8;
+    IH[IS] = IH[IS] | 128 << IL;
+    IH[Ia - 2] = Iy << 3;
+    IH[Ia - 1] = Iy >>> 29;
+    return IH;
   }
-  function X2(Xz) {
-    var XS,
-      Xa,
-      XK = "",
-      Xx = "";
-    for (Xa = 0; 3 >= Xa; Xa++) {
-      XS = Xz >>> 8 * Xa & 255;
-      Xx = "0" + XS.toString(16);
-      XK += Xx.substr(Xx.length - 2, 2);
+  function I2(IZ) {
+    var IS,
+      Iy,
+      IK = "",
+      Ic = "";
+    for (Iy = 0; 3 >= Iy; Iy++) {
+      IS = IZ >>> 8 * Iy & 255;
+      Ic = "0" + IS.toString(16);
+      IK += Ic.substr(Ic.length - 2, 2);
     }
-    return XK;
+    return IK;
   }
-  function X3(Xz) {
-    Xz = Xz.replace(/\r\n/g, "\n");
-    for (var XV = "", XS = 0; XS < Xz.length; XS++) {
-      var Xa = Xz.charCodeAt(XS);
-      128 > Xa ? XV += String.fromCharCode(Xa) : Xa > 127 && 2048 > Xa ? (XV += String.fromCharCode(Xa >> 6 | 192), XV += String.fromCharCode(63 & Xa | 128)) : (XV += String.fromCharCode(Xa >> 12 | 224), XV += String.fromCharCode(Xa >> 6 & 63 | 128), XV += String.fromCharCode(63 & Xa | 128));
+  function I3(IZ) {
+    IZ = IZ.replace(/\r\n/g, "\n");
+    for (var Iy = "", IK = 0; IK < IZ.length; IK++) {
+      var Ic = IZ.charCodeAt(IK);
+      128 > Ic ? Iy += String.fromCharCode(Ic) : Ic > 127 && 2048 > Ic ? (Iy += String.fromCharCode(Ic >> 6 | 192), Iy += String.fromCharCode(63 & Ic | 128)) : (Iy += String.fromCharCode(Ic >> 12 | 224), Iy += String.fromCharCode(Ic >> 6 & 63 | 128), Iy += String.fromCharCode(63 & Ic | 128));
     }
-    return XV;
+    return Iy;
   }
-  var X4,
-    X5,
-    X6,
-    X7,
-    X8,
-    X9,
-    XX,
-    XD,
-    Xg,
-    Xl = [],
-    XJ = 7,
-    Xu = 12,
-    XO = 17,
-    XZ = 22,
-    XA = 5,
-    Xp = 9,
-    XL = 14,
-    Xb = 20,
-    XU = 4,
-    Xn = 11,
-    XC = 16,
-    XG = 23,
-    Xe = 6,
-    Xi = 10,
-    XY = 15,
-    Xm = 21;
-  for (X = X3(X), Xl = X1(X), X9 = 1732584193, XX = 4023233417, XD = 2562383102, Xg = 271733878, X4 = 0; X4 < Xl.length; X4 += 16) {
-    X5 = X9;
-    X6 = XX;
-    X7 = XD;
-    X8 = Xg;
-    X9 = R(X9, XX, XD, Xg, Xl[X4 + 0], XJ, 3614090360);
-    Xg = R(Xg, X9, XX, XD, Xl[X4 + 1], Xu, 3905402710);
-    XD = R(XD, Xg, X9, XX, Xl[X4 + 2], XO, 606105819);
-    XX = R(XX, XD, Xg, X9, Xl[X4 + 3], XZ, 3250441966);
-    X9 = R(X9, XX, XD, Xg, Xl[X4 + 4], XJ, 4118548399);
-    Xg = R(Xg, X9, XX, XD, Xl[X4 + 5], Xu, 1200080426);
-    XD = R(XD, Xg, X9, XX, Xl[X4 + 6], XO, 2821735955);
-    XX = R(XX, XD, Xg, X9, Xl[X4 + 7], XZ, 4249261313);
-    X9 = R(X9, XX, XD, Xg, Xl[X4 + 8], XJ, 1770035416);
-    Xg = R(Xg, X9, XX, XD, Xl[X4 + 9], Xu, 2336552879);
-    XD = R(XD, Xg, X9, XX, Xl[X4 + 10], XO, 4294925233);
-    XX = R(XX, XD, Xg, X9, Xl[X4 + 11], XZ, 2304563134);
-    X9 = R(X9, XX, XD, Xg, Xl[X4 + 12], XJ, 1804603682);
-    Xg = R(Xg, X9, XX, XD, Xl[X4 + 13], Xu, 4254626195);
-    XD = R(XD, Xg, X9, XX, Xl[X4 + 14], XO, 2792965006);
-    XX = R(XX, XD, Xg, X9, Xl[X4 + 15], XZ, 1236535329);
-    X9 = P(X9, XX, XD, Xg, Xl[X4 + 1], XA, 4129170786);
-    Xg = P(Xg, X9, XX, XD, Xl[X4 + 6], Xp, 3225465664);
-    XD = P(XD, Xg, X9, XX, Xl[X4 + 11], XL, 643717713);
-    XX = P(XX, XD, Xg, X9, Xl[X4 + 0], Xb, 3921069994);
-    X9 = P(X9, XX, XD, Xg, Xl[X4 + 5], XA, 3593408605);
-    Xg = P(Xg, X9, XX, XD, Xl[X4 + 10], Xp, 38016083);
-    XD = P(XD, Xg, X9, XX, Xl[X4 + 15], XL, 3634488961);
-    XX = P(XX, XD, Xg, X9, Xl[X4 + 4], Xb, 3889429448);
-    X9 = P(X9, XX, XD, Xg, Xl[X4 + 9], XA, 568446438);
-    Xg = P(Xg, X9, XX, XD, Xl[X4 + 14], Xp, 3275163606);
-    XD = P(XD, Xg, X9, XX, Xl[X4 + 3], XL, 4107603335);
-    XX = P(XX, XD, Xg, X9, Xl[X4 + 8], Xb, 1163531501);
-    X9 = P(X9, XX, XD, Xg, Xl[X4 + 13], XA, 2850285829);
-    Xg = P(Xg, X9, XX, XD, Xl[X4 + 2], Xp, 4243563512);
-    XD = P(XD, Xg, X9, XX, Xl[X4 + 7], XL, 1735328473);
-    XX = P(XX, XD, Xg, X9, Xl[X4 + 12], Xb, 2368359562);
-    X9 = T(X9, XX, XD, Xg, Xl[X4 + 5], XU, 4294588738);
-    Xg = T(Xg, X9, XX, XD, Xl[X4 + 8], Xn, 2272392833);
-    XD = T(XD, Xg, X9, XX, Xl[X4 + 11], XC, 1839030562);
-    XX = T(XX, XD, Xg, X9, Xl[X4 + 14], XG, 4259657740);
-    X9 = T(X9, XX, XD, Xg, Xl[X4 + 1], XU, 2763975236);
-    Xg = T(Xg, X9, XX, XD, Xl[X4 + 4], Xn, 1272893353);
-    XD = T(XD, Xg, X9, XX, Xl[X4 + 7], XC, 4139469664);
-    XX = T(XX, XD, Xg, X9, Xl[X4 + 10], XG, 3200236656);
-    X9 = T(X9, XX, XD, Xg, Xl[X4 + 13], XU, 681279174);
-    Xg = T(Xg, X9, XX, XD, Xl[X4 + 0], Xn, 3936430074);
-    XD = T(XD, Xg, X9, XX, Xl[X4 + 3], XC, 3572445317);
-    XX = T(XX, XD, Xg, X9, Xl[X4 + 6], XG, 76029189);
-    X9 = T(X9, XX, XD, Xg, Xl[X4 + 9], XU, 3654602809);
-    Xg = T(Xg, X9, XX, XD, Xl[X4 + 12], Xn, 3873151461);
-    XD = T(XD, Xg, X9, XX, Xl[X4 + 15], XC, 530742520);
-    XX = T(XX, XD, Xg, X9, Xl[X4 + 2], XG, 3299628645);
-    X9 = X0(X9, XX, XD, Xg, Xl[X4 + 0], Xe, 4096336452);
-    Xg = X0(Xg, X9, XX, XD, Xl[X4 + 7], Xi, 1126891415);
-    XD = X0(XD, Xg, X9, XX, Xl[X4 + 14], XY, 2878612391);
-    XX = X0(XX, XD, Xg, X9, Xl[X4 + 5], Xm, 4237533241);
-    X9 = X0(X9, XX, XD, Xg, Xl[X4 + 12], Xe, 1700485571);
-    Xg = X0(Xg, X9, XX, XD, Xl[X4 + 3], Xi, 2399980690);
-    XD = X0(XD, Xg, X9, XX, Xl[X4 + 10], XY, 4293915773);
-    XX = X0(XX, XD, Xg, X9, Xl[X4 + 1], Xm, 2240044497);
-    X9 = X0(X9, XX, XD, Xg, Xl[X4 + 8], Xe, 1873313359);
-    Xg = X0(Xg, X9, XX, XD, Xl[X4 + 15], Xi, 4264355552);
-    XD = X0(XD, Xg, X9, XX, Xl[X4 + 6], XY, 2734768916);
-    XX = X0(XX, XD, Xg, X9, Xl[X4 + 13], Xm, 1309151649);
-    X9 = X0(X9, XX, XD, Xg, Xl[X4 + 4], Xe, 4149444226);
-    Xg = X0(Xg, X9, XX, XD, Xl[X4 + 11], Xi, 3174756917);
-    XD = X0(XD, Xg, X9, XX, Xl[X4 + 2], XY, 718787259);
-    XX = X0(XX, XD, Xg, X9, Xl[X4 + 9], Xm, 3951481745);
-    X9 = Y(X9, X5);
-    XX = Y(XX, X6);
-    XD = Y(XD, X7);
-    Xg = Y(Xg, X8);
+  var I4,
+    I5,
+    I6,
+    I7,
+    I8,
+    I9,
+    II,
+    IG,
+    Ib,
+    Ir = [],
+    Iz = 7,
+    IA = 12,
+    In = 17,
+    IO = 22,
+    IC = 5,
+    IX = 9,
+    Ik = 14,
+    Iu = 20,
+    Ij = 4,
+    IT = 11,
+    IP = 16,
+    IM = 23,
+    IR = 6,
+    It = 10,
+    Il = 15,
+    Ii = 21;
+  for (X = I3(X), Ir = I1(X), I9 = 1732584193, II = 4023233417, IG = 2562383102, Ib = 271733878, I4 = 0; I4 < Ir.length; I4 += 16) {
+    I5 = I9;
+    I6 = II;
+    I7 = IG;
+    I8 = Ib;
+    I9 = Y(I9, II, IG, Ib, Ir[I4 + 0], Iz, 3614090360);
+    Ib = Y(Ib, I9, II, IG, Ir[I4 + 1], IA, 3905402710);
+    IG = Y(IG, Ib, I9, II, Ir[I4 + 2], In, 606105819);
+    II = Y(II, IG, Ib, I9, Ir[I4 + 3], IO, 3250441966);
+    I9 = Y(I9, II, IG, Ib, Ir[I4 + 4], Iz, 4118548399);
+    Ib = Y(Ib, I9, II, IG, Ir[I4 + 5], IA, 1200080426);
+    IG = Y(IG, Ib, I9, II, Ir[I4 + 6], In, 2821735955);
+    II = Y(II, IG, Ib, I9, Ir[I4 + 7], IO, 4249261313);
+    I9 = Y(I9, II, IG, Ib, Ir[I4 + 8], Iz, 1770035416);
+    Ib = Y(Ib, I9, II, IG, Ir[I4 + 9], IA, 2336552879);
+    IG = Y(IG, Ib, I9, II, Ir[I4 + 10], In, 4294925233);
+    II = Y(II, IG, Ib, I9, Ir[I4 + 11], IO, 2304563134);
+    I9 = Y(I9, II, IG, Ib, Ir[I4 + 12], Iz, 1804603682);
+    Ib = Y(Ib, I9, II, IG, Ir[I4 + 13], IA, 4254626195);
+    IG = Y(IG, Ib, I9, II, Ir[I4 + 14], In, 2792965006);
+    II = Y(II, IG, Ib, I9, Ir[I4 + 15], IO, 1236535329);
+    I9 = W(I9, II, IG, Ib, Ir[I4 + 1], IC, 4129170786);
+    Ib = W(Ib, I9, II, IG, Ir[I4 + 6], IX, 3225465664);
+    IG = W(IG, Ib, I9, II, Ir[I4 + 11], Ik, 643717713);
+    II = W(II, IG, Ib, I9, Ir[I4 + 0], Iu, 3921069994);
+    I9 = W(I9, II, IG, Ib, Ir[I4 + 5], IC, 3593408605);
+    Ib = W(Ib, I9, II, IG, Ir[I4 + 10], IX, 38016083);
+    IG = W(IG, Ib, I9, II, Ir[I4 + 15], Ik, 3634488961);
+    II = W(II, IG, Ib, I9, Ir[I4 + 4], Iu, 3889429448);
+    I9 = W(I9, II, IG, Ib, Ir[I4 + 9], IC, 568446438);
+    Ib = W(Ib, I9, II, IG, Ir[I4 + 14], IX, 3275163606);
+    IG = W(IG, Ib, I9, II, Ir[I4 + 3], Ik, 4107603335);
+    II = W(II, IG, Ib, I9, Ir[I4 + 8], Iu, 1163531501);
+    I9 = W(I9, II, IG, Ib, Ir[I4 + 13], IC, 2850285829);
+    Ib = W(Ib, I9, II, IG, Ir[I4 + 2], IX, 4243563512);
+    IG = W(IG, Ib, I9, II, Ir[I4 + 7], Ik, 1735328473);
+    II = W(II, IG, Ib, I9, Ir[I4 + 12], Iu, 2368359562);
+    I9 = U(I9, II, IG, Ib, Ir[I4 + 5], Ij, 4294588738);
+    Ib = U(Ib, I9, II, IG, Ir[I4 + 8], IT, 2272392833);
+    IG = U(IG, Ib, I9, II, Ir[I4 + 11], IP, 1839030562);
+    II = U(II, IG, Ib, I9, Ir[I4 + 14], IM, 4259657740);
+    I9 = U(I9, II, IG, Ib, Ir[I4 + 1], Ij, 2763975236);
+    Ib = U(Ib, I9, II, IG, Ir[I4 + 4], IT, 1272893353);
+    IG = U(IG, Ib, I9, II, Ir[I4 + 7], IP, 4139469664);
+    II = U(II, IG, Ib, I9, Ir[I4 + 10], IM, 3200236656);
+    I9 = U(I9, II, IG, Ib, Ir[I4 + 13], Ij, 681279174);
+    Ib = U(Ib, I9, II, IG, Ir[I4 + 0], IT, 3936430074);
+    IG = U(IG, Ib, I9, II, Ir[I4 + 3], IP, 3572445317);
+    II = U(II, IG, Ib, I9, Ir[I4 + 6], IM, 76029189);
+    I9 = U(I9, II, IG, Ib, Ir[I4 + 9], Ij, 3654602809);
+    Ib = U(Ib, I9, II, IG, Ir[I4 + 12], IT, 3873151461);
+    IG = U(IG, Ib, I9, II, Ir[I4 + 15], IP, 530742520);
+    II = U(II, IG, Ib, I9, Ir[I4 + 2], IM, 3299628645);
+    I9 = I0(I9, II, IG, Ib, Ir[I4 + 0], IR, 4096336452);
+    Ib = I0(Ib, I9, II, IG, Ir[I4 + 7], It, 1126891415);
+    IG = I0(IG, Ib, I9, II, Ir[I4 + 14], Il, 2878612391);
+    II = I0(II, IG, Ib, I9, Ir[I4 + 5], Ii, 4237533241);
+    I9 = I0(I9, II, IG, Ib, Ir[I4 + 12], IR, 1700485571);
+    Ib = I0(Ib, I9, II, IG, Ir[I4 + 3], It, 2399980690);
+    IG = I0(IG, Ib, I9, II, Ir[I4 + 10], Il, 4293915773);
+    II = I0(II, IG, Ib, I9, Ir[I4 + 1], Ii, 2240044497);
+    I9 = I0(I9, II, IG, Ib, Ir[I4 + 8], IR, 1873313359);
+    Ib = I0(Ib, I9, II, IG, Ir[I4 + 15], It, 4264355552);
+    IG = I0(IG, Ib, I9, II, Ir[I4 + 6], Il, 2734768916);
+    II = I0(II, IG, Ib, I9, Ir[I4 + 13], Ii, 1309151649);
+    I9 = I0(I9, II, IG, Ib, Ir[I4 + 4], IR, 4149444226);
+    Ib = I0(Ib, I9, II, IG, Ir[I4 + 11], It, 3174756917);
+    IG = I0(IG, Ib, I9, II, Ir[I4 + 2], Il, 718787259);
+    II = I0(II, IG, Ib, I9, Ir[I4 + 9], Ii, 3951481745);
+    I9 = R(I9, I5);
+    II = R(II, I6);
+    IG = R(IG, I7);
+    Ib = R(Ib, I8);
   }
-  var XQ = X2(X9) + X2(XX) + X2(XD) + X2(Xg);
-  return XQ.toLowerCase();
+  var Id = I2(I9) + I2(II) + I2(IG) + I2(Ib);
+  return Id.toLowerCase();
 }
-function SHA256(X) {
-  var g = 8,
-    l = 0;
-  function J(i, Y) {
-    var Q = (i & 65535) + (Y & 65535),
-      z = (i >> 16) + (Y >> 16) + (Q >> 16);
-    return z << 16 | Q & 65535;
+function SHA256(I) {
+  var b = 8;
+  var r = 0;
+  function z(l, i) {
+    var d = (l & 65535) + (i & 65535),
+      Z = (l >> 16) + (i >> 16) + (d >> 16);
+    return Z << 16 | d & 65535;
   }
-  function u(i, Y) {
-    return i >>> Y | i << 32 - Y;
+  function A(l, i) {
+    return l >>> i | l << 32 - i;
   }
-  function O(i, Y) {
-    return i >>> Y;
+  function n(l, i) {
+    return l >>> i;
   }
-  function Z(i, Y, m) {
-    return i & Y ^ ~i & m;
+  function O(l, i, d) {
+    return l & i ^ ~l & d;
   }
-  function A(i, Y, m) {
-    return i & Y ^ i & m ^ Y & m;
+  function C(l, i, d) {
+    return l & i ^ l & d ^ i & d;
   }
-  function p(i) {
-    return u(i, 2) ^ u(i, 13) ^ u(i, 22);
+  function X(l) {
+    return A(l, 2) ^ A(l, 13) ^ A(l, 22);
   }
-  function L(i) {
-    return u(i, 6) ^ u(i, 11) ^ u(i, 25);
+  function k(l) {
+    return A(l, 6) ^ A(l, 11) ^ A(l, 25);
   }
-  function b(i) {
-    return u(i, 7) ^ u(i, 18) ^ O(i, 3);
+  function u(l) {
+    return A(l, 7) ^ A(l, 18) ^ n(l, 3);
   }
-  function U(i) {
-    return u(i, 17) ^ u(i, 19) ^ O(i, 10);
+  function j(l) {
+    return A(l, 17) ^ A(l, 19) ^ n(l, 10);
   }
-  function n(Y, Q) {
-    var V = new Array(1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298),
-      x = new Array(1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225),
+  function T(Z, y) {
+    var L = new Array(1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298),
+      o = new Array(1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225),
       B = new Array(64),
-      H,
       v,
-      E,
-      o,
-      k,
-      q,
-      I,
-      M,
-      y,
-      F,
+      V,
+      x,
+      p,
+      D,
       w,
-      r;
-    Y[Q >> 5] |= 128 << 24 - Q % 32;
-    Y[(Q + 64 >> 9 << 4) + 15] = Q;
-    for (var y = 0; y < Y.length; y += 16) {
-      H = x[0];
-      v = x[1];
-      E = x[2];
-      o = x[3];
-      k = x[4];
-      q = x[5];
-      I = x[6];
-      M = x[7];
-      for (var F = 0; F < 64; F++) {
-        if (F < 16) {
-          B[F] = Y[F + y];
+      F,
+      Q,
+      q,
+      Y,
+      J,
+      N;
+    Z[y >> 5] |= 128 << 24 - y % 32;
+    Z[(y + 64 >> 9 << 4) + 15] = y;
+    for (var q = 0; q < Z.length; q += 16) {
+      v = o[0];
+      V = o[1];
+      x = o[2];
+      p = o[3];
+      D = o[4];
+      w = o[5];
+      F = o[6];
+      Q = o[7];
+      for (var Y = 0; Y < 64; Y++) {
+        if (Y < 16) {
+          B[Y] = Z[Y + q];
         } else {
-          B[F] = J(J(J(U(B[F - 2]), B[F - 7]), b(B[F - 15])), B[F - 16]);
+          B[Y] = z(z(z(j(B[Y - 2]), B[Y - 7]), u(B[Y - 15])), B[Y - 16]);
         }
-        w = J(J(J(J(M, L(k)), Z(k, q, I)), V[F]), B[F]);
-        r = J(p(H), A(H, v, E));
-        M = I;
-        I = q;
-        q = k;
-        k = J(o, w);
-        o = E;
-        E = v;
-        v = H;
-        H = J(w, r);
+        J = z(z(z(z(Q, k(D)), O(D, w, F)), L[Y]), B[Y]);
+        N = z(X(v), C(v, V, x));
+        Q = F;
+        F = w;
+        w = D;
+        D = z(p, J);
+        p = x;
+        x = V;
+        V = v;
+        v = z(J, N);
       }
-      x[0] = J(H, x[0]);
-      x[1] = J(v, x[1]);
-      x[2] = J(E, x[2]);
-      x[3] = J(o, x[3]);
-      x[4] = J(k, x[4]);
-      x[5] = J(q, x[5]);
-      x[6] = J(I, x[6]);
-      x[7] = J(M, x[7]);
+      o[0] = z(v, o[0]);
+      o[1] = z(V, o[1]);
+      o[2] = z(x, o[2]);
+      o[3] = z(p, o[3]);
+      o[4] = z(D, o[4]);
+      o[5] = z(w, o[5]);
+      o[6] = z(F, o[6]);
+      o[7] = z(Q, o[7]);
     }
-    return x;
+    return o;
   }
-  function C(Y) {
-    var m = Array(),
-      Q = (1 << g) - 1;
-    for (var z = 0; z < Y.length * g; z += g) {
-      m[z >> 5] |= (Y.charCodeAt(z / g) & Q) << 24 - z % 32;
+  function P(l) {
+    var d = Array(),
+      Z = (1 << b) - 1;
+    for (var y = 0; y < l.length * b; y += b) {
+      d[y >> 5] |= (l.charCodeAt(y / b) & Z) << 24 - y % 32;
     }
-    return m;
+    return d;
   }
-  function G(i) {
-    i = i.replace(/\r\n/g, "\n");
-    var m = "";
-    for (var Q = 0; Q < i.length; Q++) {
-      var z = i.charCodeAt(Q);
-      if (z < 128) {
-        m += String.fromCharCode(z);
+  function M(l) {
+    l = l.replace(/\r\n/g, "\n");
+    var d = "";
+    for (var Z = 0; Z < l.length; Z++) {
+      var y = l.charCodeAt(Z);
+      if (y < 128) {
+        d += String.fromCharCode(y);
       } else {
-        if (z > 127 && z < 2048) {
-          m += String.fromCharCode(z >> 6 | 192);
-          m += String.fromCharCode(z & 63 | 128);
+        if (y > 127 && y < 2048) {
+          d += String.fromCharCode(y >> 6 | 192);
+          d += String.fromCharCode(y & 63 | 128);
         } else {
-          m += String.fromCharCode(z >> 12 | 224);
-          m += String.fromCharCode(z >> 6 & 63 | 128);
-          m += String.fromCharCode(z & 63 | 128);
+          d += String.fromCharCode(y >> 12 | 224);
+          d += String.fromCharCode(y >> 6 & 63 | 128);
+          d += String.fromCharCode(y & 63 | 128);
         }
       }
     }
-    return m;
+    return d;
   }
-  function e(Y) {
-    var m = l ? "0123456789ABCDEF" : "0123456789abcdef",
-      Q = "";
-    for (var z = 0; z < Y.length * 4; z++) {
-      Q += m.charAt(Y[z >> 2] >> (3 - z % 4) * 8 + 4 & 15) + m.charAt(Y[z >> 2] >> (3 - z % 4) * 8 & 15);
+  function t(l) {
+    var d = r ? "0123456789ABCDEF" : "0123456789abcdef",
+      Z = "";
+    for (var y = 0; y < l.length * 4; y++) {
+      Z += d.charAt(l[y >> 2] >> (3 - y % 4) * 8 + 4 & 15) + d.charAt(l[y >> 2] >> (3 - y % 4) * 8 & 15);
     }
-    return Q;
+    return Z;
   }
-  X = G(X);
-  return e(n(C(X), X.length * g));
+  I = M(I);
+  return t(T(P(I), I.length * b));
 }
-function SHA1(X) {
-  function l(f, H) {
-    var c = f << H | f >>> 32 - H;
-    return c;
+function SHA1(I) {
+  function b(H, L) {
+    var o = H << L | H >>> 32 - L;
+    return o;
   }
-  function J(f) {
-    var s = "",
+  function r(H) {
+    var L = "",
+      o,
       v,
-      c,
-      o;
-    for (v = 0; v <= 6; v += 2) {
-      c = f >>> v * 4 + 4 & 15;
-      o = f >>> v * 4 & 15;
-      s += c.toString(16) + o.toString(16);
+      V;
+    for (o = 0; o <= 6; o += 2) {
+      v = H >>> o * 4 + 4 & 15;
+      V = H >>> o * 4 & 15;
+      L += v.toString(16) + V.toString(16);
     }
-    return s;
+    return L;
   }
-  function u(f) {
-    var H = "",
-      s,
-      c;
-    for (s = 7; s >= 0; s--) {
-      c = f >>> s * 4 & 15;
-      H += c.toString(16);
+  function z(H) {
+    var L = "",
+      o,
+      V;
+    for (o = 7; o >= 0; o--) {
+      V = H >>> o * 4 & 15;
+      L += V.toString(16);
     }
-    return H;
+    return L;
   }
-  function O(f) {
-    f = f.replace(/\r\n/g, "\n");
-    var s = "";
-    for (var v = 0; v < f.length; v++) {
-      var o = f.charCodeAt(v);
-      if (o < 128) {
-        s += String.fromCharCode(o);
+  function n(H) {
+    H = H.replace(/\r\n/g, "\n");
+    var o = "";
+    for (var v = 0; v < H.length; v++) {
+      var V = H.charCodeAt(v);
+      if (V < 128) {
+        o += String.fromCharCode(V);
       } else {
-        if (o > 127 && o < 2048) {
-          s += String.fromCharCode(o >> 6 | 192);
-          s += String.fromCharCode(o & 63 | 128);
-        } else {
-          s += String.fromCharCode(o >> 12 | 224);
-          s += String.fromCharCode(o >> 6 & 63 | 128);
-          s += String.fromCharCode(o & 63 | 128);
-        }
+        V > 127 && V < 2048 ? (o += String.fromCharCode(V >> 6 | 192), o += String.fromCharCode(V & 63 | 128)) : (o += String.fromCharCode(V >> 12 | 224), o += String.fromCharCode(V >> 6 & 63 | 128), o += String.fromCharCode(V & 63 | 128));
       }
     }
-    return s;
+    return o;
   }
-  var Z,
-    p,
-    L,
-    b = new Array(80);
-  var U = 1732584193,
-    n = 4023233417,
-    G = 2562383102,
-    e = 271733878,
-    Y = 3285377520;
-  var m, Q, z, V, S, a;
-  X = O(X);
-  var K = X.length,
-    x = new Array();
-  for (p = 0; p < K - 3; p += 4) {
-    L = X.charCodeAt(p) << 24 | X.charCodeAt(p + 1 < 10 ? "0" + (p + 1) : p + 1) << 16 | X.charCodeAt(p + 2) << 8 | X.charCodeAt(p + 3);
-    x.push(L);
+  var O,
+    X,
+    k,
+    u = new Array(80),
+    T = 1732584193;
+  var P = 4023233417;
+  var M = 2562383102,
+    R = 271733878;
+  var t = 3285377520,
+    l,
+    d,
+    Z,
+    S,
+    y,
+    K;
+  I = n(I);
+  var c = I.length,
+    a = new Array();
+  for (X = 0; X < c - 3; X += 4) {
+    k = I.charCodeAt(X) << 24 | I.charCodeAt(X + 1 < 10 ? "0" + (X + 1) : X + 1) << 16 | I.charCodeAt(X + 2) << 8 | I.charCodeAt(X + 3);
+    a.push(k);
   }
-  switch (K % 4) {
+  switch (c % 4) {
     case 0:
-      p = 2147483648;
+      X = 2147483648;
       break;
     case 1:
-      p = X.charCodeAt(K - 1) << 24 | 8388608;
+      X = I.charCodeAt(c - 1) << 24 | 8388608;
       break;
     case 2:
-      p = X.charCodeAt(K - 2) << 24 | X.charCodeAt(K - 1) << 16 | 32768;
+      X = I.charCodeAt(c - 2) << 24 | I.charCodeAt(c - 1) << 16 | 32768;
       break;
     case 3:
-      p = X.charCodeAt(K - 3) << 24 | X.charCodeAt(K - 2) << 16 | X.charCodeAt(K - 1) << 8 | 128;
+      X = I.charCodeAt(c - 3) << 24 | I.charCodeAt(c - 2) << 16 | I.charCodeAt(c - 1) << 8 | 128;
       break;
   }
-  x.push(p);
-  while (x.length % 16 != 14) {
-    x.push(0);
+  a.push(X);
+  while (a.length % 16 != 14) {
+    a.push(0);
   }
-  x.push(K >>> 29);
-  x.push(K << 3 & 4294967295);
-  for (Z = 0; Z < x.length; Z += 16) {
-    for (p = 0; p < 16; p++) {
-      b[p] = x[Z + p];
+  a.push(c >>> 29);
+  a.push(c << 3 & 4294967295);
+  for (O = 0; O < a.length; O += 16) {
+    for (X = 0; X < 16; X++) {
+      u[X] = a[O + X];
     }
-    for (p = 16; p <= 79; p++) {
-      b[p] = l(b[p - 3] ^ b[p - 8] ^ b[p - 14] ^ b[p - 16], 1);
+    for (X = 16; X <= 79; X++) {
+      u[X] = b(u[X - 3] ^ u[X - 8] ^ u[X - 14] ^ u[X - 16], 1);
     }
-    m = U;
-    Q = n;
-    z = G;
-    V = e;
-    S = Y;
-    for (p = 0; p <= 19; p++) {
-      a = l(m, 5) + (Q & z | ~Q & V) + S + b[p] + 1518500249 & 4294967295;
-      S = V;
-      V = z;
-      z = l(Q, 30);
-      Q = m;
-      m = a;
+    l = T;
+    d = P;
+    Z = M;
+    S = R;
+    y = t;
+    for (X = 0; X <= 19; X++) {
+      K = b(l, 5) + (d & Z | ~d & S) + y + u[X] + 1518500249 & 4294967295;
+      y = S;
+      S = Z;
+      Z = b(d, 30);
+      d = l;
+      l = K;
     }
-    for (p = 20; p <= 39; p++) {
-      a = l(m, 5) + (Q ^ z ^ V) + S + b[p] + 1859775393 & 4294967295;
-      S = V;
-      V = z;
-      z = l(Q, 30);
-      Q = m;
-      m = a;
+    for (X = 20; X <= 39; X++) {
+      K = b(l, 5) + (d ^ Z ^ S) + y + u[X] + 1859775393 & 4294967295;
+      y = S;
+      S = Z;
+      Z = b(d, 30);
+      d = l;
+      l = K;
     }
-    for (p = 40; p <= 59; p++) {
-      a = l(m, 5) + (Q & z | Q & V | z & V) + S + b[p] + 2400959708 & 4294967295;
-      S = V;
-      V = z;
-      z = l(Q, 30);
-      Q = m;
-      m = a;
+    for (X = 40; X <= 59; X++) {
+      K = b(l, 5) + (d & Z | d & S | Z & S) + y + u[X] + 2400959708 & 4294967295;
+      y = S;
+      S = Z;
+      Z = b(d, 30);
+      d = l;
+      l = K;
     }
-    for (p = 60; p <= 79; p++) {
-      a = l(m, 5) + (Q ^ z ^ V) + S + b[p] + 3395469782 & 4294967295;
-      S = V;
-      V = z;
-      z = l(Q, 30);
-      Q = m;
-      m = a;
+    for (X = 60; X <= 79; X++) {
+      K = b(l, 5) + (d ^ Z ^ S) + y + u[X] + 3395469782 & 4294967295;
+      y = S;
+      S = Z;
+      Z = b(d, 30);
+      d = l;
+      l = K;
     }
-    U = U + m & 4294967295;
-    n = n + Q & 4294967295;
-    G = G + z & 4294967295;
-    e = e + V & 4294967295;
-    Y = Y + S & 4294967295;
+    T = T + l & 4294967295;
+    P = P + d & 4294967295;
+    M = M + Z & 4294967295;
+    R = R + S & 4294967295;
+    t = t + y & 4294967295;
   }
-  var a = u(U) + u(n) + u(G) + u(e) + u(Y);
-  return a.toLowerCase();
+  var K = z(T) + z(P) + z(M) + z(R) + z(t);
+  return K.toLowerCase();
 }
 function Base64() {
-  var D = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-  this.encode = function (g) {
-    var J = "";
-    var u, O, Z, A, p, L, b;
-    var l = 0;
-    g = utf8Encode(g);
-    while (l < g.length) {
-      u = g.charCodeAt(l++);
-      O = g.charCodeAt(l++);
-      Z = g.charCodeAt(l++);
-      A = u >> 2;
-      p = (u & 3) << 4 | O >> 4;
-      L = (O & 15) << 2 | Z >> 6;
-      b = Z & 63;
-      if (isNaN(O)) {
-        L = b = 64;
-      } else {
-        isNaN(Z) && (b = 64);
-      }
-      J = J + D.charAt(A) + D.charAt(p) + D.charAt(L) + D.charAt(b);
-    }
-    return J;
-  };
-  this.decode = function (g) {
-    var J = "";
-    var u, O, Z;
-    var A, p, L, b;
-    var U = 0;
-    g = g.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-    while (U < g.length) {
-      A = D.indexOf(g.charAt(U++));
-      p = D.indexOf(g.charAt(U++));
-      L = D.indexOf(g.charAt(U++));
-      b = D.indexOf(g.charAt(U++));
-      u = A << 2 | p >> 4;
-      O = (p & 15) << 4 | L >> 2;
-      Z = (L & 3) << 6 | b;
-      J = J + String.fromCharCode(u);
-      L !== 64 && (J = J + String.fromCharCode(O));
-      if (b !== 64) {
-        J = J + String.fromCharCode(Z);
-      }
-    }
-    J = utf8Decode(J);
-    return J;
-  };
-  utf8Encode = function (g) {
-    g = g.replace(/\r\n/g, "\n");
-    var J = "";
-    for (var u = 0; u < g.length; u++) {
-      var O = g.charCodeAt(u);
-      if (O < 128) {
-        J += String.fromCharCode(O);
-      } else {
-        if (O > 127 && O < 2048) {
-          J += String.fromCharCode(O >> 6 | 192);
-          J += String.fromCharCode(O & 63 | 128);
-        } else {
-          J += String.fromCharCode(O >> 12 | 224);
-          J += String.fromCharCode(O >> 6 & 63 | 128);
-          J += String.fromCharCode(O & 63 | 128);
-        }
-      }
-    }
-    return J;
-  };
-  utf8Decode = function (g) {
+  var G = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  this.encode = function (b) {
     var u = "";
-    var Z = 0;
-    var O = 0;
-    var A = 0;
-    var J = 0;
-    while (Z < g.length) {
-      O = g.charCodeAt(Z);
-      if (O < 128) {
-        u += String.fromCharCode(O);
-        Z++;
+    var z, A, n, O, C, X, k;
+    var j = 0;
+    b = utf8Encode(b);
+    while (j < b.length) {
+      z = b.charCodeAt(j++);
+      A = b.charCodeAt(j++);
+      n = b.charCodeAt(j++);
+      O = z >> 2;
+      C = (z & 3) << 4 | A >> 4;
+      X = (A & 15) << 2 | n >> 6;
+      k = n & 63;
+      if (isNaN(A)) {
+        X = k = 64;
       } else {
-        if (O > 191 && O < 224) {
-          A = g.charCodeAt(Z + 1 < 10 ? "0" + (Z + 1) : Z + 1);
-          u += String.fromCharCode((O & 31) << 6 | A & 63);
-          Z += 2;
-        } else {
-          A = g.charCodeAt(Z + 1 < 10 ? "0" + (Z + 1) : Z + 1);
-          J = g.charCodeAt(Z + 2);
-          u += String.fromCharCode((O & 15) << 12 | (A & 63) << 6 | J & 63);
-          Z += 3;
-        }
+        isNaN(n) && (k = 64);
       }
+      u = u + G.charAt(O) + G.charAt(C) + G.charAt(X) + G.charAt(k);
     }
     return u;
   };
-}
-function Env(X, D) {
-  class l {
-    constructor(J) {
-      this.env = J;
+  this.decode = function (b) {
+    var j = "";
+    var z, A, n;
+    var C, X, k, u;
+    var O = 0;
+    b = b.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+    while (O < b.length) {
+      C = G.indexOf(b.charAt(O++));
+      X = G.indexOf(b.charAt(O++));
+      k = G.indexOf(b.charAt(O++));
+      u = G.indexOf(b.charAt(O++));
+      z = C << 2 | X >> 4;
+      A = (X & 15) << 4 | k >> 2;
+      n = (k & 3) << 6 | u;
+      j = j + String.fromCharCode(z);
+      k !== 64 && (j = j + String.fromCharCode(A));
+      u !== 64 && (j = j + String.fromCharCode(n));
     }
-    send(J, u = "GET") {
-      J = typeof J === "string" ? {
-        url: J
-      } : J;
-      let Z = this.get;
-      if (u === "POST") {
-        Z = this.post;
+    j = utf8Decode(j);
+    return j;
+  };
+  utf8Encode = function (b) {
+    b = b.replace(/\r\n/g, "\n");
+    var z = "";
+    for (var A = 0; A < b.length; A++) {
+      var O = b.charCodeAt(A);
+      if (O < 128) {
+        z += String.fromCharCode(O);
+      } else {
+        if (O > 127 && O < 2048) {
+          z += String.fromCharCode(O >> 6 | 192);
+          z += String.fromCharCode(O & 63 | 128);
+        } else {
+          z += String.fromCharCode(O >> 12 | 224);
+          z += String.fromCharCode(O >> 6 & 63 | 128);
+          z += String.fromCharCode(O & 63 | 128);
+        }
       }
-      return new Promise((p, L) => {
-        Z.call(this, J, (U, n, C) => {
-          if (U) {
-            L(U);
+    }
+    return z;
+  };
+  utf8Decode = function (b) {
+    var n = "";
+    var A = 0;
+    var z = 0;
+    var O = 0;
+    var C = 0;
+    while (A < b.length) {
+      z = b.charCodeAt(A);
+      if (z < 128) {
+        n += String.fromCharCode(z);
+        A++;
+      } else {
+        if (z > 191 && z < 224) {
+          O = b.charCodeAt(A + 1 < 10 ? "0" + (A + 1) : A + 1);
+          n += String.fromCharCode((z & 31) << 6 | O & 63);
+          A += 2;
+        } else {
+          O = b.charCodeAt(A + 1 < 10 ? "0" + (A + 1) : A + 1);
+          C = b.charCodeAt(A + 2);
+          n += String.fromCharCode((z & 15) << 12 | (O & 63) << 6 | C & 63);
+          A += 3;
+        }
+      }
+    }
+    return n;
+  };
+}
+function Env(I, G) {
+  class r {
+    constructor(z) {
+      this.env = z;
+    }
+    send(z, A = "GET") {
+      z = typeof z === "string" ? {
+        url: z
+      } : z;
+      let C = this.get;
+      if (A === "POST") {
+        C = this.post;
+      }
+      return new Promise((k, u) => {
+        C.call(this, z, (P, M, R) => {
+          if (P) {
+            u(P);
           } else {
-            p(n);
+            k(M);
           }
         });
       });
     }
-    get(J) {
-      return this.send.call(this.env, J);
+    get(z) {
+      return this.send.call(this.env, z);
     }
-    post(J) {
-      return this.send.call(this.env, J, "POST");
+    post(z) {
+      return this.send.call(this.env, z, "POST");
     }
   }
   return new class {
-    constructor(J, u) {
-      this.name = J;
-      this.http = new l(this);
+    constructor(z, A) {
+      this.name = z;
+      this.http = new r(this);
       this.data = null;
       this.dataFile = "box.dat";
       this.logs = [];
@@ -1808,11 +1828,9 @@ function Env(X, D) {
       this.isNeedRewrite = false;
       this.logSeparator = "\n";
       this.startTime = new Date().getTime();
-      Object.assign(this, u);
-      const Z = "\n       ***********          *****      ***       **** ******  ***********  \n       *************       ******      ***      ****  ****    ************ \n      ****      ****     ***  ***      ***     ***    ***    ***      **** \n      ***       ****    ***  ****      ***    ***    ****   ****       *** \n     ****       ***    ***    ***      ***   ***     ***    ***       **** \n     ***       ***    ****   ****      ***  ***     ****   ****       ***  \n    ***      ****    ************      *** ***      ***    ***      ****   \n   ****   ******   ****      ****      ******      ****   ****   ******    \n   **********     ****       ****      *****     ******  ***********";
-      if (this.isNode()) {
-        this.log(Z);
-      }
+      Object.assign(this, A);
+      const C = "\n       ***********          *****      ***       **** ******  ***********  \n       *************       ******      ***      ****  ****    ************ \n      ****      ****     ***  ***      ***     ***    ***    ***      **** \n      ***       ****    ***  ****      ***    ***    ****   ****       *** \n     ****       ***    ***    ***      ***   ***     ***    ***       **** \n     ***       ***    ****   ****      ***  ***     ****   ****       ***  \n    ***      ****    ************      *** ***      ***    ***      ****   \n   ****   ******   ****      ****      ******      ****   ****   ******    \n   **********     ****       ****      *****     ******  ***********";
+      this.isNode() && this.log(C);
       this.log("", "🔔 " + this.name + ", 开始!");
     }
     isNode() {
@@ -1830,83 +1848,83 @@ function Env(X, D) {
     isShadowrocket() {
       return "undefined" !== typeof $rocket;
     }
-    toObj(J, u = null) {
+    toObj(z, A = null) {
       try {
-        return JSON.parse(J);
+        return JSON.parse(z);
       } catch {
-        return u;
+        return A;
       }
     }
-    toStr(J, u = null) {
+    toStr(z, A = null) {
       try {
-        return JSON.stringify(J);
+        return JSON.stringify(z);
       } catch {
-        return u;
+        return A;
       }
     }
-    getjson(J, u) {
-      let A = u;
-      const p = this.getdata(J);
-      if (p) {
+    getjson(z, A) {
+      let n = A;
+      const O = this.getdata(z);
+      if (O) {
         try {
-          A = JSON.parse(this.getdata(J));
+          n = JSON.parse(this.getdata(z));
         } catch {}
       }
-      return A;
+      return n;
     }
-    setjson(J, u) {
+    setjson(z, A) {
       try {
-        return this.setdata(JSON.stringify(J), u);
+        return this.setdata(JSON.stringify(z), A);
       } catch {
         return false;
       }
     }
-    getScript(J) {
-      return new Promise(Z => {
-        const p = {
-          url: J
+    getScript(z) {
+      return new Promise(n => {
+        const C = {
+          url: z
         };
-        this.get(p, (L, b, U) => Z(U));
+        this.get(C, (X, k, u) => n(u));
       });
     }
-    runScript(J, u) {
-      return new Promise(O => {
-        let p = this.getdata("@chavy_boxjs_userCfgs.httpapi");
-        p = p ? p.replace(/\n/g, "").trim() : p;
-        let L = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
-        L = L ? L * 1 : 20;
-        L = u && u.timeout ? u.timeout : L;
-        const [b, U] = p.split("@"),
-          n = {
-            script_text: J,
+    runScript(z, A) {
+      return new Promise(n => {
+        let C = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+        C = C ? C.replace(/\n/g, "").trim() : C;
+        let X = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
+        X = X ? X * 1 : 20;
+        X = A && A.timeout ? A.timeout : X;
+        const [k, u] = C.split("@"),
+          j = {
+            script_text: z,
             mock_type: "cron",
-            timeout: L
+            timeout: X
           };
-        const C = {
-          "X-Key": b,
+        const T = {
+          "X-Key": k,
           Accept: "*/*"
         };
-        const G = {
-          url: "http: //" + U + "/v1/scripting/evaluate",
-          body: n,
-          headers: C
+        const P = {
+          url: "http: //" + u + "/v1/scripting/evaluate",
+          body: j,
+          headers: T
         };
-        this.post(G, (i, Y, m) => O(m));
-      }).catch(O => this.logErr(O));
+        this.post(P, (R, t, l) => n(l));
+      }).catch(n => this.logErr(n));
     }
     loaddata() {
       if (this.isNode()) {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const J = this.path.resolve(this.dataFile),
-          u = this.path.resolve(process.cwd(), this.dataFile),
-          O = this.fs.existsSync(J),
-          Z = !O && this.fs.existsSync(u);
-        if (O || Z) {
-          const A = O ? J : u;
+        const A = this.path.resolve(this.dataFile),
+          n = this.path.resolve(process.cwd(), this.dataFile),
+          O = this.fs.existsSync(A),
+          C = !O && this.fs.existsSync(n);
+        if (O || C) {
+          const X = O ? A : n;
           try {
-            return JSON.parse(this.fs.readFileSync(A));
-          } catch (L) {
+            return JSON.parse(this.fs.readFileSync(X));
+          } catch (u) {
             return {};
           }
         } else {
@@ -1920,398 +1938,393 @@ function Env(X, D) {
       if (this.isNode()) {
         this.fs = this.fs ? this.fs : require("fs");
         this.path = this.path ? this.path : require("path");
-        const Z = this.path.resolve(this.dataFile),
-          A = this.path.resolve(process.cwd(), this.dataFile),
-          p = this.fs.existsSync(Z),
-          L = !p && this.fs.existsSync(A),
-          b = JSON.stringify(this.data);
-        if (p) {
-          this.fs.writeFileSync(Z, b);
+        const n = this.path.resolve(this.dataFile),
+          O = this.path.resolve(process.cwd(), this.dataFile),
+          C = this.fs.existsSync(n),
+          X = !C && this.fs.existsSync(O),
+          k = JSON.stringify(this.data);
+        if (C) {
+          this.fs.writeFileSync(n, k);
         } else {
-          if (L) {
-            this.fs.writeFileSync(A, b);
+          if (X) {
+            this.fs.writeFileSync(O, k);
           } else {
-            this.fs.writeFileSync(Z, b);
+            this.fs.writeFileSync(n, k);
           }
         }
       }
     }
-    lodash_get(J, u, O = undefined) {
-      const L = u.replace(/[(d+)]/g, ".$1").split(".");
-      let b = J;
-      for (const U of L) {
-        b = Object(b)[U];
-        if (b === undefined) {
-          return O;
+    lodash_get(z, A, n = undefined) {
+      const C = A.replace(/[(d+)]/g, ".$1").split(".");
+      let X = z;
+      for (const k of C) {
+        X = Object(X)[k];
+        if (X === undefined) {
+          return n;
         }
       }
-      return b;
+      return X;
     }
-    lodash_set(J, u, O) {
-      if (Object(J) !== J) {
-        return J;
+    lodash_set(z, A, n) {
+      if (Object(z) !== z) {
+        return z;
       }
-      if (!Array.isArray(u)) {
-        u = u.toString().match(/[^.[]]+/g) || [];
+      if (!Array.isArray(A)) {
+        A = A.toString().match(/[^.[]]+/g) || [];
       }
-      u.slice(0, -1).reduce((Z, A, p) => Object(Z[A]) === Z[A] ? Z[A] : Z[A] = Math.abs(u[p + 1 < 10 ? "0" + (p + 1) : p + 1]) >> 0 === +u[p + 1 < 10 ? "0" + (p + 1) : p + 1] ? [] : {}, J)[u[u.length - 1]] = O;
-      return J;
+      A.slice(0, -1).reduce((C, X, k) => Object(C[X]) === C[X] ? C[X] : C[X] = Math.abs(A[k + 1 < 10 ? "0" + (k + 1) : k + 1]) >> 0 === +A[k + 1 < 10 ? "0" + (k + 1) : k + 1] ? [] : {}, z)[A[A.length - 1]] = n;
+      return z;
     }
-    getdata(J) {
-      let O = this.getval(J);
-      if (/^@/.test(J)) {
-        const [, Z, A] = /^@(.*?).(.*?)$/.exec(J),
-          p = Z ? this.getval(Z) : "";
-        if (p) {
+    getdata(z) {
+      let n = this.getval(z);
+      if (/^@/.test(z)) {
+        const [, O, C] = /^@(.*?).(.*?)$/.exec(z),
+          X = O ? this.getval(O) : "";
+        if (X) {
           try {
-            const U = JSON.parse(p);
-            O = U ? this.lodash_get(U, A, "") : O;
-          } catch (n) {
-            O = "";
+            const k = JSON.parse(X);
+            n = k ? this.lodash_get(k, C, "") : n;
+          } catch (j) {
+            n = "";
           }
         }
+      }
+      return n;
+    }
+    setdata(z, A) {
+      let O = false;
+      if (/^@/.test(A)) {
+        const [, C, X] = /^@(.*?).(.*?)$/.exec(A),
+          k = this.getval(C),
+          u = C ? k === "null" ? null : k || "{}" : "{}";
+        try {
+          const T = JSON.parse(u);
+          this.lodash_set(T, X, z);
+          O = this.setval(JSON.stringify(T), C);
+        } catch (P) {
+          const R = {};
+          this.lodash_set(R, X, z);
+          O = this.setval(JSON.stringify(R), C);
+        }
+      } else {
+        O = this.setval(z, A);
       }
       return O;
     }
-    setdata(J, u) {
-      let A = false;
-      if (/^@/.test(u)) {
-        const [, L, b] = /^@(.*?).(.*?)$/.exec(u),
-          U = this.getval(L),
-          n = L ? U === "null" ? null : U || "{}" : "{}";
-        try {
-          const C = JSON.parse(n);
-          this.lodash_set(C, b, J);
-          A = this.setval(JSON.stringify(C), L);
-        } catch (i) {
-          const m = {};
-          this.lodash_set(m, b, J);
-          A = this.setval(JSON.stringify(m), L);
-        }
-      } else {
-        A = this.setval(J, u);
-      }
-      return A;
-    }
-    getval(J) {
+    getval(z) {
       if (this.isSurge() || this.isLoon()) {
-        return $persistentStore.read(J);
+        return $persistentStore.read(z);
       } else {
         if (this.isQuanX()) {
-          return $prefs.valueForKey(J);
+          return $prefs.valueForKey(z);
         } else {
           if (this.isNode()) {
             this.data = this.loaddata();
-            return this.data[J];
+            return this.data[z];
           } else {
-            return this.data && this.data[J] || null;
+            return this.data && this.data[z] || null;
           }
         }
       }
     }
-    setval(J, u) {
+    setval(z, A) {
       if (this.isSurge() || this.isLoon()) {
-        return $persistentStore.write(J, u);
+        return $persistentStore.write(z, A);
       } else {
         if (this.isQuanX()) {
-          return $prefs.setValueForKey(J, u);
+          return $prefs.setValueForKey(z, A);
         } else {
           if (this.isNode()) {
             this.data = this.loaddata();
-            this.data[u] = J;
+            this.data[A] = z;
             this.writedata();
             return true;
           } else {
-            return this.data && this.data[u] || null;
+            return this.data && this.data[A] || null;
           }
         }
       }
     }
-    initGotEnv(J) {
+    initGotEnv(z) {
       this.got = this.got ? this.got : require("got");
       this.cktough = this.cktough ? this.cktough : require("tough-cookie");
       this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
-      if (J) {
-        J.headers = J.headers ? J.headers : {};
-        if (undefined === J.headers.Cookie && undefined === J.cookieJar) {
-          J.cookieJar = this.ckjar;
-        }
-      }
+      z && (z.headers = z.headers ? z.headers : {}, undefined === z.headers.Cookie && undefined === z.cookieJar && (z.cookieJar = this.ckjar));
     }
-    get(J, u = () => {}) {
-      if (J.headers) {
-        if (J.url.indexOf("BaseReq=") == -1) {
-          delete J.headers["Content-Type"];
-        }
-        delete J.headers["Content-Length"];
-      }
+    get(z, A = () => {}) {
+      z.headers && (delete z.headers["Content-Type"], delete z.headers["Content-Length"]);
       if (this.isSurge() || this.isLoon()) {
         if (this.isSurge() && this.isNeedRewrite) {
-          J.headers = J.headers || {};
-          const U = {
+          z.headers = z.headers || {};
+          const k = {
             "X-Surge-Skip-Scripting": false
           };
-          Object.assign(J.headers, U);
+          Object.assign(z.headers, k);
         }
-        $httpClient.get(J, (n, C, G) => {
-          if (!n && C) {
-            C.body = G;
-            C.statusCode = C.status;
+        $httpClient.get(z, (u, j, T) => {
+          if (!u && j) {
+            j.body = T;
+            j.statusCode = j.status;
           }
-          u(n, C, G);
+          A(u, j, T);
         });
       } else {
         if (this.isQuanX()) {
           if (this.isNeedRewrite) {
-            J.opts = J.opts || {};
-            const n = {
+            z.opts = z.opts || {};
+            const P = {
               hints: false
             };
-            Object.assign(J.opts, n);
+            Object.assign(z.opts, P);
           }
-          $task.fetch(J).then(G => {
+          $task.fetch(z).then(M => {
             const {
-                statusCode: e,
-                statusCode: i,
-                headers: Y,
-                body: m
-              } = G,
-              Q = {
-                status: e,
-                statusCode: i,
-                headers: Y,
-                body: m
+                statusCode: R,
+                statusCode: t,
+                headers: l,
+                body: i
+              } = M,
+              d = {
+                status: R,
+                statusCode: t,
+                headers: l,
+                body: i
               };
-            u(null, Q, m);
-          }, G => u(G));
+            A(null, d, i);
+          }, M => A(M));
         } else {
-          this.isNode() && (this.initGotEnv(J), this.got(J).on("redirect", (i, Y) => {
-            try {
-              if (i.headers["set-cookie"]) {
-                const z = i.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
-                if (z) {
-                  this.ckjar.setCookieSync(z, null);
+          if (this.isNode()) {
+            this.initGotEnv(z);
+            this.got(z).on("redirect", (M, R) => {
+              try {
+                if (M.headers["set-cookie"]) {
+                  const d = M.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
+                  if (d) {
+                    this.ckjar.setCookieSync(d, null);
+                  }
+                  R.cookieJar = this.ckjar;
                 }
-                Y.cookieJar = this.ckjar;
+              } catch (y) {
+                this.logErr(y);
               }
-            } catch (K) {
-              this.logErr(K);
-            }
-          }).then(e => {
-            const {
-                statusCode: Y,
-                statusCode: m,
-                headers: Q,
-                body: z
-              } = e,
-              V = {
-                status: Y,
-                statusCode: m,
-                headers: Q,
-                body: z
-              };
-            u(null, V, z);
-          }, e => {
-            const {
-              message: Y,
-              response: m
-            } = e;
-            u(Y, m, m && m.body);
-          }));
-        }
-      }
-    }
-    post(J, u = () => {}) {
-      const Z = J.method ? J.method.toLocaleLowerCase() : "post";
-      if (J.body && J.headers && !J.headers["Content-Type"]) {
-        J.headers["Content-Type"] = "application/x-www-form-urlencoded";
-      }
-      if (J.headers) {
-        delete J.headers["Content-Length"];
-      }
-      if (this.isSurge() || this.isLoon()) {
-        if (this.isSurge() && this.isNeedRewrite) {
-          J.headers = J.headers || {};
-          const L = {
-            "X-Surge-Skip-Scripting": false
-          };
-          Object.assign(J.headers, L);
-        }
-        $httpClient[Z](J, (U, n, C) => {
-          if (!U && n) {
-            n.body = C;
-            n.statusCode = n.status;
-          }
-          u(U, n, C);
-        });
-      } else {
-        if (this.isQuanX()) {
-          J.method = Z;
-          if (this.isNeedRewrite) {
-            J.opts = J.opts || {};
-            const U = {
-              hints: false
-            };
-            Object.assign(J.opts, U);
-          }
-          $task.fetch(J).then(C => {
-            const {
-                statusCode: Y,
-                statusCode: m,
-                headers: Q,
-                body: z
-              } = C,
-              V = {
-                status: Y,
-                statusCode: m,
-                headers: Q,
-                body: z
-              };
-            u(null, V, z);
-          }, C => u(C));
-        } else {
-          if (this.isNode()) {
-            this.initGotEnv(J);
-            const {
-              url: G,
-              ...e
-            } = J;
-            this.got[Z](G, e).then(i => {
+            }).then(M => {
               const {
-                  statusCode: Y,
-                  statusCode: m,
-                  headers: Q,
-                  body: z
-                } = i,
-                V = {
-                  status: Y,
-                  statusCode: m,
-                  headers: Q,
-                  body: z
+                  statusCode: R,
+                  statusCode: t,
+                  headers: l,
+                  body: i
+                } = M,
+                d = {
+                  status: R,
+                  statusCode: t,
+                  headers: l,
+                  body: i
                 };
-              u(null, V, z);
-            }, i => {
+              A(null, d, i);
+            }, M => {
               const {
-                message: Y,
-                response: m
-              } = i;
-              u(Y, m, m && m.body);
+                message: R,
+                response: t
+              } = M;
+              A(R, t, t && t.body);
             });
           }
         }
       }
     }
-    put(J, u = () => {}) {
-      const Z = J.method ? J.method.toLocaleLowerCase() : "put";
-      J.body && J.headers && !J.headers["Content-Type"] && (J.headers["Content-Type"] = "application/x-www-form-urlencoded");
-      if (J.headers) {
-        delete J.headers["Content-Length"];
+    post(z, A = () => {}) {
+      const O = z.method ? z.method.toLocaleLowerCase() : "post";
+      if (z.body && z.headers && !z.headers["Content-Type"]) {
+        z.headers["Content-Type"] = "application/x-www-form-urlencoded";
+      }
+      if (z.headers) {
+        delete z.headers["Content-Length"];
       }
       if (this.isSurge() || this.isLoon()) {
         if (this.isSurge() && this.isNeedRewrite) {
-          J.headers = J.headers || {};
-          const A = {
+          z.headers = z.headers || {};
+          const X = {
             "X-Surge-Skip-Scripting": false
           };
-          Object.assign(J.headers, A);
+          Object.assign(z.headers, X);
         }
-        $httpClient[Z](J, (p, L, b) => {
-          !p && L && (L.body = b, L.statusCode = L.status);
-          u(p, L, b);
+        $httpClient[O](z, (u, j, T) => {
+          !u && j && (j.body = T, j.statusCode = j.status);
+          A(u, j, T);
         });
       } else {
         if (this.isQuanX()) {
-          J.method = Z;
+          z.method = O;
           if (this.isNeedRewrite) {
-            J.opts = J.opts || {};
-            const p = {
+            z.opts = z.opts || {};
+            const j = {
               hints: false
             };
-            Object.assign(J.opts, p);
+            Object.assign(z.opts, j);
           }
-          $task.fetch(J).then(L => {
+          $task.fetch(z).then(P => {
             const {
-              statusCode: b,
-              statusCode: U,
-              headers: n,
-              body: C
-            } = L;
-            const G = {
-              status: b,
-              statusCode: U,
-              headers: n,
-              body: C
-            };
-            u(null, G, C);
-          }, L => u(L));
+                statusCode: R,
+                statusCode: t,
+                headers: l,
+                body: i
+              } = P,
+              d = {
+                status: R,
+                statusCode: t,
+                headers: l,
+                body: i
+              };
+            A(null, d, i);
+          }, P => A(P));
         } else {
           if (this.isNode()) {
-            this.initGotEnv(J);
+            this.initGotEnv(z);
             const {
-              url: L,
-              ...b
-            } = J;
-            this.got[Z](L, b).then(U => {
+              url: R,
+              ...t
+            } = z;
+            this.got[O](R, t).then(l => {
               const {
-                  statusCode: n,
-                  statusCode: C,
-                  headers: G,
-                  body: e
-                } = U,
-                i = {
-                  status: n,
-                  statusCode: C,
-                  headers: G,
-                  body: e
+                  statusCode: d,
+                  statusCode: Z,
+                  headers: S,
+                  body: y
+                } = l,
+                K = {
+                  status: d,
+                  statusCode: Z,
+                  headers: S,
+                  body: y
                 };
-              u(null, i, e);
-            }, U => {
+              A(null, K, y);
+            }, l => {
               const {
-                message: n,
-                response: C
-              } = U;
-              u(n, C, C && C.body);
+                message: d,
+                response: Z
+              } = l;
+              A(d, Z, Z && Z.body);
             });
           }
         }
       }
     }
-    time(J, u = null) {
-      const O = u ? new Date(u) : new Date();
-      let Z = {
-        "M+": O.getMonth() + 1,
-        "d+": O.getDate(),
-        "H+": O.getHours(),
-        "m+": O.getMinutes(),
-        "s+": O.getSeconds(),
-        "q+": Math.floor((O.getMonth() + 3) / 3),
-        S: O.getMilliseconds()
+    put(z, A = () => {}) {
+      const O = z.method ? z.method.toLocaleLowerCase() : "put";
+      if (z.body && z.headers && !z.headers["Content-Type"]) {
+        z.headers["Content-Type"] = "application/x-www-form-urlencoded";
+      }
+      if (z.headers) {
+        delete z.headers["Content-Length"];
+      }
+      if (this.isSurge() || this.isLoon()) {
+        if (this.isSurge() && this.isNeedRewrite) {
+          z.headers = z.headers || {};
+          const X = {
+            "X-Surge-Skip-Scripting": false
+          };
+          Object.assign(z.headers, X);
+        }
+        $httpClient[O](z, (u, j, T) => {
+          if (!u && j) {
+            j.body = T;
+            j.statusCode = j.status;
+          }
+          A(u, j, T);
+        });
+      } else {
+        if (this.isQuanX()) {
+          z.method = O;
+          if (this.isNeedRewrite) {
+            z.opts = z.opts || {};
+            const T = {
+              hints: false
+            };
+            Object.assign(z.opts, T);
+          }
+          $task.fetch(z).then(M => {
+            const {
+                statusCode: t,
+                statusCode: l,
+                headers: i,
+                body: d
+              } = M,
+              Z = {
+                status: t,
+                statusCode: l,
+                headers: i,
+                body: d
+              };
+            A(null, Z, d);
+          }, M => A(M));
+        } else {
+          if (this.isNode()) {
+            this.initGotEnv(z);
+            const {
+              url: M,
+              ...R
+            } = z;
+            this.got[O](M, R).then(t => {
+              const {
+                  statusCode: i,
+                  statusCode: d,
+                  headers: Z,
+                  body: S
+                } = t,
+                y = {
+                  status: i,
+                  statusCode: d,
+                  headers: Z,
+                  body: S
+                };
+              A(null, y, S);
+            }, t => {
+              const {
+                message: l,
+                response: i
+              } = t;
+              A(l, i, i && i.body);
+            });
+          }
+        }
+      }
+    }
+    time(z, A = null) {
+      const n = A ? new Date(A) : new Date();
+      let O = {
+        "M+": n.getMonth() + 1,
+        "d+": n.getDate(),
+        "H+": n.getHours(),
+        "m+": n.getMinutes(),
+        "s+": n.getSeconds(),
+        "q+": Math.floor((n.getMonth() + 3) / 3),
+        S: n.getMilliseconds()
       };
-      if (/(y+)/.test(J)) {
-        J = J.replace(RegExp.$1, (O.getFullYear() + "").substr(4 - RegExp.$1.length));
+      if (/(y+)/.test(z)) {
+        z = z.replace(RegExp.$1, (n.getFullYear() + "").substr(4 - RegExp.$1.length));
       }
-      for (let A in Z) if (new RegExp("(" + A + ")").test(J)) {
-        J = J.replace(RegExp.$1, RegExp.$1.length == 1 ? Z[A] : ("00" + Z[A]).substr(("" + Z[A]).length));
+      for (let C in O) if (new RegExp("(" + C + ")").test(z)) {
+        z = z.replace(RegExp.$1, RegExp.$1.length == 1 ? O[C] : ("00" + O[C]).substr(("" + O[C]).length));
       }
-      return J;
+      return z;
     }
-    msg(J = X, u = "", O = "", Z) {
-      const A = p => {
-        if (!p) {
-          return p;
+    msg(z = I, A = "", n = "", O) {
+      const C = X => {
+        if (!X) {
+          return X;
         }
-        if (typeof p === "string") {
+        if (typeof X === "string") {
           if (this.isLoon()) {
-            return p;
+            return X;
           } else {
             if (this.isQuanX()) {
               return {
-                "open-url": p
+                "open-url": X
               };
             } else {
               if (this.isSurge()) {
                 return {
-                  url: p
+                  url: X
                 };
               } else {
                 return undefined;
@@ -2319,31 +2332,31 @@ function Env(X, D) {
             }
           }
         } else {
-          if (typeof p === "object") {
+          if (typeof X === "object") {
             if (this.isLoon()) {
-              let L = p.openUrl || p.url || p["open-url"],
-                b = p.mediaUrl || p["media-url"];
-              const U = {
-                openUrl: L,
-                mediaUrl: b
+              let k = X.openUrl || X.url || X["open-url"],
+                u = X.mediaUrl || X["media-url"];
+              const j = {
+                openUrl: k,
+                mediaUrl: u
               };
-              return U;
+              return j;
             } else {
               if (this.isQuanX()) {
-                let n = p["open-url"] || p.url || p.openUrl,
-                  C = p["media-url"] || p.mediaUrl;
-                const G = {
-                  "open-url": n,
-                  "media-url": C
+                let T = X["open-url"] || X.url || X.openUrl,
+                  P = X["media-url"] || X.mediaUrl;
+                const M = {
+                  "open-url": T,
+                  "media-url": P
                 };
-                return G;
+                return M;
               } else {
                 if (this.isSurge()) {
-                  let e = p.url || p.openUrl || p["open-url"];
-                  const i = {
-                    url: e
+                  let R = X.url || X.openUrl || X["open-url"];
+                  const t = {
+                    url: R
                   };
-                  return i;
+                  return t;
                 }
               }
             }
@@ -2354,37 +2367,37 @@ function Env(X, D) {
       };
       if (!this.isMute) {
         if (this.isSurge() || this.isLoon()) {
-          $notification.post(J, u, O, A(Z));
+          $notification.post(z, A, n, C(O));
         } else {
-          this.isQuanX() && $notify(J, u, O, A(Z));
+          this.isQuanX() && $notify(z, A, n, C(O));
         }
       }
       if (!this.isMuteLog) {
-        let p = ["", "==============📣系统通知📣=============="];
-        p.push(J);
-        u ? p.push(u) : "";
-        O ? p.push(O) : "";
-        console.log(p.join("\n"));
-        this.logs = this.logs.concat(p);
+        let X = ["", "==============📣系统通知📣=============="];
+        X.push(z);
+        A ? X.push(A) : "";
+        n ? X.push(n) : "";
+        console.log(X.join("\n"));
+        this.logs = this.logs.concat(X);
       }
     }
-    log(...J) {
-      J.length > 0 && (this.logs = [...this.logs, ...J]);
-      console.log(J.join(this.logSeparator));
+    log(...z) {
+      z.length > 0 && (this.logs = [...this.logs, ...z]);
+      console.log(z.join(this.logSeparator));
     }
-    logErr(J, u) {
-      const O = !this.isSurge() && !this.isQuanX() && !this.isLoon();
-      !O ? this.log("", "❗️" + this.name + ", 错误!", J) : this.log("", "❗️" + this.name + ", 错误!", J.stack);
+    logErr(z, A) {
+      const n = !this.isSurge() && !this.isQuanX() && !this.isLoon();
+      !n ? this.log("", "❗️" + this.name + ", 错误!", z) : this.log("", "❗️" + this.name + ", 错误!", z.stack);
     }
-    wait(J) {
-      return new Promise(u => setTimeout(u, J));
+    wait(z) {
+      return new Promise(A => setTimeout(A, z));
     }
-    done(J = {}) {
-      const u = new Date().getTime();
-      const O = (u - this.startTime) / 1000;
-      this.log("", "🔔" + this.name + ", 结束!🕛" + O + "秒");
+    done(z = {}) {
+      const A = new Date().getTime();
+      const n = (A - this.startTime) / 1000;
+      this.log("", "🔔" + this.name + ", 结束!🕛" + n + "秒");
       this.log();
-      (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(J);
+      (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(z);
     }
-  }(X, D);
+  }(I, G);
 }
