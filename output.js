@@ -1,1101 +1,944 @@
-//Mon Jun 02 2025 12:59:50 GMT+0000 (Coordinated Universal Time)
+//Mon Jun 02 2025 13:57:38 GMT+0000 (Coordinated Universal Time)
 //Base:https://github.com/echo094/decode-js
 //Modify:https://github.com/smallfawn/decode_action
-const $ = new Env("浓五酒馆"),
-  version = "V1.0.0",
-  appName = "nwjgapp";
-let nwjgapp = $.getjson(appName, []);
-const fs = $.isNode() ? require("fs") : "",
-  WebSocket = $.isNode() ? require("ws") : "",
-  file = "david_cookies.js";
-$.isNode() && !fs.existsSync(file) && ($.log("🔔 外挂ck文件不存在，开始创建模版>>>"), fs.writeFileSync("./david_cookies.js", "//独立CK文件，主要用来处理多账号大数据量CK,注意JRTTAPP外边不用加引号，依葫芦画瓢。\n//今日头条(三个账号)\nlet JRTTAPP = [{},{},{}]\n//番茄小说(一个账号)\nlet FQXSAPP = [{}]\n//抖音极速版(两个账号)\nlet DYJSBAPP = [{},{}]\n    \nlet APPS = {\n    JRTT: JRTTAPP,\n    FQXS: FQXSAPP,\n    DYJSB: DYJSBAPP\n}\n\nmodule.exports = APPS", Z => {}));
-const http = $.isNode() ? require("http") : "";
-const notify = $.isNode() ? require("./sendNotify") : "",
-  COOKIES = $.isNode() ? require("./david_cookies") : "";
-let userId = $.getdata("tguserid") || 1,
-  activeCode = $.getdata("nwjgactivecode") || 0,
-  nwjguserck = $.getval("nwjguserck") || 1,
-  apiHost = $.getval("apiHost") || "http://106.15.104.124:8080";
-$.getval("apiHosts") && (apiHost = $.getval("apiHosts"));
-let flushCash = $.getval("cleanCache") || false;
-const debug = 0;
-let tz = $.getval("tz") || "1",
-  helpUtils = undefined,
-  CryptoJS = undefined,
-  saveFile = false;
-let wechatMiniAppId = "wxed3cf95a14b58a26",
-  wechatMiniShopAppId = "wx4802c49f1578c6fe",
-  signTaskActivityIds = [],
-  nwjg_ck_file = "nwjg_cookies.json";
-var hour = "",
-  minute = "";
-let sendlogs = "",
-  nwjglogs = [];
-let wss = [],
-  channels_status = [],
-  reconectCounts = [],
-  requestObjects = [],
-  requestSigns = [],
-  codes = [],
-  httpResult = "",
-  userAuth = "",
-  scriptAuth = "",
-  newest_version = "",
-  runAuth = "",
-  systemNotify = "",
-  vipAuth = "",
-  isCharge = "",
-  multiAccount = 1,
-  buyCount = 1;
-let runTotalCounts = 1,
-  runedCounts = 1,
-  userRank = "",
-  invicode = "",
-  numbers = 3,
-  vipDate = "";
-if ($.isNode()) {
-  process.env.NWJGAPP ? nwjgapp = JSON.parse(process.env.NWJGAPP) : nwjgapp = COOKIES.NWJG;
-  userId = process.env.TGUSERID;
-  activeCode = process.env.NWJGACTIVECODE;
-  process.env.APIHOST && (apiHost = process.env.APIHOST);
-  process.env.APIHOSTS && (apiHost = process.env.APIHOSTS);
-  process.env.CLEANCACHE && (flushCash = JSON.parse(process.env.CLEANCACHE));
-  hour = new Date(new Date().getTime()).getHours();
-  minute = new Date(new Date().getTime()).getMinutes();
-  $.log("🔔 当前环境: Node, 当前时间：" + hour + "点");
-} else {
-  hour = new Date().getHours();
-  minute = new Date().getMinutes();
-  $.log("🔔 当前环境: 手机代理, 当前时间：" + hour + "点");
+/**
+ * @author wuqing
+ * @description 变量名 ylsp
+ * 群937994514
+ * 活动入口：https://fishing.fulubro.com/app/api/oauth.php?open_id=o8M4xq68hFU4c6g8jT2If9fxALJzk1QE4&package=z
+ * 单v一天0.5
+ */
+;
+const $ = new Env("\u9C7C\u4E50\u89C6\u9891");
+const users = process.env.ylsp && process.env.ylsp.split("&") || [];
+var CryptoJS = CryptoJS || function (Math, Oଠﾟ) {
+  var ₒₒⲟ;
+  if (typeof window !== "undefined" && window.crypto) {
+    ₒₒⲟ = window.crypto;
+  }
+  if (typeof self !== "undefined" && self.crypto) {
+    ₒₒⲟ = self.crypto;
+  }
+  if (typeof globalThis !== "undefined" && globalThis.crypto) {
+    ₒₒⲟ = globalThis.crypto;
+  }
+  if (!ₒₒⲟ && typeof window !== "undefined" && window.msCrypto) {
+    ₒₒⲟ = window.msCrypto;
+  }
+  if (!ₒₒⲟ && typeof global !== "undefined" && global.crypto) {
+    ₒₒⲟ = global.crypto;
+  }
+  if (!ₒₒⲟ && typeof require === "function") {
+    try {
+      ₒₒⲟ = require("crypto");
+    } catch (ﾟ0ᵒ) {}
+  }
+  var ﾷﾷ = function () {
+    if (ₒₒⲟ) {
+      if (typeof ₒₒⲟ.getRandomValues === "function") {
+        try {
+          return ₒₒⲟ.getRandomValues(new Uint32Array(1))[0];
+        } catch (ﾟ0ᵒ) {}
+      }
+      if (typeof ₒₒⲟ.randomBytes === "function") {
+        try {
+          return ₒₒⲟ.randomBytes(4).readInt32LE();
+        } catch (ﾟ0ᵒ) {}
+      }
+    }
+    throw new Error("Native crypto module could not be used to get secure random number.");
+  };
+  var ᣞㅇ = Object.create || function () {
+    function ㅇΟ() {}
+    return function (ᵒꙨᐤ) {
+      var ᵒᐤﾟ;
+      ㅇΟ.prototype = ᵒꙨᐤ;
+      ᵒᐤﾟ = new ㅇΟ();
+      ㅇΟ.prototype = null;
+      return ᵒᐤﾟ;
+    };
+  }();
+  var ⲟΟଠ = {};
+  var ﾷₒᴑ = ⲟΟଠ.lib = {};
+  var ᣞOo = ﾷₒᴑ.Base = function () {
+    return {
+      extend: function (ᣞﾟo) {
+        var ᵒᐤﾟ = ᣞㅇ(this);
+        if (ᣞﾟo) {
+          ᵒᐤﾟ.mixIn(ᣞﾟo);
+        }
+        if (!ᵒᐤﾟ.hasOwnProperty("init") || this.init === ᵒᐤﾟ.init) {
+          ᵒᐤﾟ.init = function () {
+            ᵒᐤﾟ.$super.init.apply(this, arguments);
+          };
+        }
+        ᵒᐤﾟ.init.prototype = ᵒᐤﾟ;
+        ᵒᐤﾟ.$super = this;
+        return ᵒᐤﾟ;
+      },
+      create: function () {
+        var ᵒⲟᣞ = this.extend();
+        ᵒⲟᣞ.init.apply(ᵒⲟᣞ, arguments);
+        return ᵒⲟᣞ;
+      },
+      init: function () {},
+      mixIn: function (O) {
+        for (var ᣞﾟﾟ in O) {
+          if (O.hasOwnProperty(ᣞﾟﾟ)) {
+            this[ᣞﾟﾟ] = O[ᣞﾟﾟ];
+          }
+        }
+        if (O.hasOwnProperty("toString")) {
+          this.toString = O.toString;
+        }
+      },
+      clone: function () {
+        return this.init.prototype.extend(this);
+      }
+    };
+  }();
+  var ᵒﾷ0 = ﾷₒᴑ.WordArray = ᣞOo.extend({
+    init: function (ᵒㅇᴑ, ᵒㅇﾷ) {
+      ᵒㅇᴑ = this.words = ᵒㅇᴑ || [];
+      if (ᵒㅇﾷ != Oଠﾟ) {
+        this.sigBytes = ᵒㅇﾷ;
+      } else {
+        this.sigBytes = ᵒㅇᴑ.length * 4;
+      }
+    },
+    toString: function (ᵒᣞⲟ) {
+      return (ᵒᣞⲟ || ᣞﾟㅇ).stringify(this);
+    },
+    concat: function (Ꙩﾷ) {
+      var ᣞᐤΟ = this.words;
+      var ᣞΟᣞ = Ꙩﾷ.words;
+      var Ꙩㅇ = this.sigBytes;
+      var ﾷଠꓳ = Ꙩﾷ.sigBytes;
+      this.clamp();
+      if (Ꙩㅇ % 4) {
+        for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ﾷଠꓳ; ﾷ0ﾷ++) {
+          var ﾷꓳㅇ = ᣞΟᣞ[ﾷ0ﾷ >>> 2] >>> 24 - ﾷ0ﾷ % 4 * 8 & 255;
+          ᣞᐤΟ[Ꙩㅇ + ﾷ0ﾷ >>> 2] |= ﾷꓳㅇ << 24 - (Ꙩㅇ + ﾷ0ﾷ) % 4 * 8;
+        }
+      } else {
+        for (var ﾷﾟㅇ = 0; ﾷﾟㅇ < ﾷଠꓳ; ﾷﾟㅇ += 4) {
+          ᣞᐤΟ[Ꙩㅇ + ﾷﾟㅇ >>> 2] = ᣞΟᣞ[ﾷﾟㅇ >>> 2];
+        }
+      }
+      this.sigBytes += ﾷଠꓳ;
+      return this;
+    },
+    clamp: function () {
+      var ᵒㅇᴑ = this.words;
+      var ᵒㅇﾷ = this.sigBytes;
+      ᵒㅇᴑ[ᵒㅇﾷ >>> 2] &= 4294967295 << 32 - ᵒㅇﾷ % 4 * 8;
+      ᵒㅇᴑ.length = Math.ceil(ᵒㅇﾷ / 4);
+    },
+    clone: function () {
+      var ﾷᐤᵒ = ᣞOo.clone.call(this);
+      ﾷᐤᵒ.words = this.words.slice(0);
+      return ﾷᐤᵒ;
+    },
+    random: function (ﾷᵒᣞ) {
+      var ᵒㅇᴑ = [];
+      var ᵒⲟᴑ = function (ᣞᐤﾟ) {
+        var ᣞᐤﾟ = ᣞᐤﾟ;
+        var ﾷﾟᐤ = 987654321;
+        var ﾷ0ꓳ = 4294967295;
+        return function () {
+          ﾷﾟᐤ = 36969 * (ﾷﾟᐤ & 65535) + (ﾷﾟᐤ >> 16) & ﾷ0ꓳ;
+          ᣞᐤﾟ = 18000 * (ᣞᐤﾟ & 65535) + (ᣞᐤﾟ >> 16) & ﾷ0ꓳ;
+          var ﾷOₒ = (ﾷﾟᐤ << 16) + ᣞᐤﾟ & ﾷ0ꓳ;
+          ﾷOₒ /= 4294967296;
+          ﾷOₒ += 0.5;
+          return ﾷOₒ * (Math.random() > 0.5 ? 1 : -1);
+        };
+      };
+      var ꓳﾷ = false,
+        ᵒⲟo;
+      try {
+        ﾷﾷ();
+        ꓳﾷ = true;
+      } catch (ﾟ0ᵒ) {}
+      for (var ﾷ0ﾷ = 0, ﾷ0o; ﾷ0ﾷ < ﾷᵒᣞ; ﾷ0ﾷ += 4) {
+        if (!ꓳﾷ) {
+          ᵒⲟo = ᵒⲟᴑ((ﾷ0o || Math.random()) * 4294967296);
+          ﾷ0o = ᵒⲟo() * 987654071;
+          ᵒㅇᴑ.push(ᵒⲟo() * 4294967296 | 0);
+          continue;
+        }
+        ᵒㅇᴑ.push(ﾷﾷ());
+      }
+      return new ᵒﾷ0.init(ᵒㅇᴑ, ﾷᵒᣞ);
+    }
+  });
+  var ᣞﾟᵒ = ⲟΟଠ.enc = {};
+  var ᣞﾟㅇ = ᣞﾟᵒ.Hex = {
+    stringify: function (Ꙩﾷ) {
+      var ᵒㅇᴑ = Ꙩﾷ.words;
+      var ᵒㅇﾷ = Ꙩﾷ.sigBytes;
+      var ᣞΟ0 = [];
+      for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ᵒㅇﾷ; ﾷ0ﾷ++) {
+        var ⲟᴑ = ᵒㅇᴑ[ﾷ0ﾷ >>> 2] >>> 24 - ﾷ0ﾷ % 4 * 8 & 255;
+        ᣞΟ0.push((ⲟᴑ >>> 4).toString(16));
+        ᣞΟ0.push((ⲟᴑ & 15).toString(16));
+      }
+      return ᣞΟ0.join("");
+    },
+    parse: function (ᵒﾷᴑ) {
+      var ᴑₒ = ᵒﾷᴑ.length;
+      var ᵒㅇᴑ = [];
+      for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ᴑₒ; ﾷ0ﾷ += 2) {
+        ᵒㅇᴑ[ﾷ0ﾷ >>> 3] |= parseInt(ᵒﾷᴑ.substr(ﾷ0ﾷ, 2), 16) << 24 - ﾷ0ﾷ % 8 * 4;
+      }
+      return new ᵒﾷ0.init(ᵒㅇᴑ, ᴑₒ / 2);
+    }
+  };
+  var ᣞᐤᣞ = ᣞﾟᵒ.Latin1 = {
+    stringify: function (Ꙩﾷ) {
+      var ᵒㅇᴑ = Ꙩﾷ.words;
+      var ᵒㅇﾷ = Ꙩﾷ.sigBytes;
+      var ᣞΟₒ = [];
+      for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ᵒㅇﾷ; ﾷ0ﾷ++) {
+        var ⲟᴑ = ᵒㅇᴑ[ﾷ0ﾷ >>> 2] >>> 24 - ﾷ0ﾷ % 4 * 8 & 255;
+        ᣞΟₒ.push(String.fromCharCode(ⲟᴑ));
+      }
+      return ᣞΟₒ.join("");
+    },
+    parse: function (ﾷꙨଠ) {
+      var ₒⲟ = ﾷꙨଠ.length;
+      var ᵒㅇᴑ = [];
+      for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ₒⲟ; ﾷ0ﾷ++) {
+        ᵒㅇᴑ[ﾷ0ﾷ >>> 2] |= (ﾷꙨଠ.charCodeAt(ﾷ0ﾷ) & 255) << 24 - ﾷ0ﾷ % 4 * 8;
+      }
+      return new ᵒﾷ0.init(ᵒㅇᴑ, ₒⲟ);
+    }
+  };
+  var ᴑᐤ = ᣞﾟᵒ.Utf8 = {
+    stringify: function (Ꙩﾷ) {
+      try {
+        return decodeURIComponent(escape(ᣞᐤᣞ.stringify(Ꙩﾷ)));
+      } catch (ᵒㅇଠ) {
+        throw new Error("Malformed UTF-8 data");
+      }
+    },
+    parse: function (ᵒᣞ0) {
+      return ᣞᐤᣞ.parse(unescape(encodeURIComponent(ᵒᣞ0)));
+    }
+  };
+  var ᵒΟᵒ = ﾷₒᴑ.BufferedBlockAlgorithm = ᣞOo.extend({
+    reset: function () {
+      this._data = new ᵒﾷ0.init();
+      this._nDataBytes = 0;
+    },
+    _append: function (ᵒΟଠ) {
+      if (typeof ᵒΟଠ == "string") {
+        ᵒΟଠ = ᴑᐤ.parse(ᵒΟଠ);
+      }
+      this._data.concat(ᵒΟଠ);
+      this._nDataBytes += ᵒΟଠ.sigBytes;
+    },
+    _process: function (oଠ) {
+      var ᵒᣞₒ;
+      var ᵒΟଠ = this._data;
+      var ᵒΟꙨ = ᵒΟଠ.words;
+      var Οᵒ = ᵒΟଠ.sigBytes;
+      var ᣞﾟﾷ = this.blockSize;
+      var ᣞꙨ = ᣞﾟﾷ * 4;
+      var ᵒᣞﾟ = Οᵒ / ᣞꙨ;
+      if (oଠ) {
+        ᵒᣞﾟ = Math.ceil(ᵒᣞﾟ);
+      } else {
+        ᵒᣞﾟ = Math.max((ᵒᣞﾟ | 0) - this._minBufferSize, 0);
+      }
+      var ﾷଠⲟ = ᵒᣞﾟ * ᣞﾟﾷ;
+      var ㅇₒ = Math.min(ﾷଠⲟ * 4, Οᵒ);
+      if (ﾷଠⲟ) {
+        for (var ᣞﾟⲟ = 0; ᣞﾟⲟ < ﾷଠⲟ; ᣞﾟⲟ += ᣞﾟﾷ) {
+          this._doProcessBlock(ᵒΟꙨ, ᣞﾟⲟ);
+        }
+        ᵒᣞₒ = ᵒΟꙨ.splice(0, ﾷଠⲟ);
+        ᵒΟଠ.sigBytes -= ㅇₒ;
+      }
+      return new ᵒﾷ0.init(ᵒᣞₒ, ㅇₒ);
+    },
+    clone: function () {
+      var ﾷᐤᵒ = ᣞOo.clone.call(this);
+      ﾷᐤᵒ._data = this._data.clone();
+      return ﾷᐤᵒ;
+    },
+    _minBufferSize: 0
+  });
+  var ﾷ0 = ﾷₒᴑ.Hasher = ᵒΟᵒ.extend({
+    cfg: ᣞOo.extend(),
+    init: function (ᣞᐤꙨ) {
+      this.cfg = this.cfg.extend(ᣞᐤꙨ);
+      this.reset();
+    },
+    reset: function () {
+      ᵒΟᵒ.reset.call(this);
+      this._doReset();
+    },
+    update: function (oꙨ) {
+      this._append(oꙨ);
+      this._process();
+      return this;
+    },
+    finalize: function (oꙨ) {
+      if (oꙨ) {
+        this._append(oꙨ);
+      }
+      var ᵒﾟꙨ = this._doFinalize();
+      return ᵒﾟꙨ;
+    },
+    blockSize: 16,
+    _createHelper: function (ᵒᣞᐤ) {
+      return function (ᣞ0ଠ, ᣞᐤꙨ) {
+        return new ᵒᣞᐤ.init(ᣞᐤꙨ).finalize(ᣞ0ଠ);
+      };
+    },
+    _createHmacHelper: function (ᵒᣞᐤ) {
+      return function (ᣞ0ଠ, ᵒᣞᣞ) {
+        return new ᣞOᐤ.HMAC.init(ᵒᣞᐤ, ᵒᣞᣞ).finalize(ᣞ0ଠ);
+      };
+    }
+  });
+  var ᣞOᐤ = ⲟΟଠ.algo = {};
+  return ⲟΟଠ;
+}(Math);
+(function () {
+  var ⲟΟଠ = CryptoJS;
+  var ﾷₒᴑ = ⲟΟଠ.lib;
+  var ᵒﾷ0 = ﾷₒᴑ.WordArray;
+  var ᣞﾟᵒ = ⲟΟଠ.enc;
+  var ﾷꓳO = ᣞﾟᵒ.Base64 = {
+    stringify: function (Ꙩﾷ) {
+      var ᵒㅇᴑ = Ꙩﾷ.words;
+      var ᵒㅇﾷ = Ꙩﾷ.sigBytes;
+      var ﾷ0ଠ = this._map;
+      Ꙩﾷ.clamp();
+      var ᣞꙨᐤ = [];
+      for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ᵒㅇﾷ; ﾷ0ﾷ += 3) {
+        var ﾷΟO = ᵒㅇᴑ[ﾷ0ﾷ >>> 2] >>> 24 - ﾷ0ﾷ % 4 * 8 & 255;
+        var ᣞᵒㅇ = ᵒㅇᴑ[ﾷ0ﾷ + 1 >>> 2] >>> 24 - (ﾷ0ﾷ + 1) % 4 * 8 & 255;
+        var ᵒଠo = ᵒㅇᴑ[ﾷ0ﾷ + 2 >>> 2] >>> 24 - (ﾷ0ﾷ + 2) % 4 * 8 & 255;
+        var ᣞOO = ﾷΟO << 16 | ᣞᵒㅇ << 8 | ᵒଠo;
+        for (var ﾷﾟㅇ = 0; ﾷﾟㅇ < 4 && ﾷ0ﾷ + ﾷﾟㅇ * 0.75 < ᵒㅇﾷ; ﾷﾟㅇ++) {
+          ᣞꙨᐤ.push(ﾷ0ଠ.charAt(ᣞOO >>> 6 * (3 - ﾷﾟㅇ) & 63));
+        }
+      }
+      var ﾷꓳଠ = ﾷ0ଠ.charAt(64);
+      if (ﾷꓳଠ) {
+        while (ᣞꙨᐤ.length % 4) {
+          ᣞꙨᐤ.push(ﾷꓳଠ);
+        }
+      }
+      return ᣞꙨᐤ.join("");
+    },
+    parse: function (ﾷΟⲟ) {
+      var ᣞଠO = ﾷΟⲟ.length;
+      var ﾷ0ଠ = this._map;
+      var ᵒᣞꓳ = this._reverseMap;
+      if (!ᵒᣞꓳ) {
+        ᵒᣞꓳ = this._reverseMap = [];
+        for (var ﾷﾟㅇ = 0; ﾷﾟㅇ < ﾷ0ଠ.length; ﾷﾟㅇ++) {
+          ᵒᣞꓳ[ﾷ0ଠ.charCodeAt(ﾷﾟㅇ)] = ﾷﾟㅇ;
+        }
+      }
+      var ﾷꓳଠ = ﾷ0ଠ.charAt(64);
+      if (ﾷꓳଠ) {
+        var ﾷᴑﾟ = ﾷΟⲟ.indexOf(ﾷꓳଠ);
+        if (ﾷᴑﾟ !== -1) {
+          ᣞଠO = ﾷᴑﾟ;
+        }
+      }
+      return ᣞₒΟ(ﾷΟⲟ, ᣞଠO, ᵒᣞꓳ);
+    },
+    _map: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+  };
+  function ᣞₒΟ(ﾷΟⲟ, ᣞଠO, ᵒᣞꓳ) {
+    var ᵒㅇᴑ = [];
+    var ﾷᵒᣞ = 0;
+    for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ᣞଠO; ﾷ0ﾷ++) {
+      if (ﾷ0ﾷ % 4) {
+        var Oﾟ = ᵒᣞꓳ[ﾷΟⲟ.charCodeAt(ﾷ0ﾷ - 1)] << ﾷ0ﾷ % 4 * 2;
+        var ᣞᵒO = ᵒᣞꓳ[ﾷΟⲟ.charCodeAt(ﾷ0ﾷ)] >>> 6 - ﾷ0ﾷ % 4 * 2;
+        ᵒㅇᴑ[ﾷᵒᣞ >>> 2] |= (Oﾟ | ᣞᵒO) << 24 - ﾷᵒᣞ % 4 * 8;
+        ﾷᵒᣞ++;
+      }
+    }
+    return ᵒﾷ0.create(ᵒㅇᴑ, ﾷᵒᣞ);
+  }
+})();
+CryptoJS.lib.Cipher || function (Oଠﾟ) {
+  var ⲟΟଠ = CryptoJS;
+  var ﾷₒᴑ = ⲟΟଠ.lib;
+  var ᣞOo = ﾷₒᴑ.Base;
+  var ᵒﾷ0 = ﾷₒᴑ.WordArray;
+  var ᵒΟᵒ = ﾷₒᴑ.BufferedBlockAlgorithm;
+  var ᣞﾟᵒ = ⲟΟଠ.enc;
+  var ᴑᐤ = ᣞﾟᵒ.Utf8;
+  var ﾷꓳO = ᣞﾟᵒ.Base64;
+  var ᣞOᐤ = ⲟΟଠ.algo;
+  var ㅇꓳ = ᣞOᐤ.EvpKDF;
+  var ﾷꓳΟ = ﾷₒᴑ.Cipher = ᵒΟᵒ.extend({
+    cfg: ᣞOo.extend(),
+    createEncryptor: function (ᵒᣞᣞ, ᣞᐤꙨ) {
+      return this.create(this._ENC_XFORM_MODE, ᵒᣞᣞ, ᣞᐤꙨ);
+    },
+    createDecryptor: function (ᵒᣞᣞ, ᣞᐤꙨ) {
+      return this.create(this._DEC_XFORM_MODE, ᵒᣞᣞ, ᣞᐤꙨ);
+    },
+    init: function (ᣞΟo, ᵒᣞᣞ, ᣞᐤꙨ) {
+      this.cfg = this.cfg.extend(ᣞᐤꙨ);
+      this._xformMode = ᣞΟo;
+      this._key = ᵒᣞᣞ;
+      this.reset();
+    },
+    reset: function () {
+      ᵒΟᵒ.reset.call(this);
+      this._doReset();
+    },
+    process: function (ᣞᐤ) {
+      this._append(ᣞᐤ);
+      return this._process();
+    },
+    finalize: function (ᣞᐤ) {
+      if (ᣞᐤ) {
+        this._append(ᣞᐤ);
+      }
+      var ᣞꙨⲟ = this._doFinalize();
+      return ᣞꙨⲟ;
+    },
+    keySize: 4,
+    ivSize: 4,
+    _ENC_XFORM_MODE: 1,
+    _DEC_XFORM_MODE: 2,
+    _createHelper: function () {
+      function ﾷᴑᵒ(ᵒᣞᣞ) {
+        if (typeof ᵒᣞᣞ == "string") {
+          return ﾷﾟꓳ;
+        } else {
+          return ₒᣞᴑ;
+        }
+      }
+      return function (ᵒଠꙨ) {
+        return {
+          encrypt: function (ᣞ0ଠ, ᵒᣞᣞ, ᣞᐤꙨ) {
+            return ﾷᴑᵒ(ᵒᣞᣞ).encrypt(ᵒଠꙨ, ᣞ0ଠ, ᵒᣞᣞ, ᣞᐤꙨ);
+          },
+          decrypt: function (ﾷﾟₒ, ᵒᣞᣞ, ᣞᐤꙨ) {
+            return ﾷᴑᵒ(ᵒᣞᣞ).decrypt(ᵒଠꙨ, ﾷﾟₒ, ᵒᣞᣞ, ᣞᐤꙨ);
+          }
+        };
+      };
+    }()
+  });
+  var ᣞﾟꙨ = ﾷₒᴑ.StreamCipher = ﾷꓳΟ.extend({
+    _doFinalize: function () {
+      var ﾷᣞO = this._process(!!"flush");
+      return ﾷᣞO;
+    },
+    blockSize: 1
+  });
+  var ₒΟଠ = ⲟΟଠ.mode = {};
+  var ᣞᵒꙨ = ﾷₒᴑ.BlockCipherMode = ᣞOo.extend({
+    createEncryptor: function (ᵒଠꙨ, ₒOₒ) {
+      return this.Encryptor.create(ᵒଠꙨ, ₒOₒ);
+    },
+    createDecryptor: function (ᵒଠꙨ, ₒOₒ) {
+      return this.Decryptor.create(ᵒଠꙨ, ₒOₒ);
+    },
+    init: function (ᵒଠꙨ, ₒOₒ) {
+      this._cipher = ᵒଠꙨ;
+      this._iv = ₒOₒ;
+    }
+  });
+  var ₒㅇ = ₒΟଠ.CBC = function () {
+    var ₒㅇ = ᣞᵒꙨ.extend();
+    ₒㅇ.Encryptor = ₒㅇ.extend({
+      processBlock: function (ᵒㅇᴑ, ᣞﾟⲟ) {
+        var ᵒଠꙨ = this._cipher;
+        var ᣞﾟﾷ = ᵒଠꙨ.blockSize;
+        ﾷₒꓳ.call(this, ᵒㅇᴑ, ᣞﾟⲟ, ᣞﾟﾷ);
+        ᵒଠꙨ.encryptBlock(ᵒㅇᴑ, ᣞﾟⲟ);
+        this._prevBlock = ᵒㅇᴑ.slice(ᣞﾟⲟ, ᣞﾟⲟ + ᣞﾟﾷ);
+      }
+    });
+    ₒㅇ.Decryptor = ₒㅇ.extend({
+      processBlock: function (ᵒㅇᴑ, ᣞﾟⲟ) {
+        var ᵒଠꙨ = this._cipher;
+        var ᣞﾟﾷ = ᵒଠꙨ.blockSize;
+        var ﾷㅇଠ = ᵒㅇᴑ.slice(ᣞﾟⲟ, ᣞﾟⲟ + ᣞﾟﾷ);
+        ᵒଠꙨ.decryptBlock(ᵒㅇᴑ, ᣞﾟⲟ);
+        ﾷₒꓳ.call(this, ᵒㅇᴑ, ᣞﾟⲟ, ᣞﾟﾷ);
+        this._prevBlock = ﾷㅇଠ;
+      }
+    });
+    function ﾷₒꓳ(ᵒㅇᴑ, ᣞﾟⲟ, ᣞﾟﾷ) {
+      var ㅇᣞ;
+      var ₒOₒ = this._iv;
+      if (ₒOₒ) {
+        ㅇᣞ = ₒOₒ;
+        this._iv = Oଠﾟ;
+      } else {
+        ㅇᣞ = this._prevBlock;
+      }
+      for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ᣞﾟﾷ; ﾷ0ﾷ++) {
+        ᵒㅇᴑ[ᣞﾟⲟ + ﾷ0ﾷ] ^= ㅇᣞ[ﾷ0ﾷ];
+      }
+    }
+    return ₒㅇ;
+  }();
+  var ᵒᣞO = ⲟΟଠ.pad = {};
+  var ﾷꓳᣞ = ᵒᣞO.Pkcs7 = {
+    pad: function (ᵒΟଠ, ᣞﾟﾷ) {
+      var ᣞꙨ = ᣞﾟﾷ * 4;
+      var ﾷﾷଠ = ᣞꙨ - ᵒΟଠ.sigBytes % ᣞꙨ;
+      var ᣞㅇᣞ = ﾷﾷଠ << 24 | ﾷﾷଠ << 16 | ﾷﾷଠ << 8 | ﾷﾷଠ;
+      var ଠꙨ = [];
+      for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < ﾷﾷଠ; ﾷ0ﾷ += 4) {
+        ଠꙨ.push(ᣞㅇᣞ);
+      }
+      var Ꙩﾷﾷ = ᵒﾷ0.create(ଠꙨ, ﾷﾷଠ);
+      ᵒΟଠ.concat(Ꙩﾷﾷ);
+    },
+    unpad: function (ᵒΟଠ) {
+      var ﾷﾷଠ = ᵒΟଠ.words[ᵒΟଠ.sigBytes - 1 >>> 2] & 255;
+      ᵒΟଠ.sigBytes -= ﾷﾷଠ;
+    }
+  };
+  var ﾷﾷΟ = ﾷₒᴑ.BlockCipher = ﾷꓳΟ.extend({
+    cfg: ﾷꓳΟ.cfg.extend({
+      mode: ₒㅇ,
+      padding: ﾷꓳᣞ
+    }),
+    reset: function () {
+      var ꙨOo;
+      ﾷꓳΟ.reset.call(this);
+      var ᣞᐤꙨ = this.cfg;
+      var ₒOₒ = ᣞᐤꙨ.iv;
+      var ﾷₒ = ᣞᐤꙨ.mode;
+      if (this._xformMode == this._ENC_XFORM_MODE) {
+        ꙨOo = ﾷₒ.createEncryptor;
+      } else {
+        ꙨOo = ﾷₒ.createDecryptor;
+        this._minBufferSize = 1;
+      }
+      if (this._mode && this._mode.__creator == ꙨOo) {
+        this._mode.init(this, ₒOₒ && ₒOₒ.words);
+      } else {
+        this._mode = ꙨOo.call(ﾷₒ, this, ₒOₒ && ₒOₒ.words);
+        this._mode.__creator = ꙨOo;
+      }
+    },
+    _doProcessBlock: function (ᵒㅇᴑ, ᣞﾟⲟ) {
+      this._mode.processBlock(ᵒㅇᴑ, ᣞﾟⲟ);
+    },
+    _doFinalize: function () {
+      var ﾷᣞO;
+      var Ꙩﾷﾷ = this.cfg.padding;
+      if (this._xformMode == this._ENC_XFORM_MODE) {
+        Ꙩﾷﾷ.pad(this._data, this.blockSize);
+        ﾷᣞO = this._process(!!"flush");
+      } else {
+        ﾷᣞO = this._process(!!"flush");
+        Ꙩﾷﾷ.unpad(ﾷᣞO);
+      }
+      return ﾷᣞO;
+    },
+    blockSize: 4
+  });
+  var ᣞᴑᴑ = ﾷₒᴑ.CipherParams = ᣞOo.extend({
+    init: function (ﾷᴑﾷ) {
+      this.mixIn(ﾷᴑﾷ);
+    },
+    toString: function (ꓳﾟ) {
+      return (ꓳﾟ || this.formatter).stringify(this);
+    }
+  });
+  var ꓳ0ᵒ = ⲟΟଠ.format = {};
+  var ﾷᵒ0 = ꓳ0ᵒ.OpenSSL = {
+    stringify: function (ﾷᴑﾷ) {
+      var Ꙩﾷ;
+      var ﾷﾟₒ = ﾷᴑﾷ.ciphertext;
+      var ᣞⲟᣞ = ﾷᴑﾷ.salt;
+      if (ᣞⲟᣞ) {
+        Ꙩﾷ = ᵒﾷ0.create([1398893684, 1701076831]).concat(ᣞⲟᣞ).concat(ﾷﾟₒ);
+      } else {
+        Ꙩﾷ = ﾷﾟₒ;
+      }
+      return Ꙩﾷ.toString(ﾷꓳO);
+    },
+    parse: function (OᵒꙨ) {
+      var ᣞⲟᣞ;
+      var ﾷﾟₒ = ﾷꓳO.parse(OᵒꙨ);
+      var ᣞꓳΟ = ﾷﾟₒ.words;
+      if (ᣞꓳΟ[0] == 1398893684 && ᣞꓳΟ[1] == 1701076831) {
+        ᣞⲟᣞ = ᵒﾷ0.create(ᣞꓳΟ.slice(2, 4));
+        ᣞꓳΟ.splice(0, 4);
+        ﾷﾟₒ.sigBytes -= 16;
+      }
+      return ᣞᴑᴑ.create({
+        ciphertext: ﾷﾟₒ,
+        salt: ᣞⲟᣞ
+      });
+    }
+  };
+  var ₒᣞᴑ = ﾷₒᴑ.SerializableCipher = ᣞOo.extend({
+    cfg: ᣞOo.extend({
+      format: ﾷᵒ0
+    }),
+    encrypt: function (ᵒଠꙨ, ᣞ0ଠ, ᵒᣞᣞ, ᣞᐤꙨ) {
+      ᣞᐤꙨ = this.cfg.extend(ᣞᐤꙨ);
+      var oⲟᐤ = ᵒଠꙨ.createEncryptor(ᵒᣞᣞ, ᣞᐤꙨ);
+      var ﾷﾟₒ = oⲟᐤ.finalize(ᣞ0ଠ);
+      var ﾷﾷㅇ = oⲟᐤ.cfg;
+      return ᣞᴑᴑ.create({
+        ciphertext: ﾷﾟₒ,
+        key: ᵒᣞᣞ,
+        iv: ﾷﾷㅇ.iv,
+        algorithm: ᵒଠꙨ,
+        mode: ﾷﾷㅇ.mode,
+        padding: ﾷﾷㅇ.padding,
+        blockSize: ᵒଠꙨ.blockSize,
+        formatter: ᣞᐤꙨ.format
+      });
+    },
+    decrypt: function (ᵒଠꙨ, ﾷﾟₒ, ᵒᣞᣞ, ᣞᐤꙨ) {
+      ᣞᐤꙨ = this.cfg.extend(ᣞᐤꙨ);
+      ﾷﾟₒ = this._parse(ﾷﾟₒ, ᣞᐤꙨ.format);
+      var ᣞଠﾷ = ᵒଠꙨ.createDecryptor(ᵒᣞᣞ, ᣞᐤꙨ).finalize(ﾷﾟₒ.ciphertext);
+      return ᣞଠﾷ;
+    },
+    _parse: function (ﾷﾟₒ, ⲟᣞﾷ) {
+      if (typeof ﾷﾟₒ == "string") {
+        return ⲟᣞﾷ.parse(ﾷﾟₒ, this);
+      } else {
+        return ﾷﾟₒ;
+      }
+    }
+  });
+  var ⲟOO = ⲟΟଠ.kdf = {};
+  var ⲟㅇO = ⲟOO.OpenSSL = {
+    execute: function (ᵒﾟΟ, ⲟⲟㅇ, ᣞᴑₒ, ᣞⲟᣞ, ᵒᣞᐤ) {
+      if (!ᣞⲟᣞ) {
+        ᣞⲟᣞ = ᵒﾷ0.random(8);
+      }
+      if (!ᵒᣞᐤ) {
+        var ᵒᣞᣞ = ㅇꓳ.create({
+          keySize: ⲟⲟㅇ + ᣞᴑₒ
+        }).compute(ᵒﾟΟ, ᣞⲟᣞ);
+      } else {
+        var ᵒᣞᣞ = ㅇꓳ.create({
+          keySize: ⲟⲟㅇ + ᣞᴑₒ,
+          hasher: ᵒᣞᐤ
+        }).compute(ᵒﾟΟ, ᣞⲟᣞ);
+      }
+      var ₒOₒ = ᵒﾷ0.create(ᵒᣞᣞ.words.slice(ⲟⲟㅇ), ᣞᴑₒ * 4);
+      ᵒᣞᣞ.sigBytes = ⲟⲟㅇ * 4;
+      return ᣞᴑᴑ.create({
+        key: ᵒᣞᣞ,
+        iv: ₒOₒ,
+        salt: ᣞⲟᣞ
+      });
+    }
+  };
+  var ﾷﾟꓳ = ﾷₒᴑ.PasswordBasedCipher = ₒᣞᴑ.extend({
+    cfg: ₒᣞᴑ.cfg.extend({
+      kdf: ⲟㅇO
+    }),
+    encrypt: function (ᵒଠꙨ, ᣞ0ଠ, ᵒﾟΟ, ᣞᐤꙨ) {
+      ᣞᐤꙨ = this.cfg.extend(ᣞᐤꙨ);
+      var ꓳₒΟ = ᣞᐤꙨ.kdf.execute(ᵒﾟΟ, ᵒଠꙨ.keySize, ᵒଠꙨ.ivSize, ᣞᐤꙨ.salt, ᣞᐤꙨ.hasher);
+      ᣞᐤꙨ.iv = ꓳₒΟ.iv;
+      var ﾷﾟₒ = ₒᣞᴑ.encrypt.call(this, ᵒଠꙨ, ᣞ0ଠ, ꓳₒΟ.key, ᣞᐤꙨ);
+      ﾷﾟₒ.mixIn(ꓳₒΟ);
+      return ﾷﾟₒ;
+    },
+    decrypt: function (ᵒଠꙨ, ﾷﾟₒ, ᵒﾟΟ, ᣞᐤꙨ) {
+      ᣞᐤꙨ = this.cfg.extend(ᣞᐤꙨ);
+      ﾷﾟₒ = this._parse(ﾷﾟₒ, ᣞᐤꙨ.format);
+      var ꓳₒΟ = ᣞᐤꙨ.kdf.execute(ᵒﾟΟ, ᵒଠꙨ.keySize, ᵒଠꙨ.ivSize, ﾷﾟₒ.salt, ᣞᐤꙨ.hasher);
+      ᣞᐤꙨ.iv = ꓳₒΟ.iv;
+      var ᣞଠﾷ = ₒᣞᴑ.decrypt.call(this, ᵒଠꙨ, ﾷﾟₒ, ꓳₒΟ.key, ᣞᐤꙨ);
+      return ᣞଠﾷ;
+    }
+  });
+}();
+(function () {
+  var ⲟΟଠ = CryptoJS;
+  var ﾷₒᴑ = ⲟΟଠ.lib;
+  var ﾷﾷΟ = ﾷₒᴑ.BlockCipher;
+  var ᣞOᐤ = ⲟΟଠ.algo;
+  var ꓳ0ꓳ = [];
+  var ﾷଠﾷ = [];
+  var ⲟﾷO = [];
+  var ⲟΟㅇ = [];
+  var ﾷoO = [];
+  var ﾷₒꙨ = [];
+  var ㅇΟᐤ = [];
+  var Oᵒₒ = [];
+  var ㅇᴑᣞ = [];
+  var Oꓳㅇ = [];
+  (function () {
+    var ᵒᣞΟ = [];
+    for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < 256; ﾷ0ﾷ++) {
+      if (ﾷ0ﾷ < 128) {
+        ᵒᣞΟ[ﾷ0ﾷ] = ﾷ0ﾷ << 1;
+      } else {
+        ᵒᣞΟ[ﾷ0ﾷ] = ﾷ0ﾷ << 1 ^ 283;
+      }
+    }
+    var ᵒⲟᐤ = 0;
+    var ᣞᴑଠ = 0;
+    for (var ﾷ0ﾷ = 0; ﾷ0ﾷ < 256; ﾷ0ﾷ++) {
+      var ⲟᐤᐤ = ᣞᴑଠ ^ ᣞᴑଠ << 1 ^ ᣞᴑଠ << 2 ^ ᣞᴑଠ << 3 ^ ᣞᴑଠ << 4;
+      ⲟᐤᐤ = ⲟᐤᐤ >>> 8 ^ ⲟᐤᐤ & 255 ^ 99;
+      ꓳ0ꓳ[ᵒⲟᐤ] = ⲟᐤᐤ;
+      ﾷଠﾷ[ⲟᐤᐤ] = ᵒⲟᐤ;
+      var ꙨO0 = ᵒᣞΟ[ᵒⲟᐤ];
+      var ꙨOΟ = ᵒᣞΟ[ꙨO0];
+      var ₒᴑꙨ = ᵒᣞΟ[ꙨOΟ];
+      var Oₒଠ = ᵒᣞΟ[ⲟᐤᐤ] * 257 ^ ⲟᐤᐤ * 16843008;
+      ⲟﾷO[ᵒⲟᐤ] = Oₒଠ << 24 | Oₒଠ >>> 8;
+      ⲟΟㅇ[ᵒⲟᐤ] = Oₒଠ << 16 | Oₒଠ >>> 16;
+      ﾷoO[ᵒⲟᐤ] = Oₒଠ << 8 | Oₒଠ >>> 24;
+      ﾷₒꙨ[ᵒⲟᐤ] = Oₒଠ;
+      var Oₒଠ = ₒᴑꙨ * 16843009 ^ ꙨOΟ * 65537 ^ ꙨO0 * 257 ^ ᵒⲟᐤ * 16843008;
+      ㅇΟᐤ[ⲟᐤᐤ] = Oₒଠ << 24 | Oₒଠ >>> 8;
+      Oᵒₒ[ⲟᐤᐤ] = Oₒଠ << 16 | Oₒଠ >>> 16;
+      ㅇᴑᣞ[ⲟᐤᐤ] = Oₒଠ << 8 | Oₒଠ >>> 24;
+      Oꓳㅇ[ⲟᐤᐤ] = Oₒଠ;
+      if (!ᵒⲟᐤ) {
+        ᵒⲟᐤ = ᣞᴑଠ = 1;
+      } else {
+        ᵒⲟᐤ = ꙨO0 ^ ᵒᣞΟ[ᵒᣞΟ[ᵒᣞΟ[ₒᴑꙨ ^ ꙨO0]]];
+        ᣞᴑଠ ^= ᵒᣞΟ[ᵒᣞΟ[ᣞᴑଠ]];
+      }
+    }
+  })();
+  var ᵒᐤⲟ = [0, 1, 2, 4, 8, 16, 32, 64, 128, 27, 54];
+  var Oₒꓳ = ᣞOᐤ.AES = ﾷﾷΟ.extend({
+    _doReset: function () {
+      if (this._nRounds && this._keyPriorReset === this._key) {
+        return;
+      }
+      var ᵒᣞᣞ = this._keyPriorReset = this._key;
+      var ㅇₒₒ = ᵒᣞᣞ.words;
+      var ⲟⲟㅇ = ᵒᣞᣞ.sigBytes / 4;
+      var ㅇₒᵒ = this._nRounds = ⲟⲟㅇ + 6;
+      var ꓳﾷᵒ = (ㅇₒᵒ + 1) * 4;
+      var ﾷᴑㅇ = this._keySchedule = [];
+      for (var ㅇOO = 0; ㅇOO < ꓳﾷᵒ; ㅇOO++) {
+        if (ㅇOO < ⲟⲟㅇ) {
+          ﾷᴑㅇ[ㅇOO] = ㅇₒₒ[ㅇOO];
+        } else {
+          var Oₒଠ = ﾷᴑㅇ[ㅇOO - 1];
+          if (!(ㅇOO % ⲟⲟㅇ)) {
+            Oₒଠ = Oₒଠ << 8 | Oₒଠ >>> 24;
+            Oₒଠ = ꓳ0ꓳ[Oₒଠ >>> 24] << 24 | ꓳ0ꓳ[Oₒଠ >>> 16 & 255] << 16 | ꓳ0ꓳ[Oₒଠ >>> 8 & 255] << 8 | ꓳ0ꓳ[Oₒଠ & 255];
+            Oₒଠ ^= ᵒᐤⲟ[ㅇOO / ⲟⲟㅇ | 0] << 24;
+          } else if (ⲟⲟㅇ > 6 && ㅇOO % ⲟⲟㅇ == 4) {
+            Oₒଠ = ꓳ0ꓳ[Oₒଠ >>> 24] << 24 | ꓳ0ꓳ[Oₒଠ >>> 16 & 255] << 16 | ꓳ0ꓳ[Oₒଠ >>> 8 & 255] << 8 | ꓳ0ꓳ[Oₒଠ & 255];
+          }
+          ﾷᴑㅇ[ㅇOO] = ﾷᴑㅇ[ㅇOO - ⲟⲟㅇ] ^ Oₒଠ;
+        }
+      }
+      var ⲟ0ⲟ = this._invKeySchedule = [];
+      for (var ㅇₒﾷ = 0; ㅇₒﾷ < ꓳﾷᵒ; ㅇₒﾷ++) {
+        var ㅇOO = ꓳﾷᵒ - ㅇₒﾷ;
+        if (ㅇₒﾷ % 4) {
+          var Oₒଠ = ﾷᴑㅇ[ㅇOO];
+        } else {
+          var Oₒଠ = ﾷᴑㅇ[ㅇOO - 4];
+        }
+        if (ㅇₒﾷ < 4 || ㅇOO <= 4) {
+          ⲟ0ⲟ[ㅇₒﾷ] = Oₒଠ;
+        } else {
+          ⲟ0ⲟ[ㅇₒﾷ] = ㅇΟᐤ[ꓳ0ꓳ[Oₒଠ >>> 24]] ^ Oᵒₒ[ꓳ0ꓳ[Oₒଠ >>> 16 & 255]] ^ ㅇᴑᣞ[ꓳ0ꓳ[Oₒଠ >>> 8 & 255]] ^ Oꓳㅇ[ꓳ0ꓳ[Oₒଠ & 255]];
+        }
+      }
+    },
+    encryptBlock: function (ₒΟᴑ, ᣞﾟⲟ) {
+      this._doCryptBlock(ₒΟᴑ, ᣞﾟⲟ, this._keySchedule, ⲟﾷO, ⲟΟㅇ, ﾷoO, ﾷₒꙨ, ꓳ0ꓳ);
+    },
+    decryptBlock: function (ₒΟᴑ, ᣞﾟⲟ) {
+      var Oₒଠ = ₒΟᴑ[ᣞﾟⲟ + 1];
+      ₒΟᴑ[ᣞﾟⲟ + 1] = ₒΟᴑ[ᣞﾟⲟ + 3];
+      ₒΟᴑ[ᣞﾟⲟ + 3] = Oₒଠ;
+      this._doCryptBlock(ₒΟᴑ, ᣞﾟⲟ, this._invKeySchedule, ㅇΟᐤ, Oᵒₒ, ㅇᴑᣞ, Oꓳㅇ, ﾷଠﾷ);
+      var Oₒଠ = ₒΟᴑ[ᣞﾟⲟ + 1];
+      ₒΟᴑ[ᣞﾟⲟ + 1] = ₒΟᴑ[ᣞﾟⲟ + 3];
+      ₒΟᴑ[ᣞﾟⲟ + 3] = Oₒଠ;
+    },
+    _doCryptBlock: function (ₒΟᴑ, ᣞﾟⲟ, ﾷᴑㅇ, ⲟﾷO, ⲟΟㅇ, ﾷoO, ﾷₒꙨ, ꓳ0ꓳ) {
+      var ㅇₒᵒ = this._nRounds;
+      var oᣞ0 = ₒΟᴑ[ᣞﾟⲟ] ^ ﾷᴑㅇ[0];
+      var ꙨₒꙨ = ₒΟᴑ[ᣞﾟⲟ + 1] ^ ﾷᴑㅇ[1];
+      var ᵒﾷᐤ = ₒΟᴑ[ᣞﾟⲟ + 2] ^ ﾷᴑㅇ[2];
+      var ﾷOㅇ = ₒΟᴑ[ᣞﾟⲟ + 3] ^ ﾷᴑㅇ[3];
+      var ㅇOO = 4;
+      for (var ㅇᵒO = 1; ㅇᵒO < ㅇₒᵒ; ㅇᵒO++) {
+        var Oᵒﾟ = ⲟﾷO[oᣞ0 >>> 24] ^ ⲟΟㅇ[ꙨₒꙨ >>> 16 & 255] ^ ﾷoO[ᵒﾷᐤ >>> 8 & 255] ^ ﾷₒꙨ[ﾷOㅇ & 255] ^ ﾷᴑㅇ[ㅇOO++];
+        var ꓳᴑΟ = ⲟﾷO[ꙨₒꙨ >>> 24] ^ ⲟΟㅇ[ᵒﾷᐤ >>> 16 & 255] ^ ﾷoO[ﾷOㅇ >>> 8 & 255] ^ ﾷₒꙨ[oᣞ0 & 255] ^ ﾷᴑㅇ[ㅇOO++];
+        var ꓳﾟㅇ = ⲟﾷO[ᵒﾷᐤ >>> 24] ^ ⲟΟㅇ[ﾷOㅇ >>> 16 & 255] ^ ﾷoO[oᣞ0 >>> 8 & 255] ^ ﾷₒꙨ[ꙨₒꙨ & 255] ^ ﾷᴑㅇ[ㅇOO++];
+        var ﾷꓳꓳ = ⲟﾷO[ﾷOㅇ >>> 24] ^ ⲟΟㅇ[oᣞ0 >>> 16 & 255] ^ ﾷoO[ꙨₒꙨ >>> 8 & 255] ^ ﾷₒꙨ[ᵒﾷᐤ & 255] ^ ﾷᴑㅇ[ㅇOO++];
+        oᣞ0 = Oᵒﾟ;
+        ꙨₒꙨ = ꓳᴑΟ;
+        ᵒﾷᐤ = ꓳﾟㅇ;
+        ﾷOㅇ = ﾷꓳꓳ;
+      }
+      var Oᵒﾟ = (ꓳ0ꓳ[oᣞ0 >>> 24] << 24 | ꓳ0ꓳ[ꙨₒꙨ >>> 16 & 255] << 16 | ꓳ0ꓳ[ᵒﾷᐤ >>> 8 & 255] << 8 | ꓳ0ꓳ[ﾷOㅇ & 255]) ^ ﾷᴑㅇ[ㅇOO++];
+      var ꓳᴑΟ = (ꓳ0ꓳ[ꙨₒꙨ >>> 24] << 24 | ꓳ0ꓳ[ᵒﾷᐤ >>> 16 & 255] << 16 | ꓳ0ꓳ[ﾷOㅇ >>> 8 & 255] << 8 | ꓳ0ꓳ[oᣞ0 & 255]) ^ ﾷᴑㅇ[ㅇOO++];
+      var ꓳﾟㅇ = (ꓳ0ꓳ[ᵒﾷᐤ >>> 24] << 24 | ꓳ0ꓳ[ﾷOㅇ >>> 16 & 255] << 16 | ꓳ0ꓳ[oᣞ0 >>> 8 & 255] << 8 | ꓳ0ꓳ[ꙨₒꙨ & 255]) ^ ﾷᴑㅇ[ㅇOO++];
+      var ﾷꓳꓳ = (ꓳ0ꓳ[ﾷOㅇ >>> 24] << 24 | ꓳ0ꓳ[oᣞ0 >>> 16 & 255] << 16 | ꓳ0ꓳ[ꙨₒꙨ >>> 8 & 255] << 8 | ꓳ0ꓳ[ᵒﾷᐤ & 255]) ^ ﾷᴑㅇ[ㅇOO++];
+      ₒΟᴑ[ᣞﾟⲟ] = Oᵒﾟ;
+      ₒΟᴑ[ᣞﾟⲟ + 1] = ꓳᴑΟ;
+      ₒΟᴑ[ᣞﾟⲟ + 2] = ꓳﾟㅇ;
+      ₒΟᴑ[ᣞﾟⲟ + 3] = ﾷꓳꓳ;
+    },
+    keySize: 8
+  });
+  ⲟΟଠ.AES = ﾷﾷΟ._createHelper(Oₒꓳ);
+})();
+function AES_Encrypt(ଠ0) {
+  var ᵒᣞᣞ = CryptoJS.enc.Hex.parse("33346566396b637331337364783832336264316e61676635626d617838377300");
+  var ₒOₒ = CryptoJS.enc.Utf8.parse("3a64f1kf00l52ecn");
+  var ㅇoㅇ = CryptoJS.enc.Utf8.parse(ଠ0);
+  var ꙨOₒ = CryptoJS.AES.encrypt(ㅇoㅇ, ᵒᣞᣞ, {
+    iv: ₒOₒ,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+  });
+  return ꙨOₒ.toString();
+}
+class MainProgram {
+  constructor(O0O, oㅇﾟ) {
+    this.openid = O0O;
+    this.index = oㅇﾟ;
+    this.headers = {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+      "Accept-Encoding": "gzip, deflate",
+      "upgrade-insecure-requests": "1",
+      "x-requested-with": "com.fulubro.fishing2",
+      "sec-fetch-site": "same-origin",
+      "sec-fetch-mode": "navigate",
+      "sec-fetch-user": "?1",
+      "sec-fetch-dest": "document",
+      "referer": "https://fishing.fulubro.com/app/my1.html",
+      "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
+    };
+  }
+  log(Ꙩₒ) {
+    console.log(`\u8d26\u53f7\x5B${this.index}\x5D\x20\x5B${this.remark}\x5D\x3A${Ꙩₒ}`);
+  }
+  async account() {
+    let ᐤₒ = `\x68\x74\x74\x70\x73\x3A\x2F\x2F\x66\x69\x73\x68\x69\x6E\x67\x2E\x66\x75\x6C\x75\x62\x72\x6F\x2E\x63\x6F\x6D\x2F\x61\x70\x70\x2F\x61\x70\x69\x2F\x67\x6F\x6C\x64\x5F\x61\x70\x69\x2E\x70\x68\x70\x3F\x6F\x70\x65\x6E\x5F\x69\x64\x3D${this.openid}\x26\x70\x61\x63\x6B\x61\x67\x65\x3D\x7A`;
+    let ㅇꙨᐤ = this.headers;
+    let ⲟOᵒ = JSON.parse((await get({
+      url: ᐤₒ,
+      headers: ㅇꙨᐤ
+    })).body);
+    this.log(JSON.stringify(ⲟOᵒ));
+  }
+  async plus_coin() {
+    let ᐤₒ = `\x68\x74\x74\x70\x73\x3A\x2F\x2F\x66\x69\x73\x68\x69\x6E\x67\x2E\x66\x75\x6C\x75\x62\x72\x6F\x2E\x63\x6F\x6D\x2F\x61\x70\x70\x2F\x61\x70\x69\x2F\x70\x6C\x75\x73\x5F\x63\x6F\x69\x6E\x5F\x73\x69\x67\x6E\x2E\x70\x68\x70`;
+    let ㅇꙨᐤ = this.headers;
+    let ⲟଠᐤ = Date.now();
+    let ⲟﾟﾟ = AES_Encrypt(`${ⲟଠᐤ}\x5F${this.openid}`);
+    let Oꓳₒ = `\x75\x73\x65\x72\x49\x64\x3D${this.openid}\x26\x70\x61\x63\x6B\x61\x67\x65\x3D\x7A\x26\x74\x69\x6D\x65\x3D${ⲟଠᐤ}\x26\x73\x69\x67\x6E\x3D${encodeURIComponent(ⲟﾟﾟ)}`;
+    let ⲟOᵒ = (await post({
+      url: ᐤₒ,
+      body: Oꓳₒ,
+      headers: ㅇꙨᐤ
+    })).body;
+  }
+  async doTask() {
+    try {
+      await this.account();
+      await this.plus_coin();
+    } catch (ᵒㅇଠ) {
+      this.log(ᵒㅇଠ.message);
+    }
+  }
+}
+async function main() {
+  console.log("\u7FA4937994514");
+  console.log("\u7FA4937994514");
+  console.log("\u7FA4937994514");
+  console.log("\u6D3B\u52A8\u5165\u53E3: https://fishing.fulubro.com/app/api/oauth.php?open_id=o8M4xq68hFU4c6g8jT2If9fxALJzk1QE4&package=z");
+  for (let oㅇﾟ = 0; oㅇﾟ < users.length; oㅇﾟ++) {
+    await new MainProgram(users[oㅇﾟ], oㅇﾟ + 1).doTask();
+  }
 }
 !(async () => {
-  if (typeof $request !== "undefined") {
-    await getCk();
+  if (typeof $request != "undefined") {
+    await getCookie();
   } else {
-    if (!nwjgapp) {
-      $.log("📢 很抱歉，😭 没有找到账号信息！你确定配置账号信息了吗？");
-      return;
-    }
-    $.log("📢 开始检测服务器接口状态>>>");
-    let r = false;
-    const c = apiHost.split("&"),
-      p = c.length;
-    for (let F = 0; F < p; F++) {
-      if ($.isNode()) {
-        r = await checkAddress("" + c[F], 2500);
-      } else {
-        if ($.isSurge() || $.isLoon()) {
-          r = await httpClientRequest("" + c[F], 2500);
-        } else {
-          r = await fetchRequest("" + c[F], 2500);
-        }
-      }
-      if (r == true) {
-        apiHost = c[F];
-        $.log("📢 接口" + (F + 1) + "[" + c[F] + "]服务器接口正常! 🎉");
-        break;
-      }
-      if (F == p - 1 && r == false) {
-        $.log("📢 抱歉，所有接口都不可用, 请前往交流群置顶获取最新的接口地址! 😭");
-        $.msg($.name, "所有接口都不可用, 请尽快前往交流群置顶获取最新的接口地址!");
-        return;
-      }
-    }
-    if (!activeCode || !userId || userId == 1 || activeCode == 0 || activeCode.length != 32) {
-      $.log("❗️ 抱歉，你没有权限运行此脚本, 请关注电报机器人: https://t.me/DavidLoveBot");
-      return;
-    }
-    await getScriptAuth(appName, userId, activeCode);
-    $.log("📢 " + systemNotify);
-    $.log("🔔 当前脚本版本号: " + version + "，最新版本号: " + newest_version);
-    if (vipDate != "") {
-      let w = new Date(vipDate).getTime(),
-        R = new Date().getTime();
-      if (R > w) {
-        $.log("❗️ 抱歉，VIP到期了，请及时付费。");
-        return;
-      }
-    }
-    if (version < newest_version) {
-      $.log("❗️ 当前脚本版本号低于服务器版本，请更新脚本吧！");
-      sendMsg("🔔 当前脚本版本号低于服务器版本，请更新脚本吧！");
-      return;
-    }
-    if (scriptAuth != true) {
-      $.log("❗️ 抱歉, 此脚本已停用。");
-      return;
-    }
-    if (userRank != true) {
-      $.log("❗️ 抱歉, 用户不合法，请先私聊机器人加入交流区。 https://t.me/DavidLoveBot");
-      return;
-    }
-    if (userAuth != true) {
-      $.log("❗️ 抱歉，你没有权限运行此脚本, 请关注电报机器人: https://t.me/DavidLoveBot");
-      return;
-    }
-    if (isCharge == true) {
-      $.log("🔔 此脚本采用付费模式。🔒");
-    } else {
-      $.log("🔔 此脚本采用免费模式。🔓");
-    }
-    if (vipDate != "") {
-      if (isCharge == true) {
-        let L = new Date(vipDate).getTime(),
-          s = new Date().getTime();
-        if (s > L) {
-          $.log("❗️ 抱歉，VIP到期了，请及时付费。");
-          return;
-        } else {
-          $.log("🔔 尊敬的会员：您好，你是VIP用户！🔐");
-        }
-      }
-    } else {
-      if (isCharge == true) {
-        if (vipAuth != true) {
-          $.log("❗️ 抱歉，你不是付费用户, 你没有权限运行此脚本, 需要使用请查看使用说明。");
-          return;
-        } else {
-          $.log("🔔 尊敬的会员：您好，你是付费用户！🔐");
-        }
-      }
-    }
-    if (multiAccount > 1) {
-      $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一次可以运行" + numbers * multiAccount + "个账号。");
-    }
-    if (buyCount > 1) {
-      $.log("🔔 尊敬的会员，您好！你使用的是付费多用户授权账号，一共可以运行" + runTotalCounts + "次, 已经运行了" + runedCounts + "次。");
-    }
-    if (runAuth != true) {
-      $.log("❗️ 抱歉,  该用户今天可能已经达到最大运行次数，明天再试吧！");
-      return;
-    }
-    if (nwjgapp.length > numbers * multiAccount) {
-      $.log("❗️ 当前用户一次最多运行" + numbers * multiAccount + "个账号，需要增加账号请查看置顶说明。");
-      return;
-    }
-    if (nwjgapp.length == 0) {
-      $.log("先抓取账号ck，再运行脚本吧！");
-      return;
-    }
-    if (runedCounts + nwjgapp.length > runTotalCounts) {
-      $.log("📢 一共发现了" + nwjgapp.length + "个账号");
-      $.log("❗️ 当前用户运行次数剩余" + (runTotalCounts - runedCounts) + "次，还可以运行" + (runTotalCounts - runedCounts) + "个账号，还需要" + (nwjgapp.length - (runTotalCounts - runedCounts)) + "次，可以通过赞赏后增加运行次数！");
-      return;
-    }
-    if (vipDate != "") {
-      $.log("📢 你的会员有效期到： " + vipDate);
-    }
-    helpUtils = await loadUtils(flushCash);
-    CryptoJS = helpUtils.createCryptoJS();
-    $.log("📢 一共发现了" + nwjgapp.length + "个账号");
-    if ($.isNode()) {
-      if (!fs.existsSync(nwjg_ck_file)) {
-        nwjg_cks = {};
-      } else {
-        nwjg_cks = JSON.parse(fs.readFileSync(nwjg_ck_file, "utf8"));
-      }
-    }
-    let g = [],
-      P = nwjgapp.length,
-      l = 0;
-    if ($.isNode() && process.env.NWJG_THREAD_COUNT) {
-      l = parseInt(process.env.NWJG_THREAD_COUNT);
-    } else {
-      l = P;
-    }
-    let h = nwjgapp.length;
-    if (l >= P) {
-      l = P;
-      h = 1;
-      $.log("📢 你设置的线程数是" + l + "，账号个数是" + P + "，" + h + "次可全部跑完。");
-      for (let Z1 = 0; Z1 < nwjgapp.length; Z1++) {
-        g.push(runMultiTasks(Z1));
-        nwjglogs[Z1] = "";
-        if ($.isNode()) {
-          channels_status[Z1] = 0;
-          await init_ws(Z1);
-        } else {
-          channels_status[Z1] = 1;
-        }
-      }
-      await Promise.allSettled(g).then(Z5 => {
-        if ($.isNode() && saveFile) {
-          $.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数");
-          fs.writeFileSync(nwjg_ck_file, JSON.stringify(nwjg_cks, null, 2));
-        }
-        $.log("日志整理功能如下：");
-        $.log("---------------日志整理开始--------------");
-        for (let Z8 = 0; Z8 < nwjgapp.length; Z8++) {
-          $.log(nwjglogs[Z8]);
-          sendlogs += nwjglogs[Z8];
-        }
-        $.log("---------------日志整理结束--------------");
-        sendMsg(sendlogs);
-      });
-    } else {
-      h = Math.ceil(P / l);
-      $.log("📢 你设置的线程数是" + l + "，账号个数是" + P + "，计算后分" + h + "次执行，一次可执行" + l + "个账号，最后一次如果不够" + l + "个账号，剩多少个账号就跑几个账号。");
-      for (let Z6 = 0; Z6 < h; Z6++) {
-        for (let Z8 = Z6 * l; Z8 < l * (Z6 + 1) && Z8 < P; Z8++) {
-          g.push(runMultiTasks(Z8));
-          nwjglogs[Z8] = "";
-          channels_status[Z8] = 0;
-          await init_ws(Z8);
-        }
-        await Promise.allSettled(g).then(ZZ => {
-          g = [];
-          if (Z6 == h - 1) {
-            if ($.isNode() && saveFile) {
-              $.log("[温馨提醒]: 即将本地化token，这样可以有效降低登录次数");
-              fs.writeFileSync(nwjg_ck_file, JSON.stringify(nwjg_cks, null, 2));
-            }
-            $.log("日志整理功能如下：");
-            $.log("---------------日志整理开始--------------");
-            for (let Zp = 0; Zp < nwjgapp.length; Zp++) {
-              $.log(nwjglogs[Zp]);
-              sendlogs += nwjglogs[Zp];
-            }
-            $.log("---------------日志整理结束--------------");
-            sendMsg(sendlogs);
-          }
-        });
-      }
-    }
+    await main();
   }
-})().catch(Z => $.logErr(Z)).finally(() => $.done());
-async function runMultiTasks(Z) {
-  return new Promise((t, r) => {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 开始执行 working......");
-    runSubTask(t, Z);
-  });
-}
-async function init_ws(Z) {
-  $.isNode() && (reconectCounts[Z] > 0 && $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 尝试重新连接服务器>>>>>>"), wss[Z] = new WebSocket(apiHost.replace("http", "ws") + "/ws"), wss[Z].on("open", function c() {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 签名通道已连接");
-  }), wss[Z].on("close", function p() {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 签名通道已关闭，原因是任务已处理完成");
-  }), wss[Z].on("error", function g() {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 签名通道已关闭，原因是出现错误");
-    channels_status[Z] = 1;
-    reconectCounts[Z]++;
-    if (reconectCounts[Z] <= 3) {
-      init_ws(Z);
-    }
-  }));
-}
-async function initLotteryPlatformHeaders(D, t) {
-  requestObjects[D].headers.Token = t;
-  requestObjects[D].headers["Content-Type"] = "application/x-www-form-urlencoded";
-  delete requestObjects[D].headers.Authorization;
-}
-async function runSubTask(Z, D) {
-  if ($.isNode()) {
-    await $.wait(3000, 5000);
-  }
-  await login(D);
-  await userInfo(D);
-  await getActivityId(D);
-  await signInfo(D);
-  await lotteryPlaformLogin(D);
-  await getIntegral(D);
-  $.isNode() && (await wss[D].close());
-  await runComplete(appName, userId);
-  Z();
-}
-async function getCk() {
-  if ($request.url.match(/\/passport\/UnionLogin/)) {
-    const t = $request.body;
-    let r = nwjguserck - 1;
-    if (nwjgapp[r]) {
-      nwjgapp[r].token_body = t;
-    } else {
-      const g = {
-        token_body: t
-      };
-      nwjgapp[r] = g;
-    }
-    $.setdata(JSON.stringify(nwjgapp, null, 2), "nwjgapp");
-    $.msg($.name, "快音账号" + (r + 1) + "Token获取成功！🎉");
-  }
-}
-async function userInfo(Z) {
-  const t = "https://stdcrm.dtmiller.com/scrm-promotion-service/mini/wly/user/info";
-  let r = "";
-  await getReqObject(t, r, Z);
-  await httpRequest("get", requestObjects[Z], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 0) {
-    let p = c.data.member,
-      g = c.data.grade;
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 👤 用户信息: " + p.nick_name + " (" + p.mobile + ")");
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 👤 用户信息: " + p.nick_name + " (" + p.mobile + ")\n";
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 🎖️ 会员等级: " + g.level_name + " (到期: " + g.expire_time + ")");
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 🎖️ 会员等级: " + g.level_name + " (到期: " + g.expire_time + ")\n";
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 💰 当前积分: " + p.points);
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 💰 当前积分: " + p.points + "\n";
-  } else {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 用户信息=> " + c.msg);
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 用户信息=> " + c.msg + "\n";
-  }
-}
-async function getActivityId(Z) {
-  const t = "https://stdcrm.dtmiller.com/scrm-promotion-service/mini/module/config/list";
-  let r = "";
-  await getReqObject(t, r, Z);
-  await httpRequest("post", requestObjects[Z], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 0) {
-    let p = c.data.find(g => g.title == "任务中心");
-    if (p) {
-      let P = p.detailList.find(l => l.id == 151);
-      if (P) {
-        let h = JSON.parse(P.detailJson),
-          Y = h.jumpData.pagePath;
-        signTaskActivityIds[Z] = Y.split("actId=")[1];
-      }
-    }
-  } else {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 用户信息=> " + c.msg);
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 用户信息=> " + c.msg + "\n";
-  }
-}
-async function signInfo(Z) {
-  const t = "https://stdcrm.dtmiller.com/scrm-promotion-service/promotion/sign/userinfo?promotionId=" + signTaskActivityIds[Z];
-  let r = "";
-  await getReqObject(t, r, Z);
-  await httpRequest("get", requestObjects[Z], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 0) {
-    let p = c.data;
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 📅 签到活动: " + p.promotionName);
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 📅 签到活动: " + p.promotionName + "\n";
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 📈 累计签到: " + p.signDays + " 天");
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 📈 累计签到: " + p.signDays + " 天\n";
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 🎁 今日奖励: " + (p.signDayPrizeName ? p.signDayPrizeName : ""));
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 🎁 今日奖励: " + (p.signDayPrizeName ? p.signDayPrizeName : "") + "\n";
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 今日已签: " + (p.today ? "是" : "否"));
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 今日已签: " + (p.today ? "是" : "否") + "\n";
-    if (!p.today) {
-      $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 🚀 开始签到...");
-      nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 🚀 开始签到...\n";
-      await doSignToday(Z);
-    } else {
-      $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ℹ️ 今日已签到，无需重复操作");
-      nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ℹ️ 今日已签到，无需重复操作\n";
-    }
-  } else {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 用户信息=> " + c.msg);
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 用户信息=> " + c.msg + "\n";
-  }
-}
-async function doSignToday(Z) {
-  await getWxCode(Z);
-  const t = "https://stdcrm.dtmiller.com/scrm-promotion-service/promotion/sign/today?promotionId=" + signTaskActivityIds[Z];
-  let r = "";
-  await getReqObject(t, r, Z);
-  await httpRequest("get", requestObjects[Z], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 0) {
-    let g = c.data;
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 签到成功，获得: " + g.prize.prizeName);
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 签到成功，获得: " + g.prize.prizeName + "\n";
-  } else {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 签到失败！原因：" + c.msg);
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 签到失败！原因：" + c.msg + "\n";
-  }
-}
-async function login(Z) {
-  await getWxCodeFromLocal(Z, wechatMiniAppId);
-  $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 浓五酒馆小程序微信code获取成功，code值为" + codes[Z]);
-  const t = "https://stdcrm.dtmiller.com/std-weixin-mp-service/miniApp/custom/login";
-  let r = "{\"code\": \"" + codes[Z] + "\",\"appId\": \"" + wechatMiniAppId + "\"}";
-  await getReqObject(t, r, Z);
-  await httpRequest("post", requestObjects[Z], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 0) {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 登录成功");
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 登录成功\n";
-    nwjgapp[Z].auth = "Bearer " + c.data;
-  } else {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 登录失败！");
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 登录失败！\n";
-  }
-}
-async function lotteryPlaformLogin(Z) {
-  await getWxCodeFromLocal(Z, wechatMiniShopAppId);
-  $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 积分商城平台小程序微信code获取成功，code值为" + codes[Z]);
-  const t = "https://jf.wlnxjc.com/mini/WeChat/Login";
-  let r = "code=" + codes[Z] + "&to=wheel&loginSource=1";
-  await getReqObject(t, r, Z);
-  await initLotteryPlatformHeaders(Z, "");
-  await httpRequest("post", requestObjects[Z], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 200) {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 积分商城平台登录成功");
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: ✅ 积分商城平台登录成功\n";
-    nwjgapp[Z].lotteryPlatformAuth = c.data.token;
-  } else {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 登录失败！");
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 登录失败！\n";
-  }
-}
-async function getIntegral(Z) {
-  const t = "https://jf.wlnxjc.com/mini/Integral/Get";
-  let r = "";
-  await getReqObject(t, r, Z);
-  await initLotteryPlatformHeaders(Z, nwjgapp[Z].lotteryPlatformAuth);
-  await httpRequest("get", requestObjects[Z], printCaller());
-  let c = httpResult;
-  if (c != null && c.code == 200) {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 💰 当前积分: " + c.data.integral);
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 💰 当前积分: " + c.data.integral + "\n";
-    if (c.data.integral >= 20) {
-      await draw(Z);
-    }
-  } else {
-    $.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 获取积分信息失败！");
-    nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 获取积分信息失败！\n";
-  }
-}
-async function draw(Z) {
-  const t = "https://jf.wlnxjc.com/mini/Activity/Draw";
-  let r = "activityId=1924637800871890944";
-  await getReqObject(t, r, Z);
-  await initLotteryPlatformHeaders(Z, nwjgapp[Z].lotteryPlatformAuth);
-  await httpRequest("post", requestObjects[Z], printCaller());
-  let c = httpResult;
-  c != null && c.code == 200 ? ($.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 🎉 恭喜获得: " + c.data.lottery.awardName + ", 奖品是" + c.data.lottery.prizeName), nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 🎉 恭喜获得: " + c.data.lottery.awardName + ", 奖品是" + c.data.lottery.prizeName + "\n") : ($.log("[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 抽奖失败！"), nwjglogs[Z] += "[账号" + (Z + 1 < 10 ? "0" + (Z + 1) : Z + 1) + "]: 抽奖失败！\n");
-}
-function getScriptAuth(Z, D, t) {
-  return new Promise((c, p) => {
-    const l = apiHost + "/script/permissions/lastest",
-      h = {
-        appName: Z,
-        userId: D,
-        activityCode: t,
-        version: version
-      };
-    const F = {
-      "Content-Type": "application/json",
-      accept: "application/json"
-    };
-    const G = {
-      url: l,
-      headers: F,
-      body: JSON.stringify(h)
-    };
-    $.post(G, async (v, b, C) => {
-      if (C && C != null && C.replace(/\"/g, "").length > 50) {
-        const z = C.replace(/\"/g, "").slice(34);
-        helpUtils = await loadUtils(flushCash);
-        CryptoJS = helpUtils.createCryptoJS();
-        result = JSON.parse(CryptoJS.enc.Base64.parse(z).toString(CryptoJS.enc.Utf8));
-        try {
-          newest_version = result.version;
-          userAuth = result.userAuth;
-          scriptAuth = result.scriptAuth;
-          runAuth = result.runAuth;
-          systemNotify = result.notify;
-          vipAuth = result.vipAuth;
-          isCharge = result.isCharge;
-          multiAccount = result.runAcounts;
-          buyCount = result.buyCount;
-          runedCounts = result.runedCounts;
-          runTotalCounts = result.runTotalCounts;
-          userRank = result.userRank;
-          invicode = result.invicate;
-          numbers = result.accountNumbers;
-          vipDate = result.vipDate;
-        } catch (S) {
-          $.log(S);
-        }
-      } else {
-        $.log("请求服务器接口出现错误，请检查网络连接情况");
-      }
-      c();
+})().catch(ᵒㅇଠ => {
+  console.log(ᵒㅇଠ);
+}).finally(() => $.done());
+function get(ᵒㅇO) {
+  return new Promise((ﾷㅇﾟ, ₒᐤଠ) => {
+    $.get(ᵒㅇO, (ﾟ0ᵒ, ﾷ0ᐤ, Oꓳₒ) => {
+      if (ﾟ0ᵒ) ₒᐤଠ(ﾟ0ᵒ);
+      ﾷㅇﾟ(ﾷ0ᐤ);
     });
   });
 }
-function runComplete(Z, D) {
-  return new Promise((r, c) => {
-    const p = apiHost + "/script/run/add",
-      g = {
-        appName: Z,
-        userId: D,
-        activityCode: activeCode,
-        version: version
-      };
-    const l = {
-      "Content-Type": "application/json",
-      accept: "application/json"
-    };
-    const h = {
-      url: p,
-      headers: l,
-      body: JSON.stringify(g)
-    };
-    $.post(h, async (Y, F, G) => {
-      r();
+function post(ᵒㅇO) {
+  return new Promise((ﾷㅇﾟ, ₒᐤଠ) => {
+    $.post(ᵒㅇO, (ﾟ0ᵒ, ﾷ0ᐤ, Oꓳₒ) => {
+      ﾷㅇﾟ(ﾷ0ᐤ);
     });
   });
 }
-function loadToken(D) {
-  let c = nwjgapp[D].mobile;
-  nwjg_item = nwjg_cks["" + c];
-  if (nwjg_item) {
-    nwjgapp[D].refreshToken = nwjg_item.refreshToken;
-    nwjgapp[D].accessToken = nwjg_item.accessToken;
-    return true;
-  } else {
-    return false;
-  }
-}
-function saveToken(Z) {
-  nwjg_cks[nwjgapp[Z].mobile] = {
-    refreshToken: nwjgapp[Z].refreshToken,
-    accessToken: nwjgapp[Z].accessToken,
-    ts: ts13()
-  };
-}
-async function loadUtils(Z) {
-  let t = $.getdata("Utils_Code") || "";
-  if (!Z && t && Object.keys(t).length) {
-    $.log("📢 缓存中存在JS-Utils");
-    eval(t);
-    return creatUtils();
-  }
-  $.log("📢 开始初始化JS-Utils");
-  return new Promise(async c => {
-    $.getScript("http://script.david2025.top/scripts/tools/JS-Utils.js").then(P => {
-      $.setdata(P, "Utils_Code");
-      eval(P);
-      $.log("📢 JS-Utils加载成功");
-      c(creatUtils());
-    });
-  });
-}
-function checkAddress(Z, D) {
-  return new Promise((r, c) => {
-    const g = setTimeout(() => {
-        r(false);
-      }, D),
-      P = http.get(Z, l => {
-        clearTimeout(g);
-        if (l.statusCode === 404) {
-          r(true);
-        } else {
-          r(false);
-        }
-      });
-    P.on("error", l => {
-      clearTimeout(g);
-      r(false);
-    });
-    P.on("timeout", () => {
-      P.abort();
-      c(new Error("请求超时"));
-    });
-  });
-}
-async function fetchRequest(Z, D = 3000) {
-  return new Promise((r, c) => {
-    const g = {
-      url: Z + "/docs"
-    };
-    setTimeout(() => {
-      r(false);
-    }, D);
-    $.get(g, async (P, l, h) => {
-      l.status == 401 ? r(true) : r(false);
-    });
-  });
-}
-async function httpClientRequest(Z, D = 3000) {
-  return new Promise((r, c) => {
-    const g = {
-      url: Z + "/"
-    };
-    setTimeout(() => {
-      r(false);
-    }, D);
-    $httpClient.get(g, async (P, l, h) => {
-      if (h == "{\"detail\":\"Not Found\"}") {
-        r(true);
-      } else {
-        r(false);
-      }
-    });
-  });
-}
-async function redisGet(Z, D, t) {
-  return new Promise((c, p) => {
-    const P = apiHost + "/redis/hash/get/" + D + "/" + t,
-      l = {
-        "Content-Type": "application/json",
-        accept: "application/json"
-      };
-    const h = {
-      url: P,
-      headers: l
-    };
-    $.get(h, async (F, G, v) => {
-      const x = v.replace(/\"/g, "");
-      answerTexts[Z] = x;
-      c();
-    });
-  });
-}
-function redisSet(Z, D, t) {
-  return new Promise((c, p) => {
-    const g = apiHost + "/redis/hash/set",
-      P = {
-        key: Z,
-        hashKey: D,
-        hashValue: t
-      };
-    const h = {
-      "Content-Type": "application/json",
-      accept: "application/json"
-    };
-    const Y = {
-      url: g,
-      headers: h,
-      body: JSON.stringify(P)
-    };
-    $.post(Y, async (F, G, v) => {
-      c();
-    });
-  });
-}
-function redisPop(Z) {
-  return new Promise((t, r) => {
-    const g = apiHost + "/redis/set/pop/" + Z,
-      P = {
-        "Content-Type": "application/json",
-        accept: "application/json"
-      };
-    const l = {
-      url: g,
-      headers: P
-    };
-    $.get(l, async (Y, F, G) => {
-      const v = G.replace(/\"/g, "");
-      popCookie = v;
-      t();
-    });
-  });
-}
-function getWxCode(Z, D) {
-  return new Promise((r, c) => {
-    const P = apiHost + "/wechat/mini/code",
-      l = {
-        content: nwjgapp[Z].key + "@" + D,
-        appName: appName,
-        uuid: userId
-      };
-    const Y = {
-      "Content-Type": "application/json",
-      accept: "application/json"
-    };
-    const F = {
-      url: P,
-      headers: Y,
-      body: JSON.stringify(l)
-    };
-    $.post(F, async (G, v, b) => {
-      const K = b.replace(/\"/g, "");
-      codes[Z] = K;
-      r();
-    });
-  });
-}
-function getWxCodeFromLocal(Z, D) {
-  return new Promise((r, c) => {
-    const g = nwjgapp[Z].interface + "/applet/JsLogin?key=" + nwjgapp[Z].key,
-      P = {
-        AppId: D,
-        Data: "",
-        Opt: 1,
-        PackageName: "",
-        SdkName: ""
-      };
-    const h = {
-      "Content-Type": "application/json",
-      accept: "application/json"
-    };
-    const Y = {
-      url: g,
-      headers: h,
-      body: JSON.stringify(P)
-    };
-    $.post(Y, async (F, G, v) => {
-      codes[Z] = JSON.parse(v).Data.Code;
-      r();
-    });
-  });
-}
-async function getReqObject(t, r, c) {
-  let g = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
-  nwjgapp[c].ua && nwjgapp[c].ua != "" && (g = nwjgapp[c].ua);
-  let P = getHostname(t);
-  const l = {
-    "Content-Type": "application/json",
-    "User-Agent": g,
-    Authorization: nwjgapp[c].auth ? nwjgapp[c].auth : "",
-    Host: P
-  };
-  const h = {
-    url: t,
-    headers: l
-  };
-  if (r) {
-    h.body = r;
-  }
-  requestObjects[c] = h;
-  return h;
-}
-function getReqObject_(t, r, c) {
-  let g = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.31(0x18001f34) NetType/WIFI Language/zh_CN";
-  if (nwjgapp[c].ua && nwjgapp[c].ua != "") {
-    g = nwjgapp[c].ua;
-  }
-  let P = getHostname(t);
-  const l = {
-    "Content-Type": "application/x-www-form-urlencoded",
-    "User-Agent": g,
-    Authorization: nwjgapp[c].auth,
-    Host: P
-  };
-  const h = {};
-  h.url = t;
-  h.headers = l;
-  let Y = h;
-  if (r) {
-    Y.body = r;
-  }
-  requestObjects[c] = Y;
-  return Y;
-}
-async function httpRequest(Z, D, t) {
-  httpResult = null;
-  return new Promise(c => {
-    $[Z](D, async (P, l, h) => {
-      try {
-        if (P) {
-          $.log(t + ": " + Z + "请求失败");
-          $.log(JSON.stringify(P));
-          $.logErr(P);
-        } else {
-          if (safeGet(h)) {
-            httpResult = JSON.parse(h);
-          } else {
-            const x = new URL(D.url);
-            $.log(x.pathname + "发起" + Z + "请求时，出现错误，请处理");
-          }
-        }
-      } catch (z) {
-        $.logErr(z, l);
-      } finally {
-        c(httpResult);
-      }
-    });
-  });
-}
-async function selectChannel(Z, D) {
-  if (channels_status[Z] == 0) {
-    await getSign_(Z, D);
-  } else {
-    await getSign(Z, D);
-  }
-}
-function getSign_(Z, D) {
-  return new Promise((r, c) => {
-    function g(P) {
-      let Y = P.toString("utf8");
-      requestSigns[Z] = Y;
-      wss[Z].removeListener("message", g);
-      r(Y);
+function Env(Oₒଠ, ᵒㅇଠ) {
+  class ᵒⲟₒ {
+    constructor(Oₒଠ) {
+      this.env = Oₒଠ;
     }
-    wss[Z].on("message", g);
-    if (wss[Z].readyState === 1) {
-      const P = {
-        method: appName,
-        params: {}
-      };
-      P.params.content = D;
-      P.params.appName = appName;
-      P.params.uuid = userId;
-      wss[Z].send(JSON.stringify(P), l => {
-        if (l) {
-          c(l);
-        }
-      });
-    } else {
-      r(getSign(Z, D));
-      wss[Z].removeListener("message", g);
-    }
-  });
-}
-function getSign(Z, D) {
-  return new Promise((r, c) => {
-    const g = apiHost + "/sign/nwjg",
-      P = {
-        content: D,
-        appName: appName,
-        uuid: userId
-      };
-    const h = {
-      "Content-Type": "application/json",
-      accept: "application/json"
-    };
-    const Y = {
-      url: g,
-      headers: h,
-      body: JSON.stringify(P)
-    };
-    $.post(Y, async (F, G, v) => {
-      const C = v.replace(/\"/g, "");
-      requestSigns[Z] = C;
-      r();
-    });
-  });
-}
-function sortUrlParams(Z, D, t) {
-  const c = url2obj(Z);
-  D.forEach(P => {
-    delete c[P];
-  });
-  Object.assign(c, t);
-  const p = Object.keys(c).sort();
-  const g = p.map(P => P + "=" + c[P]).join("&");
-  return g;
-}
-function url2obj(D) {
-  D = D.replace(/\"/g, "");
-  var c,
-    p = {},
-    g = D.slice(D.indexOf("?") + 1).split("&");
-  for (var P = 0; P < g.length; P++) {
-    c = g[P].split("=");
-    p[c[0]] = c[1];
-  }
-  return p;
-}
-function convertStringToJson(Z) {
-  const t = Z.replace(/[{} ]/g, ""),
-    r = t.split(","),
-    c = {};
-  r.forEach(p => {
-    const [P, l] = p.split("=");
-    c[P] = l;
-  });
-  return c;
-}
-function getHostname(D) {
-  let c = D.substr(D.indexOf("//") + 2),
-    p = c.substr(0, c.indexOf("/")),
-    g = "",
-    P = p.indexOf(":");
-  if (P > 0) {
-    g = p.substr(0, P);
-  } else {
-    g = p;
-  }
-  return g;
-}
-function calculateTimeDifference(D, t) {
-  var Y = new Date(D);
-  var P = new Date(t);
-  var l = P - Y;
-  var h = Math.floor(l / 1000);
-  return h;
-}
-function cutString(Z, D) {
-  if (Z.length * 2 <= D) {
-    return Z;
-  }
-  var r = 0;
-  var c = "";
-  for (var p = 0; p < Z.length; p++) {
-    c = c + Z.charAt(p);
-    if (Z.charCodeAt(p) > 128) {
-      r = r + 2;
-      if (r >= D) {
-        return c.substring(0, c.length - 1) + "...";
-      }
-    } else {
-      r = r + 1;
-      if (r >= D) {
-        return c.substring(0, c.length - 2) + "...";
-      }
-    }
-  }
-  return c;
-}
-function printCaller() {
-  return new Error().stack.split("\n")[3].split("@")[0];
-}
-function safeGet(Z) {
-  try {
-    if (typeof JSON.parse(Z) == "object") {
-      return true;
-    }
-  } catch (c) {
-    console.log(c);
-    console.log("服务器访问数据为空，请检查自身设备网络情况");
-    return false;
-  }
-}
-function jsonToUrl(Z) {
-  var t = Object.keys(Z).map(function (r) {
-    return encodeURIComponent(r) + "=" + encodeURIComponent(Z[r]);
-  }).join("&");
-  return t;
-}
-function compileStr(Z) {
-  var t = String.fromCharCode(Z.charCodeAt(0) + Z.length);
-  for (var r = 1; r < Z.length; r++) {
-    t += String.fromCharCode(Z.charCodeAt(r) + Z.charCodeAt(r - 1));
-  }
-  return escape(t);
-}
-function uncompileStr(Z) {
-  Z = unescape(Z);
-  var t = String.fromCharCode(Z.charCodeAt(0) - Z.length);
-  for (var r = 1; r < Z.length; r++) {
-    t += String.fromCharCode(Z.charCodeAt(r) - t.charCodeAt(r - 1));
-  }
-  return t;
-}
-function randomMac() {
-  return "XX:XX:XX:XX:XX:XX".replace(/X/g, function () {
-    return "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16));
-  });
-}
-function txt_api(Z) {
-  return new Promise((t, r) => {
-    const p = "https://v1.hitokoto.cn/?c=e",
-      g = {
-        accept: "application/json"
-      };
-    const P = {
-      url: p,
-      headers: g
-    };
-    $.get(P, async (h, Y, F) => {
-      let b = JSON.parse(F),
-        C = b.hitokoto;
-      contents[Z] = C + " " + C;
-      t();
-    });
-  });
-}
-function getTime_8() {
-  return new Promise((D, t) => {
-    const c = "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
-      p = {
-        url: c
-      };
-    $.get(p, async (P, l, h) => {
-      D(h);
-    });
-  });
-}
-function message() {
-  if (tz == 1) {
-    $.msg($.name, "", $.message);
-  }
-}
-async function sendMsg(Z) {
-  if (hour == 9 || hour == 12 || hour == 18) {
-    if (tz == 1) {
-      if ($.isNode()) {
-        await notify.sendNotify($.name, Z);
-      } else {
-        $.msg($.name, "", Z);
-      }
-    } else {
-      $.log(Z);
-    }
-  }
-}
-async function wxPush(Z, D, t) {
-  return new Promise((c, p) => {
-    const P = "https://wxpusher.zjiecode.com/api/send/message",
-      l = {
-        appToken: "AT_6BZsE2IyJuVLPp3mcOkKvpoF245GR9xn",
-        content: D,
-        summary: "快手答题余额通知",
-        contentType: 1,
-        uids: [t],
-        verifyPay: false
-      };
-    const Y = {
-      "Content-Type": "application/json"
-    };
-    const F = {
-      url: P,
-      headers: Y,
-      body: JSON.stringify(l)
-    };
-    $.post(F, async (G, v, b) => {
-      c();
-    });
-  });
-}
-function Env(Z, D) {
-  class c {
-    constructor(p) {
-      this.env = p;
-    }
-    send(p, g = "GET") {
-      p = "string" == typeof p ? {
-        url: p
-      } : p;
-      let h = this.get;
-      "POST" === g && (h = this.post);
-      return new Promise((Y, F) => {
-        h.call(this, p, (b, C, x) => {
-          b ? F(b) : Y(C);
+    send(Oₒଠ, ᵒㅇଠ = "GET") {
+      Oₒଠ = "string" == typeof Oₒଠ ? {
+        url: Oₒଠ
+      } : Oₒଠ;
+      let ᵒⲟₒ = this.get;
+      "POST" === ᵒㅇଠ && (ᵒⲟₒ = this.post);
+      const ﾷ0ﾷ = new Promise((ᵒㅇଠ, ﾷ0ﾷ) => {
+        ᵒⲟₒ.call(this, Oₒଠ, (Oₒଠ, ᵒⲟₒ, ᣞଠᴑ) => {
+          Oₒଠ ? ﾷ0ﾷ(Oₒଠ) : ᵒㅇଠ(ᵒⲟₒ);
         });
       });
+      return Oₒଠ.timeout ? ((Oₒଠ, ᵒㅇଠ = 1000) => Promise.race([Oₒଠ, new Promise((Oₒଠ, ᵒⲟₒ) => {
+        setTimeout(() => {
+          ᵒⲟₒ(new Error("\u8BF7\u6C42\u8D85\u65F6"));
+        }, ᵒㅇଠ);
+      })]))(ﾷ0ﾷ, Oₒଠ.timeout) : ﾷ0ﾷ;
     }
-    get(p) {
-      return this.send.call(this.env, p);
+    get(Oₒଠ) {
+      return this.send.call(this.env, Oₒଠ);
     }
-    post(p) {
-      return this.send.call(this.env, p, "POST");
+    post(Oₒଠ) {
+      return this.send.call(this.env, Oₒଠ, "POST");
     }
   }
   return new class {
-    constructor(p, g) {
-      const l = {
+    constructor(Oₒଠ, ᵒㅇଠ) {
+      this.logLevels = {
         debug: 0,
         info: 1,
         warn: 2,
         error: 3
-      };
-      const h = {
+      }, this.logLevelPrefixs = {
         debug: "[DEBUG] ",
         info: "[INFO] ",
         warn: "[WARN] ",
         error: "[ERROR] "
-      };
-      this.logLevels = l;
-      this.logLevelPrefixs = h;
-      this.logLevel = "info";
-      this.name = p;
-      this.http = new c(this);
-      this.data = null;
-      this.dataFile = "box.dat";
-      this.logs = [];
-      this.isMute = !1;
-      this.isNeedRewrite = !1;
-      this.logSeparator = "\n";
-      this.encoding = "utf-8";
-      this.startTime = new Date().getTime();
-      Object.assign(this, g);
-      this.log("", "🔔 " + this.name + ", 开始!");
+      }, this.logLevel = "info", this.name = Oₒଠ, this.http = new ᵒⲟₒ(this), this.data = null, this.dataFile = "box.dat", this.logs = [], this.isMute = !1, this.isNeedRewrite = !1, this.logSeparator = "\n", this.encoding = "utf-8", this.startTime = new Date().getTime(), Object.assign(this, ᵒㅇଠ), this.log("", `\ud83d\udd14${this.name}\x2C\x20\u5f00\u59cb\x21`);
     }
     getEnv() {
       return "undefined" != typeof $environment && $environment["surge-version"] ? "Surge" : "undefined" != typeof $environment && $environment["stash-version"] ? "Stash" : "undefined" != typeof module && module.exports ? "Node.js" : "undefined" != typeof $task ? "Quantumult X" : "undefined" != typeof $loon ? "Loon" : "undefined" != typeof $rocket ? "Shadowrocket" : void 0;
@@ -1118,88 +961,79 @@ function Env(Z, D) {
     isStash() {
       return "Stash" === this.getEnv();
     }
-    toObj(p, g = null) {
+    toObj(Oₒଠ, ᵒㅇଠ = null) {
       try {
-        return JSON.parse(p);
+        return JSON.parse(Oₒଠ);
       } catch {
-        return g;
+        return ᵒㅇଠ;
       }
     }
-    toStr(p, g = null, ...P) {
+    toStr(Oₒଠ, ᵒㅇଠ = null, ...ᵒⲟₒ) {
       try {
-        return JSON.stringify(p, ...P);
+        return JSON.stringify(Oₒଠ, ...ᵒⲟₒ);
       } catch {
-        return g;
+        return ᵒㅇଠ;
       }
     }
-    getjson(p, g) {
-      let P = g;
-      if (this.getdata(p)) {
-        try {
-          P = JSON.parse(this.getdata(p));
-        } catch {}
-      }
-      return P;
+    getjson(Oₒଠ, ᵒㅇଠ) {
+      let ᵒⲟₒ = ᵒㅇଠ;
+      if (this.getdata(Oₒଠ)) try {
+        ᵒⲟₒ = JSON.parse(this.getdata(Oₒଠ));
+      } catch {}
+      return ᵒⲟₒ;
     }
-    setjson(p, g) {
+    setjson(Oₒଠ, ᵒㅇଠ) {
       try {
-        return this.setdata(JSON.stringify(p), g);
+        return this.setdata(JSON.stringify(Oₒଠ), ᵒㅇଠ);
       } catch {
         return !1;
       }
     }
-    getScript(p) {
-      return new Promise(P => {
-        const l = {
-          url: p
-        };
-        this.get(l, (h, Y, F) => P(F));
+    getScript(Oₒଠ) {
+      return new Promise(ᵒㅇଠ => {
+        this.get({
+          url: Oₒଠ
+        }, (Oₒଠ, ᵒⲟₒ, ﾷ0ﾷ) => ᵒㅇଠ(ﾷ0ﾷ));
       });
     }
-    runScript(p, g) {
-      return new Promise(h => {
-        let F = this.getdata("@chavy_boxjs_userCfgs.httpapi");
-        F = F ? F.replace(/\n/g, "").trim() : F;
-        let G = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
-        G = G ? 1 * G : 20;
-        G = g && g.timeout ? g.timeout : G;
-        const v = {
-          script_text: p,
-          mock_type: "cron",
-          timeout: G
-        };
-        const [b, C] = F.split("@"),
-          x = {
-            url: "http://" + C + "/v1/scripting/evaluate",
-            body: v,
+    runScript(Oₒଠ, ᵒㅇଠ) {
+      return new Promise(ᵒⲟₒ => {
+        let ﾷ0ﾷ = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+        ﾷ0ﾷ = ﾷ0ﾷ ? ﾷ0ﾷ.replace(/\n/g, "").trim() : ﾷ0ﾷ;
+        let ᣞଠᴑ = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
+        ᣞଠᴑ = ᣞଠᴑ ? 1 * ᣞଠᴑ : 20, ᣞଠᴑ = ᵒㅇଠ && ᵒㅇଠ.timeout ? ᵒㅇଠ.timeout : ᣞଠᴑ;
+        const [ᵒⲟᴑ, Ꙩoᣞ] = ﾷ0ﾷ.split("@"),
+          oଠᣞ = {
+            url: `\x68\x74\x74\x70\x3A\x2F\x2F${Ꙩoᣞ}\x2F\x76\x31\x2F\x73\x63\x72\x69\x70\x74\x69\x6E\x67\x2F\x65\x76\x61\x6C\x75\x61\x74\x65`,
+            body: {
+              script_text: Oₒଠ,
+              mock_type: "cron",
+              timeout: ᣞଠᴑ
+            },
             headers: {
-              "X-Key": b,
+              "X-Key": ᵒⲟᴑ,
               Accept: "*/*"
             },
-            timeout: G
+            policy: "DIRECT",
+            timeout: ᣞଠᴑ
           };
-        this.post(x, (K, z, j) => h(j));
-      }).catch(h => this.logErr(h));
+        this.post(oଠᣞ, (Oₒଠ, ᵒㅇଠ, ﾷ0ﾷ) => ᵒⲟₒ(ﾷ0ﾷ));
+      }).catch(Oₒଠ => this.logErr(Oₒଠ));
     }
     loaddata() {
-      if (!this.isNode()) {
-        return {};
-      }
+      if (!this.isNode()) return {};
       {
-        this.fs = this.fs ? this.fs : require("fs");
-        this.path = this.path ? this.path : require("path");
-        const l = this.path.resolve(this.dataFile),
-          h = this.path.resolve(process.cwd(), this.dataFile),
-          Y = this.fs.existsSync(l),
-          F = !Y && this.fs.existsSync(h);
-        if (!Y && !F) {
-          return {};
-        }
+        this.fs = this.fs ? this.fs : require("fs"), this.path = this.path ? this.path : require("path");
+        const Oₒଠ = this.path.resolve(this.dataFile),
+          ᵒㅇଠ = this.path.resolve(process.cwd(), this.dataFile),
+          ᵒⲟₒ = this.fs.existsSync(Oₒଠ),
+          ﾷ0ﾷ = !ᵒⲟₒ && this.fs.existsSync(ᵒㅇଠ);
+        if (!ᵒⲟₒ && !ﾷ0ﾷ) return {};
         {
-          const v = Y ? l : h;
+          const ﾷ0ﾷ = ᵒⲟₒ ? Oₒଠ : ᵒㅇଠ;
           try {
-            return JSON.parse(this.fs.readFileSync(v));
-          } catch (C) {
+            return JSON.parse(this.fs.readFileSync(ﾷ0ﾷ));
+          } catch (Oₒଠ) {
             return {};
           }
         }
@@ -1207,313 +1041,275 @@ function Env(Z, D) {
     }
     writedata() {
       if (this.isNode()) {
-        this.fs = this.fs ? this.fs : require("fs");
-        this.path = this.path ? this.path : require("path");
-        const P = this.path.resolve(this.dataFile),
-          l = this.path.resolve(process.cwd(), this.dataFile),
-          h = this.fs.existsSync(P),
-          Y = !h && this.fs.existsSync(l),
-          F = JSON.stringify(this.data);
-        h ? this.fs.writeFileSync(P, F) : Y ? this.fs.writeFileSync(l, F) : this.fs.writeFileSync(P, F);
+        this.fs = this.fs ? this.fs : require("fs"), this.path = this.path ? this.path : require("path");
+        const Oₒଠ = this.path.resolve(this.dataFile),
+          ᵒㅇଠ = this.path.resolve(process.cwd(), this.dataFile),
+          ᵒⲟₒ = this.fs.existsSync(Oₒଠ),
+          ﾷ0ﾷ = !ᵒⲟₒ && this.fs.existsSync(ᵒㅇଠ),
+          ᣞଠᴑ = JSON.stringify(this.data);
+        ᵒⲟₒ ? this.fs.writeFileSync(Oₒଠ, ᣞଠᴑ) : ﾷ0ﾷ ? this.fs.writeFileSync(ᵒㅇଠ, ᣞଠᴑ) : this.fs.writeFileSync(Oₒଠ, ᣞଠᴑ);
       }
     }
-    lodash_get(p, g, P) {
-      const Y = g.replace(/\[(\d+)\]/g, ".$1").split(".");
-      let F = p;
-      for (const G of Y) if (F = Object(F)[G], void 0 === F) {
-        return P;
-      }
-      return F;
+    lodash_get(Oₒଠ, ᵒㅇଠ, ᵒⲟₒ) {
+      const ﾷ0ﾷ = ᵒㅇଠ.replace(/\[(\d+)\]/g, ".$1").split(".");
+      let ᣞଠᴑ = Oₒଠ;
+      for (const Oₒଠ of ﾷ0ﾷ) if (ᣞଠᴑ = Object(ᣞଠᴑ)[Oₒଠ], void 0 === ᣞଠᴑ) return ᵒⲟₒ;
+      return ᣞଠᴑ;
     }
-    lodash_set(p, g, P) {
-      Object(p) !== p || (Array.isArray(g) || (g = g.toString().match(/[^.[\]]+/g) || []), g.slice(0, -1).reduce((h, Y, F) => Object(h[Y]) === h[Y] ? h[Y] : h[Y] = Math.abs(g[F + 1]) >> 0 == +g[F + 1] ? [] : {}, p)[g[g.length - 1]] = P);
-      return p;
+    lodash_set(Oₒଠ, ᵒㅇଠ, ᵒⲟₒ) {
+      return Object(Oₒଠ) !== Oₒଠ || (Array.isArray(ᵒㅇଠ) || (ᵒㅇଠ = ᵒㅇଠ.toString().match(/[^.[\]]+/g) || []), ᵒㅇଠ.slice(0, -1).reduce((Oₒଠ, ᵒⲟₒ, ﾷ0ﾷ) => Object(Oₒଠ[ᵒⲟₒ]) === Oₒଠ[ᵒⲟₒ] ? Oₒଠ[ᵒⲟₒ] : Oₒଠ[ᵒⲟₒ] = Math.abs(ᵒㅇଠ[ﾷ0ﾷ + 1]) >> 0 == +ᵒㅇଠ[ﾷ0ﾷ + 1] ? [] : {}, Oₒଠ)[ᵒㅇଠ[ᵒㅇଠ.length - 1]] = ᵒⲟₒ), Oₒଠ;
     }
-    getdata(p) {
-      let g = this.getval(p);
-      if (/^@/.test(p)) {
-        const [, P, l] = /^@(.*?)\.(.*?)$/.exec(p),
-          h = P ? this.getval(P) : "";
-        if (h) {
-          try {
-            const Y = JSON.parse(h);
-            g = Y ? this.lodash_get(Y, l, "") : g;
-          } catch (G) {
-            g = "";
-          }
+    getdata(Oₒଠ) {
+      let ᵒㅇଠ = this.getval(Oₒଠ);
+      if (/^@/.test(Oₒଠ)) {
+        const [, ᵒⲟₒ, ﾷ0ﾷ] = /^@(.*?)\.(.*?)$/.exec(Oₒଠ),
+          ᣞଠᴑ = ᵒⲟₒ ? this.getval(ᵒⲟₒ) : "";
+        if (ᣞଠᴑ) try {
+          const Oₒଠ = JSON.parse(ᣞଠᴑ);
+          ᵒㅇଠ = Oₒଠ ? this.lodash_get(Oₒଠ, ﾷ0ﾷ, "") : ᵒㅇଠ;
+        } catch (Oₒଠ) {
+          ᵒㅇଠ = "";
         }
       }
-      return g;
+      return ᵒㅇଠ;
     }
-    setdata(p, g) {
-      let h = !1;
-      if (/^@/.test(g)) {
-        const [, Y, F] = /^@(.*?)\.(.*?)$/.exec(g),
-          G = this.getval(Y),
-          v = Y ? "null" === G ? null : G || "{}" : "{}";
+    setdata(Oₒଠ, ᵒㅇଠ) {
+      let ᵒⲟₒ = !1;
+      if (/^@/.test(ᵒㅇଠ)) {
+        const [, ﾷ0ﾷ, ᣞଠᴑ] = /^@(.*?)\.(.*?)$/.exec(ᵒㅇଠ),
+          ᵒⲟᴑ = this.getval(ﾷ0ﾷ),
+          Ꙩoᣞ = ﾷ0ﾷ ? "null" === ᵒⲟᴑ ? null : ᵒⲟᴑ || "{}" : "{}";
         try {
-          const C = JSON.parse(v);
-          this.lodash_set(C, F, p);
-          h = this.setval(JSON.stringify(C), Y);
-        } catch (x) {
-          const z = {};
-          this.lodash_set(z, F, p);
-          h = this.setval(JSON.stringify(z), Y);
+          const ᵒㅇଠ = JSON.parse(Ꙩoᣞ);
+          this.lodash_set(ᵒㅇଠ, ᣞଠᴑ, Oₒଠ), ᵒⲟₒ = this.setval(JSON.stringify(ᵒㅇଠ), ﾷ0ﾷ);
+        } catch (ᵒㅇଠ) {
+          const ᵒⲟᴑ = {};
+          this.lodash_set(ᵒⲟᴑ, ᣞଠᴑ, Oₒଠ), ᵒⲟₒ = this.setval(JSON.stringify(ᵒⲟᴑ), ﾷ0ﾷ);
         }
-      } else {
-        h = this.setval(p, g);
-      }
-      return h;
+      } else ᵒⲟₒ = this.setval(Oₒଠ, ᵒㅇଠ);
+      return ᵒⲟₒ;
     }
-    getval(p) {
+    getval(Oₒଠ) {
       switch (this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
-          return $persistentStore.read(p);
+          return $persistentStore.read(Oₒଠ);
         case "Quantumult X":
-          return $prefs.valueForKey(p);
+          return $prefs.valueForKey(Oₒଠ);
         case "Node.js":
-          this.data = this.loaddata();
-          return this.data[p];
+          return this.data = this.loaddata(), this.data[Oₒଠ];
         default:
-          return this.data && this.data[p] || null;
+          return this.data && this.data[Oₒଠ] || null;
       }
     }
-    setval(p, g) {
+    setval(Oₒଠ, ᵒㅇଠ) {
       switch (this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
-          return $persistentStore.write(p, g);
+          return $persistentStore.write(Oₒଠ, ᵒㅇଠ);
         case "Quantumult X":
-          return $prefs.setValueForKey(p, g);
+          return $prefs.setValueForKey(Oₒଠ, ᵒㅇଠ);
         case "Node.js":
-          this.data = this.loaddata();
-          this.data[g] = p;
-          this.writedata();
-          return !0;
+          return this.data = this.loaddata(), this.data[ᵒㅇଠ] = Oₒଠ, this.writedata(), !0;
         default:
-          return this.data && this.data[g] || null;
+          return this.data && this.data[ᵒㅇଠ] || null;
       }
     }
-    initGotEnv(p) {
-      this.got = this.got ? this.got : require("got");
-      this.cktough = this.cktough ? this.cktough : require("tough-cookie");
-      this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
-      p && (p.headers = p.headers ? p.headers : {}, p && (p.headers = p.headers ? p.headers : {}, void 0 === p.headers.cookie && void 0 === p.headers.Cookie && void 0 === p.cookieJar && (p.cookieJar = this.ckjar)));
+    initGotEnv(Oₒଠ) {
+      this.got = this.got ? this.got : require("got"), this.cktough = this.cktough ? this.cktough : require("tough-cookie"), this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar(), Oₒଠ && (Oₒଠ.headers = Oₒଠ.headers ? Oₒଠ.headers : {}, Oₒଠ && (Oₒଠ.headers = Oₒଠ.headers ? Oₒଠ.headers : {}, void 0 === Oₒଠ.headers.cookie && void 0 === Oₒଠ.headers.Cookie && void 0 === Oₒଠ.cookieJar && (Oₒଠ.cookieJar = this.ckjar)));
     }
-    get(p, g = () => {}) {
-      const l = {
+    get(Oₒଠ, ᵒㅇଠ = () => {}) {
+      switch (Oₒଠ.headers && (delete Oₒଠ.headers["Content-Type"], delete Oₒଠ.headers["Content-Length"], delete Oₒଠ.headers["content-type"], delete Oₒଠ.headers["content-length"]), Oₒଠ.params && (Oₒଠ.url += "?" + this.queryStr(Oₒଠ.params)), void 0 === Oₒଠ.followRedirect || Oₒଠ.followRedirect || ((this.isSurge() || this.isLoon()) && (Oₒଠ["auto-redirect"] = !1), this.isQuanX() && (Oₒଠ.opts ? Oₒଠ.opts.redirection = !1 : Oₒଠ.opts = {
         redirection: !1
-      };
-      switch (p.headers && (delete p.headers["Content-Type"], delete p.headers["Content-Length"], delete p.headers["content-type"], delete p.headers["content-length"]), p.params && (p.url += "?" + this.queryStr(p.params)), void 0 === p.followRedirect || p.followRedirect || ((this.isSurge() || this.isLoon()) && (p["auto-redirect"] = !1), this.isQuanX() && (p.opts ? p.opts.redirection = !1 : p.opts = l)), this.getEnv()) {
+      })), this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
         default:
-          const h = {
+          this.isSurge() && this.isNeedRewrite && (Oₒଠ.headers = Oₒଠ.headers || {}, Object.assign(Oₒଠ.headers, {
             "X-Surge-Skip-Scripting": !1
-          };
-          this.isSurge() && this.isNeedRewrite && (p.headers = p.headers || {}, Object.assign(p.headers, h));
-          $httpClient.get(p, (G, v, b) => {
-            !G && v && (v.body = b, v.statusCode = v.status ? v.status : v.statusCode, v.status = v.statusCode);
-            g(G, v, b);
+          })), $httpClient.get(Oₒଠ, (Oₒଠ, ᵒⲟₒ, ﾷ0ﾷ) => {
+            !Oₒଠ && ᵒⲟₒ && (ᵒⲟₒ.body = ﾷ0ﾷ, ᵒⲟₒ.statusCode = ᵒⲟₒ.status ? ᵒⲟₒ.status : ᵒⲟₒ.statusCode, ᵒⲟₒ.status = ᵒⲟₒ.statusCode), ᵒㅇଠ(Oₒଠ, ᵒⲟₒ, ﾷ0ﾷ);
           });
           break;
         case "Quantumult X":
-          const Y = {};
-          Y.hints = !1;
-          this.isNeedRewrite && (p.opts = p.opts || {}, Object.assign(p.opts, Y));
-          $task.fetch(p).then(G => {
-            const {
-                statusCode: v,
-                statusCode: b,
-                headers: C,
-                body: x,
-                bodyBytes: K
-              } = G,
-              z = {
-                status: v,
-                statusCode: b,
-                headers: C,
-                body: x,
-                bodyBytes: K
-              };
-            g(null, z, x, K);
-          }, G => g(G && G.error || "UndefinedError"));
-          break;
-        case "Node.js":
-          let F = require("iconv-lite");
-          this.initGotEnv(p);
-          this.got(p).on("redirect", (G, v) => {
-            try {
-              if (G.headers["set-cookie"]) {
-                const K = G.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
-                K && this.ckjar.setCookieSync(K, null);
-                v.cookieJar = this.ckjar;
-              }
-            } catch (z) {
-              this.logErr(z);
-            }
-          }).then(G => {
-            const {
-                statusCode: b,
-                statusCode: C,
-                headers: x,
-                rawBody: K
-              } = G,
-              z = F.decode(K, this.encoding),
-              j = {
-                status: b,
-                statusCode: C,
-                headers: x,
-                rawBody: K,
-                body: z
-              };
-            g(null, j, z);
-          }, G => {
-            const {
-              message: v,
-              response: b
-            } = G;
-            g(v, b, b && F.decode(b.rawBody, this.encoding));
-          });
-          break;
-      }
-    }
-    post(p, g = () => {}) {
-      const l = p.method ? p.method.toLocaleLowerCase() : "post",
-        h = {
-          redirection: !1
-        };
-      switch (p.body && p.headers && !p.headers["Content-Type"] && !p.headers["content-type"] && (p.headers["content-type"] = "application/x-www-form-urlencoded"), p.headers && (delete p.headers["Content-Length"], delete p.headers["content-length"]), void 0 === p.followRedirect || p.followRedirect || ((this.isSurge() || this.isLoon()) && (p["auto-redirect"] = !1), this.isQuanX() && (p.opts ? p.opts.redirection = !1 : p.opts = h)), this.getEnv()) {
-        case "Surge":
-        case "Loon":
-        case "Stash":
-        case "Shadowrocket":
-        default:
-          const Y = {
-            "X-Surge-Skip-Scripting": !1
-          };
-          this.isSurge() && this.isNeedRewrite && (p.headers = p.headers || {}, Object.assign(p.headers, Y));
-          $httpClient[l](p, (C, x, K) => {
-            !C && x && (x.body = K, x.statusCode = x.status ? x.status : x.statusCode, x.status = x.statusCode);
-            g(C, x, K);
-          });
-          break;
-        case "Quantumult X":
-          const F = {
+          this.isNeedRewrite && (Oₒଠ.opts = Oₒଠ.opts || {}, Object.assign(Oₒଠ.opts, {
             hints: !1
-          };
-          p.method = l;
-          this.isNeedRewrite && (p.opts = p.opts || {}, Object.assign(p.opts, F));
-          $task.fetch(p).then(C => {
+          })), $task.fetch(Oₒଠ).then(Oₒଠ => {
             const {
-                statusCode: x,
-                statusCode: K,
-                headers: z,
-                body: j,
-                bodyBytes: w
-              } = C,
-              R = {
-                status: x,
-                statusCode: K,
-                headers: z,
-                body: j,
-                bodyBytes: w
-              };
-            g(null, R, j, w);
-          }, C => g(C && C.error || "UndefinedError"));
+              statusCode: ᵒⲟₒ,
+              statusCode: ﾷ0ﾷ,
+              headers: ᣞଠᴑ,
+              body: ᵒⲟᴑ,
+              bodyBytes: Ꙩoᣞ
+            } = Oₒଠ;
+            ᵒㅇଠ(null, {
+              status: ᵒⲟₒ,
+              statusCode: ﾷ0ﾷ,
+              headers: ᣞଠᴑ,
+              body: ᵒⲟᴑ,
+              bodyBytes: Ꙩoᣞ
+            }, ᵒⲟᴑ, Ꙩoᣞ);
+          }, Oₒଠ => ᵒㅇଠ(Oₒଠ && Oₒଠ.error || "UndefinedError"));
           break;
         case "Node.js":
-          let G = require("iconv-lite");
-          this.initGotEnv(p);
-          const {
-            url: v,
-            ...b
-          } = p;
-          this.got[l](v, b).then(C => {
+          let ᵒⲟₒ = require("iconv-lite");
+          this.initGotEnv(Oₒଠ), this.got(Oₒଠ).on("redirect", (Oₒଠ, ᵒㅇଠ) => {
+            try {
+              if (Oₒଠ.headers["set-cookie"]) {
+                const ᵒⲟₒ = Oₒଠ.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
+                ᵒⲟₒ && this.ckjar.setCookieSync(ᵒⲟₒ, null), ᵒㅇଠ.cookieJar = this.ckjar;
+              }
+            } catch (Oₒଠ) {
+              this.logErr(Oₒଠ);
+            }
+          }).then(Oₒଠ => {
             const {
-                statusCode: K,
-                statusCode: z,
-                headers: j,
-                rawBody: w
-              } = C,
-              R = G.decode(w, this.encoding),
-              S = {
-                status: K,
-                statusCode: z,
-                headers: j,
-                rawBody: w,
-                body: R
-              };
-            g(null, S, R);
-          }, C => {
+                statusCode: ﾷ0ﾷ,
+                statusCode: ᣞଠᴑ,
+                headers: ᵒⲟᴑ,
+                rawBody: Ꙩoᣞ
+              } = Oₒଠ,
+              oଠᣞ = ᵒⲟₒ.decode(Ꙩoᣞ, this.encoding);
+            ᵒㅇଠ(null, {
+              status: ﾷ0ﾷ,
+              statusCode: ᣞଠᴑ,
+              headers: ᵒⲟᴑ,
+              rawBody: Ꙩoᣞ,
+              body: oଠᣞ
+            }, oଠᣞ);
+          }, Oₒଠ => {
             const {
-              message: j,
-              response: w
-            } = C;
-            g(j, w, w && G.decode(w.rawBody, this.encoding));
+              message: ﾷ0ﾷ,
+              response: ᣞଠᴑ
+            } = Oₒଠ;
+            ᵒㅇଠ(ﾷ0ﾷ, ᣞଠᴑ, ᣞଠᴑ && ᵒⲟₒ.decode(ᣞଠᴑ.rawBody, this.encoding));
           });
           break;
       }
     }
-    time(p, g = null) {
-      const P = g ? new Date(g) : new Date();
-      let l = {
-        "M+": P.getMonth() + 1,
-        "d+": P.getDate(),
-        "H+": P.getHours(),
-        "m+": P.getMinutes(),
-        "s+": P.getSeconds(),
-        "q+": Math.floor((P.getMonth() + 3) / 3),
-        S: P.getMilliseconds()
-      };
-      /(y+)/.test(p) && (p = p.replace(RegExp.$1, (P.getFullYear() + "").substr(4 - RegExp.$1.length)));
-      for (let h in l) new RegExp("(" + h + ")").test(p) && (p = p.replace(RegExp.$1, 1 == RegExp.$1.length ? l[h] : ("00" + l[h]).substr(("" + l[h]).length)));
-      return p;
-    }
-    queryStr(p) {
-      let P = "";
-      for (const l in p) {
-        let Y = p[l];
-        null != Y && "" !== Y && ("object" == typeof Y && (Y = JSON.stringify(Y)), P += l + "=" + Y + "&");
+    post(Oₒଠ, ᵒㅇଠ = () => {}) {
+      const ᵒⲟₒ = Oₒଠ.method ? Oₒଠ.method.toLocaleLowerCase() : "post";
+      switch (Oₒଠ.body && Oₒଠ.headers && !Oₒଠ.headers["Content-Type"] && !Oₒଠ.headers["content-type"] && (Oₒଠ.headers["content-type"] = "application/x-www-form-urlencoded"), Oₒଠ.headers && (delete Oₒଠ.headers["Content-Length"], delete Oₒଠ.headers["content-length"]), void 0 === Oₒଠ.followRedirect || Oₒଠ.followRedirect || ((this.isSurge() || this.isLoon()) && (Oₒଠ["auto-redirect"] = !1), this.isQuanX() && (Oₒଠ.opts ? Oₒଠ.opts.redirection = !1 : Oₒଠ.opts = {
+        redirection: !1
+      })), this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        default:
+          this.isSurge() && this.isNeedRewrite && (Oₒଠ.headers = Oₒଠ.headers || {}, Object.assign(Oₒଠ.headers, {
+            "X-Surge-Skip-Scripting": !1
+          })), $httpClient[ᵒⲟₒ](Oₒଠ, (Oₒଠ, ᵒⲟₒ, ﾷ0ﾷ) => {
+            !Oₒଠ && ᵒⲟₒ && (ᵒⲟₒ.body = ﾷ0ﾷ, ᵒⲟₒ.statusCode = ᵒⲟₒ.status ? ᵒⲟₒ.status : ᵒⲟₒ.statusCode, ᵒⲟₒ.status = ᵒⲟₒ.statusCode), ᵒㅇଠ(Oₒଠ, ᵒⲟₒ, ﾷ0ﾷ);
+          });
+          break;
+        case "Quantumult X":
+          Oₒଠ.method = ᵒⲟₒ, this.isNeedRewrite && (Oₒଠ.opts = Oₒଠ.opts || {}, Object.assign(Oₒଠ.opts, {
+            hints: !1
+          })), $task.fetch(Oₒଠ).then(Oₒଠ => {
+            const {
+              statusCode: ᵒⲟₒ,
+              statusCode: ﾷ0ﾷ,
+              headers: ᣞଠᴑ,
+              body: ᵒⲟᴑ,
+              bodyBytes: Ꙩoᣞ
+            } = Oₒଠ;
+            ᵒㅇଠ(null, {
+              status: ᵒⲟₒ,
+              statusCode: ﾷ0ﾷ,
+              headers: ᣞଠᴑ,
+              body: ᵒⲟᴑ,
+              bodyBytes: Ꙩoᣞ
+            }, ᵒⲟᴑ, Ꙩoᣞ);
+          }, Oₒଠ => ᵒㅇଠ(Oₒଠ && Oₒଠ.error || "UndefinedError"));
+          break;
+        case "Node.js":
+          let ﾷ0ﾷ = require("iconv-lite");
+          this.initGotEnv(Oₒଠ);
+          const {
+            url: ᣞଠᴑ,
+            ...ᵒⲟᴑ
+          } = Oₒଠ;
+          this.got[ᵒⲟₒ](ᣞଠᴑ, ᵒⲟᴑ).then(Oₒଠ => {
+            const {
+                statusCode: ᵒⲟₒ,
+                statusCode: ᣞଠᴑ,
+                headers: ᵒⲟᴑ,
+                rawBody: Ꙩoᣞ
+              } = Oₒଠ,
+              oଠᣞ = ﾷ0ﾷ.decode(Ꙩoᣞ, this.encoding);
+            ᵒㅇଠ(null, {
+              status: ᵒⲟₒ,
+              statusCode: ᣞଠᴑ,
+              headers: ᵒⲟᴑ,
+              rawBody: Ꙩoᣞ,
+              body: oଠᣞ
+            }, oଠᣞ);
+          }, Oₒଠ => {
+            const {
+              message: ᵒⲟₒ,
+              response: ᣞଠᴑ
+            } = Oₒଠ;
+            ᵒㅇଠ(ᵒⲟₒ, ᣞଠᴑ, ᣞଠᴑ && ﾷ0ﾷ.decode(ᣞଠᴑ.rawBody, this.encoding));
+          });
+          break;
       }
-      P = P.substring(0, P.length - 1);
-      return P;
     }
-    msg(p = Z, g = "", P = "", l = {}) {
-      const Y = F => {
+    time(Oₒଠ, ᵒㅇଠ = null) {
+      const ᵒⲟₒ = ᵒㅇଠ ? new Date(ᵒㅇଠ) : new Date();
+      let ﾷ0ﾷ = {
+        "M+": ᵒⲟₒ.getMonth() + 1,
+        "d+": ᵒⲟₒ.getDate(),
+        "H+": ᵒⲟₒ.getHours(),
+        "m+": ᵒⲟₒ.getMinutes(),
+        "s+": ᵒⲟₒ.getSeconds(),
+        "q+": Math.floor((ᵒⲟₒ.getMonth() + 3) / 3),
+        S: ᵒⲟₒ.getMilliseconds()
+      };
+      /(y+)/.test(Oₒଠ) && (Oₒଠ = Oₒଠ.replace(RegExp.$1, (ᵒⲟₒ.getFullYear() + "").substr(4 - RegExp.$1.length)));
+      for (let ᵒㅇଠ in ﾷ0ﾷ) new RegExp("(" + ᵒㅇଠ + ")").test(Oₒଠ) && (Oₒଠ = Oₒଠ.replace(RegExp.$1, 1 == RegExp.$1.length ? ﾷ0ﾷ[ᵒㅇଠ] : ("00" + ﾷ0ﾷ[ᵒㅇଠ]).substr(("" + ﾷ0ﾷ[ᵒㅇଠ]).length)));
+      return Oₒଠ;
+    }
+    queryStr(Oₒଠ) {
+      let ᵒㅇଠ = "";
+      for (const ᵒⲟₒ in Oₒଠ) {
+        let ﾷ0ﾷ = Oₒଠ[ᵒⲟₒ];
+        null != ﾷ0ﾷ && "" !== ﾷ0ﾷ && ("object" == typeof ﾷ0ﾷ && (ﾷ0ﾷ = JSON.stringify(ﾷ0ﾷ)), ᵒㅇଠ += `${ᵒⲟₒ}\x3D${ﾷ0ﾷ}\x26`);
+      }
+      return ᵒㅇଠ = ᵒㅇଠ.substring(0, ᵒㅇଠ.length - 1), ᵒㅇଠ;
+    }
+    msg(ᵒㅇଠ = Oₒଠ, ᵒⲟₒ = "", ﾷ0ﾷ = "", ᣞଠᴑ = {}) {
+      const ᵒⲟᴑ = Oₒଠ => {
         const {
-          $open: b,
-          $copy: C,
-          $media: x,
-          $mediaMime: K
-        } = F;
-        switch (typeof F) {
+          $open: ᵒㅇଠ,
+          $copy: ᵒⲟₒ,
+          $media: ﾷ0ﾷ,
+          $mediaMime: ᣞଠᴑ
+        } = Oₒଠ;
+        switch (typeof Oₒଠ) {
           case void 0:
-            return F;
+            return Oₒଠ;
           case "string":
             switch (this.getEnv()) {
               case "Surge":
               case "Stash":
               default:
-                const z = {
-                  url: F
+                return {
+                  url: Oₒଠ
                 };
-                return z;
               case "Loon":
               case "Shadowrocket":
-                return F;
+                return Oₒଠ;
               case "Quantumult X":
-                const j = {
-                  "open-url": F
+                return {
+                  "open-url": Oₒଠ
                 };
-                return j;
               case "Node.js":
                 return;
             }
@@ -1524,89 +1320,73 @@ function Env(Z, D) {
               case "Shadowrocket":
               default:
                 {
-                  const w = {};
-                  let R = F.openUrl || F.url || F["open-url"] || b;
-                  R && Object.assign(w, {
+                  const ᵒⲟᴑ = {};
+                  let Ꙩoᣞ = Oₒଠ.openUrl || Oₒଠ.url || Oₒଠ["open-url"] || ᵒㅇଠ;
+                  Ꙩoᣞ && Object.assign(ᵒⲟᴑ, {
                     action: "open-url",
-                    url: R
+                    url: Ꙩoᣞ
                   });
-                  let S = F["update-pasteboard"] || F.updatePasteboard || C;
-                  if (S && Object.assign(w, {
+                  let oଠᣞ = Oₒଠ["update-pasteboard"] || Oₒଠ.updatePasteboard || ᵒⲟₒ;
+                  if (oଠᣞ && Object.assign(ᵒⲟᴑ, {
                     action: "clipboard",
-                    text: S
-                  }), x) {
-                    let f, V, Q;
-                    if (x.startsWith("http")) {
-                      f = x;
+                    text: oଠᣞ
+                  }), ﾷ0ﾷ) {
+                    let Oₒଠ, ᵒㅇଠ, ᵒⲟₒ;
+                    if (ﾷ0ﾷ.startsWith("http")) Oₒଠ = ﾷ0ﾷ;else if (ﾷ0ﾷ.startsWith("data:")) {
+                      const [Oₒଠ] = ﾷ0ﾷ.split(";"),
+                        [, ᣞଠᴑ] = ﾷ0ﾷ.split(",");
+                      ᵒㅇଠ = ᣞଠᴑ, ᵒⲟₒ = Oₒଠ.replace("data:", "");
                     } else {
-                      if (x.startsWith("data:")) {
-                        const [W] = x.split(";"),
-                          [, L] = x.split(",");
-                        V = L;
-                        Q = W.replace("data:", "");
-                      } else {
-                        V = x;
-                        Q = (J => {
-                          const d = {
-                            JVBERi0: "application/pdf",
-                            R0lGODdh: "image/gif",
-                            R0lGODlh: "image/gif",
-                            iVBORw0KGgo: "image/png",
-                            "/9j/": "image/jpg"
-                          };
-                          for (var O in d) if (0 === J.indexOf(O)) {
-                            return d[O];
-                          }
-                          return null;
-                        })(x);
-                      }
+                      ᵒㅇଠ = ﾷ0ﾷ, ᵒⲟₒ = (Oₒଠ => {
+                        const ᵒㅇଠ = {
+                          JVBERi0: "application/pdf",
+                          R0lGODdh: "image/gif",
+                          R0lGODlh: "image/gif",
+                          iVBORw0KGgo: "image/png",
+                          "/9j/": "image/jpg"
+                        };
+                        for (var ᵒⲟₒ in ᵒㅇଠ) if (0 === Oₒଠ.indexOf(ᵒⲟₒ)) return ᵒㅇଠ[ᵒⲟₒ];
+                        return null;
+                      })(ﾷ0ﾷ);
                     }
-                    Object.assign(w, {
-                      "media-url": f,
-                      "media-base64": V,
-                      "media-base64-mime": K ?? Q
+                    Object.assign(ᵒⲟᴑ, {
+                      "media-url": Oₒଠ,
+                      "media-base64": ᵒㅇଠ,
+                      "media-base64-mime": ᣞଠᴑ ?? ᵒⲟₒ
                     });
                   }
-                  const H = {
-                    "auto-dismiss": F["auto-dismiss"],
-                    sound: F.sound
-                  };
-                  Object.assign(w, H);
-                  return w;
+                  return Object.assign(ᵒⲟᴑ, {
+                    "auto-dismiss": Oₒଠ["auto-dismiss"],
+                    sound: Oₒଠ.sound
+                  }), ᵒⲟᴑ;
                 }
               case "Loon":
                 {
-                  const O = {};
-                  let d = F.openUrl || F.url || F["open-url"] || b;
-                  d && Object.assign(O, {
-                    openUrl: d
+                  const ᵒⲟₒ = {};
+                  let ᣞଠᴑ = Oₒଠ.openUrl || Oₒଠ.url || Oₒଠ["open-url"] || ᵒㅇଠ;
+                  ᣞଠᴑ && Object.assign(ᵒⲟₒ, {
+                    openUrl: ᣞଠᴑ
                   });
-                  let m = F.mediaUrl || F["media-url"];
-                  x?.["startsWith"]("http") && (m = x);
-                  m && Object.assign(O, {
-                    mediaUrl: m
-                  });
-                  console.log(JSON.stringify(O));
-                  return O;
+                  let ᵒⲟᴑ = Oₒଠ.mediaUrl || Oₒଠ["media-url"];
+                  return ﾷ0ﾷ?.startsWith("http") && (ᵒⲟᴑ = ﾷ0ﾷ), ᵒⲟᴑ && Object.assign(ᵒⲟₒ, {
+                    mediaUrl: ᵒⲟᴑ
+                  }), console.log(JSON.stringify(ᵒⲟₒ)), ᵒⲟₒ;
                 }
               case "Quantumult X":
                 {
-                  const k = {};
-                  let A = F["open-url"] || F.url || F.openUrl || b;
-                  A && Object.assign(k, {
-                    "open-url": A
+                  const ᣞଠᴑ = {};
+                  let ᵒⲟᴑ = Oₒଠ["open-url"] || Oₒଠ.url || Oₒଠ.openUrl || ᵒㅇଠ;
+                  ᵒⲟᴑ && Object.assign(ᣞଠᴑ, {
+                    "open-url": ᵒⲟᴑ
                   });
-                  let N = F["media-url"] || F.mediaUrl;
-                  x?.["startsWith"]("http") && (N = x);
-                  N && Object.assign(k, {
-                    "media-url": N
+                  let Ꙩoᣞ = Oₒଠ["media-url"] || Oₒଠ.mediaUrl;
+                  ﾷ0ﾷ?.startsWith("http") && (Ꙩoᣞ = ﾷ0ﾷ), Ꙩoᣞ && Object.assign(ᣞଠᴑ, {
+                    "media-url": Ꙩoᣞ
                   });
-                  let I = F["update-pasteboard"] || F.updatePasteboard || C;
-                  I && Object.assign(k, {
-                    "update-pasteboard": I
-                  });
-                  console.log(JSON.stringify(k));
-                  return k;
+                  let oଠᣞ = Oₒଠ["update-pasteboard"] || Oₒଠ.updatePasteboard || ᵒⲟₒ;
+                  return oଠᣞ && Object.assign(ᣞଠᴑ, {
+                    "update-pasteboard": oଠᣞ
+                  }), console.log(JSON.stringify(ᣞଠᴑ)), ᣞଠᴑ;
                 }
               case "Node.js":
                 return;
@@ -1615,48 +1395,41 @@ function Env(Z, D) {
             return;
         }
       };
-      if (!this.isMute) {
-        switch (this.getEnv()) {
-          case "Surge":
-          case "Loon":
-          case "Stash":
-          case "Shadowrocket":
-          default:
-            $notification.post(p, g, P, Y(l));
-            break;
-          case "Quantumult X":
-            $notify(p, g, P, Y(l));
-            break;
-          case "Node.js":
-            break;
-        }
+      if (!this.isMute) switch (this.getEnv()) {
+        case "Surge":
+        case "Loon":
+        case "Stash":
+        case "Shadowrocket":
+        default:
+          $notification.post(ᵒㅇଠ, ᵒⲟₒ, ﾷ0ﾷ, ᵒⲟᴑ(ᣞଠᴑ));
+          break;
+        case "Quantumult X":
+          $notify(ᵒㅇଠ, ᵒⲟₒ, ﾷ0ﾷ, ᵒⲟᴑ(ᣞଠᴑ));
+          break;
+        case "Node.js":
+          break;
       }
       if (!this.isMuteLog) {
-        let F = ["", "==============📣系统通知📣=============="];
-        F.push(p);
-        g && F.push(g);
-        P && F.push(P);
-        console.log(F.join("\n"));
-        this.logs = this.logs.concat(F);
+        let Oₒଠ = ["", "==============\uD83D\uDCE3\u7CFB\u7EDF\u901A\u77E5\uD83D\uDCE3=============="];
+        Oₒଠ.push(ᵒㅇଠ), ᵒⲟₒ && Oₒଠ.push(ᵒⲟₒ), ﾷ0ﾷ && Oₒଠ.push(ﾷ0ﾷ), console.log(Oₒଠ.join("\n")), this.logs = this.logs.concat(Oₒଠ);
       }
     }
-    debug(...p) {
-      this.logLevels[this.logLevel] <= this.logLevels.debug && (p.length > 0 && (this.logs = [...this.logs, ...p]), console.log("" + this.logLevelPrefixs.debug + p.map(g => g ?? String(g)).join(this.logSeparator)));
+    debug(...Oₒଠ) {
+      this.logLevels[this.logLevel] <= this.logLevels.debug && (Oₒଠ.length > 0 && (this.logs = [...this.logs, ...Oₒଠ]), console.log(`${this.logLevelPrefixs.debug}${Oₒଠ.map(Oₒଠ => Oₒଠ ?? String(Oₒଠ)).join(this.logSeparator)}`));
     }
-    info(...p) {
-      this.logLevels[this.logLevel] <= this.logLevels.info && (p.length > 0 && (this.logs = [...this.logs, ...p]), console.log("" + this.logLevelPrefixs.info + p.map(g => g ?? String(g)).join(this.logSeparator)));
+    info(...Oₒଠ) {
+      this.logLevels[this.logLevel] <= this.logLevels.info && (Oₒଠ.length > 0 && (this.logs = [...this.logs, ...Oₒଠ]), console.log(`${this.logLevelPrefixs.info}${Oₒଠ.map(Oₒଠ => Oₒଠ ?? String(Oₒଠ)).join(this.logSeparator)}`));
     }
-    warn(...p) {
-      this.logLevels[this.logLevel] <= this.logLevels.warn && (p.length > 0 && (this.logs = [...this.logs, ...p]), console.log("" + this.logLevelPrefixs.warn + p.map(P => P ?? String(P)).join(this.logSeparator)));
+    warn(...Oₒଠ) {
+      this.logLevels[this.logLevel] <= this.logLevels.warn && (Oₒଠ.length > 0 && (this.logs = [...this.logs, ...Oₒଠ]), console.log(`${this.logLevelPrefixs.warn}${Oₒଠ.map(Oₒଠ => Oₒଠ ?? String(Oₒଠ)).join(this.logSeparator)}`));
     }
-    error(...p) {
-      this.logLevels[this.logLevel] <= this.logLevels.error && (p.length > 0 && (this.logs = [...this.logs, ...p]), console.log("" + this.logLevelPrefixs.error + p.map(P => P ?? String(P)).join(this.logSeparator)));
+    error(...Oₒଠ) {
+      this.logLevels[this.logLevel] <= this.logLevels.error && (Oₒଠ.length > 0 && (this.logs = [...this.logs, ...Oₒଠ]), console.log(`${this.logLevelPrefixs.error}${Oₒଠ.map(Oₒଠ => Oₒଠ ?? String(Oₒଠ)).join(this.logSeparator)}`));
     }
-    log(...p) {
-      p.length > 0 && (this.logs = [...this.logs, ...p]);
-      console.log(p.map(g => g ?? String(g)).join(this.logSeparator));
+    log(...Oₒଠ) {
+      Oₒଠ.length > 0 && (this.logs = [...this.logs, ...Oₒଠ]), console.log(Oₒଠ.map(Oₒଠ => Oₒଠ ?? String(Oₒଠ)).join(this.logSeparator));
     }
-    logErr(p, g) {
+    logErr(Oₒଠ, ᵒㅇଠ) {
       switch (this.getEnv()) {
         case "Surge":
         case "Loon":
@@ -1664,30 +1437,30 @@ function Env(Z, D) {
         case "Shadowrocket":
         case "Quantumult X":
         default:
-          this.log("", "❗️" + this.name + ", 错误!", g, p);
+          this.log("", `\u2757\ufe0f${this.name}\x2C\x20\u9519\u8bef\x21`, ᵒㅇଠ, Oₒଠ);
           break;
         case "Node.js":
-          this.log("", "❗️" + this.name + ", 错误!", g, void 0 !== p.message ? p.message : p, p.stack);
+          this.log("", `\u2757\ufe0f${this.name}\x2C\x20\u9519\u8bef\x21`, ᵒㅇଠ, void 0 !== Oₒଠ.message ? Oₒଠ.message : Oₒଠ, Oₒଠ.stack);
           break;
       }
     }
-    wait(p) {
-      return new Promise(l => setTimeout(l, p));
+    wait(Oₒଠ) {
+      return new Promise(ᵒㅇଠ => setTimeout(ᵒㅇଠ, Oₒଠ));
     }
-    done(p = {}) {
-      const g = (new Date().getTime() - this.startTime) / 1000;
-      switch (this.log("", "🔔" + this.name + ", 结束! 🕛 " + g + " 秒"), this.log(), this.getEnv()) {
+    done(Oₒଠ = {}) {
+      const ᵒㅇଠ = (new Date().getTime() - this.startTime) / 1000;
+      switch (this.log("", `\ud83d\udd14${this.name}\x2C\x20\u7ed3\u675f\x21\x20\ud83d\udd5b\x20${ᵒㅇଠ}\x20\u79d2`), this.log(), this.getEnv()) {
         case "Surge":
         case "Loon":
         case "Stash":
         case "Shadowrocket":
         case "Quantumult X":
         default:
-          $done(p);
+          $done(Oₒଠ);
           break;
         case "Node.js":
           process.exit(1);
       }
     }
-  }(Z, D);
+  }(Oₒଠ, ᵒㅇଠ);
 }
